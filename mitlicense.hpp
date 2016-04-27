@@ -1,8 +1,6 @@
-#include <tchar.h>
-
 #pragma once
-
-TCHAR szMitLicenseRaw[]=_T("\n\
+#include <tchar.h>
+const TCHAR *szMitLicense_Raw=_T("\n\
 The MIT License(MIT)(redefined)\n\
 \n\
 Copyright (C) 2016 Too-Naive E-mail:sometimes.naive@hotmail.com\n\
