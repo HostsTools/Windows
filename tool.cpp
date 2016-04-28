@@ -62,6 +62,7 @@ There seems something wrong in download file, we will retry after 5 seconds.\n")
 //tmpfile set
 #define DownLocated _T("hosts.tmp")
 #define ChangeCTLR _T("hostsq.tmp")
+#define ReservedFile _T("hosts_n.tmp")
 //end.
 
 #define BAD_EXIT \
@@ -463,6 +464,10 @@ inline void __fastcall _perrtext(const TCHAR * _str,bool _Reserved){
 	return ;
 }
 
+
+//TODO: temp string length only 1000(TCHAR)
+//is safe for this program? I don't know.
+
 DWORD __stdcall NormalEntry(LPVOID){
 	SYSTEMTIME st={0,0,0,0,0,0,0,0};
 	FILE * fp=NULL,*_=NULL;
@@ -509,7 +514,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 			if (!bReserved) _tprintf(_T("\tDone.\n    Step3:Change Line Endings..."));
 			if (!((fp=_tfopen(DownLocated,_T("r"))) && (_=_tfopen(ChangeCTLR,_T("w")))))
 				THROWERR(_T("Open file Error!"));
-			while (!feof(fp)){
+			while (!_tcsstr(szline,_T("# Modified hosts end"))){
 				_fgetts(szline,1000,fp);
 				_fputts(szline,_);
 			}
@@ -521,12 +526,38 @@ DWORD __stdcall NormalEntry(LPVOID){
 				else
 					_tprintf(_T("Delete tmpfile error.(%ld)\n"),GetLastError());
 			}
-			if (Func_CheckDiff(ChangeCTLR,buf1)){
+			//new future
+			memset(szline,0,sizeof(szline));
+			if (!((fp=_tfopen(buf1,_T("r"))) && (_=_tfopen(ReservedFile,_T("w")))));
+			while (!feof(fp)){
+				_fgetts(szline,1000,fp);
+				if (*szline==_T('#')) 
+					if (_tcsstr(szline,_T("# Copyright (c) 2014")))
+					break; else continue;
+				if (*szline==_T('\n')) continue;
+				_fputts(szline,_);
+			}
+			fclose(_);
+			if (!feof(fp)){
+				if (!(_=_tfopen(DownLocated,_T("w"))));
+				_fputts(szline,_);
+				while (!feof(fp)) {
+					_fgetts(szline,1000,fp);
+					_fputts(szline,_);
+				}
+				fclose(_);
+			}
+			fclose(fp);
+			fp=NULL,_=NULL;
+			//end
+			if (Func_CheckDiff(ChangeCTLR,DownLocated)){
 				if (!bReserved) _tprintf(_T("\tDone.\n\n    \
 diff exited with value 0(0x00)\n    \
 Finish:Hosts file Not update.\n\n"));
 				else ___autocheckmess(_T("Finish:Hosts file Not update.\n\n"));
 				DeleteFile(ChangeCTLR);
+				DeleteFile(ReservedFile);
+				DeleteFile(DownLocated);
 				if (!bReserved) {system("pause");return GetLastError();}
 			}
 			else {
@@ -535,9 +566,16 @@ Finish:Hosts file Not update.\n\n"));
 				if (!CopyFile(buf1,buf2,FALSE))
 					THROWERR(_T("CopyFile() Error on copy a backup file"));
 				if (!bReserved) _tprintf(_T("\t\tDone.\n    Step5:Replace Default Hosts File..."));
-				if (!CopyFile(ChangeCTLR,buf1,FALSE))
+				if (!CopyFile(ReservedFile,buf1,FALSE))
 					THROWERR(_T("CopyFile() Error on copy hosts file to system path"));
-				if (!DeleteFile(ChangeCTLR))
+				if (!((fp=_tfopen(ChangeCTLR,_T("r"))) && (_=_tfopen(buf1,_T("a+")))))
+					THROWERR(_T("_tfopen() Error in copy hosts file."));
+				while (!feof(fp)){
+					_fgetts(szline,1000,fp);
+					_fputts(szline,_);
+				}
+				fclose(fp);fclose(_);
+				if (!(DeleteFile(ChangeCTLR)&&DeleteFile(ReservedFile)&&DeleteFile(DownLocated)))
 					_perrtext(_T("Delete tmpfile error.\n"),1);
 				if (!bReserved) _tprintf(_T("Replace File Successfully\n"));
 				else ___autocheckmess(_T("Replace File Successfully\n"));
