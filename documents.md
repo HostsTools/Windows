@@ -54,6 +54,20 @@ tool.exe.manifest | Executable manifest file
 tool.rc | program resource script file
 wininet.lib | g++ compile library
 
+## Functions description
+
+Function name | Description
+--------------|-------------
+`__Check_Parameters` | Function check parameters
+`Service_Main` | Service main function
+`Service_Control` | Service control function
+`Func_Service_Install` | Install service function
+`Func_Service_UnInstall;` | Uninstall service function
+` NormalEntry` | Replace/download hosts function
+`___debug_point_reset;` | Debug function(reserved)
+`__show_str;` | Show normal information
+`Func_ResetFile` | Reset hosts file function
+
 ## Program runtime process(Run without parameters)
 
 1. Check parameters
@@ -64,7 +78,7 @@ wininet.lib | g++ compile library
 6. Delete temp file
 
 
-## Backup file
+## Hosts Backup file(Windows 7+)
 
 ```
 # Copyright (c) 1993-2009 Microsoft Corp.

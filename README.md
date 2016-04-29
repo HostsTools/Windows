@@ -19,9 +19,9 @@ Server | Microsoft Windows Server 2003 Family
 
 **在此特别感谢[@qwerty258](https://github.com/qwerty258)为本程序提供了Visual  Studio的工程文件**
 
-##New Future:
+##New Feature
 
-现在，在hosts的头部加上自定义的hosts，程序不会覆盖掉自定义的hosts.例如
+现在，可以在hosts的头部加上自定义的hosts，程序自动更新时不会覆盖掉自定义的hosts.例如
 
 	127.0.0.1 baidu.com
 	# Copyright (c) 2014-2016, racaljk.
@@ -35,7 +35,7 @@ Server | Microsoft Windows Server 2003 Family
 
 ## How to use?
 
-修改hosts涉及到系统文件的修改，安装服务也有可能触发安全软件的提示，如有安全软件提示请放行通过.s
+修改hosts涉及到系统文件的修改，安装服务也有可能触发安全软件的提示，如有安全软件提示请放行通过.
 
 main program file: `tool.exe` 
 
