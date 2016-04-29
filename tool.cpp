@@ -48,12 +48,17 @@
 #define THROWERR(x) throw expection(x)
 
 //Hosts file web address set
+#ifndef DEBUG
 #define hostsfile _T("https://raw.githubusercontent.com/racaljk/hosts/master/hosts")
 #define hostsfile1 _T("https://coding.net/u/scaffrey/p/hosts/git/raw/master/hosts")
+#else
+#define hostsfile _T("http://localhost/hosts")
+#define hostsfile1 _T("http://localhost/hosts")
+#endif
 #define objectwebsite _T("https://github.com/racaljk/hosts")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tools     Build time:Apr. 27th, '16")
+#define ConsoleTitle _T("racaljk-host tools     Build time:Apr. 28th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -144,6 +149,7 @@ DWORD __stdcall NormalEntry(LPVOID);
 void ___debug_point_reset(int);
 inline void __show_str(TCHAR const *,TCHAR const *);
 void Func_ResetFile();
+int FASTCALL Func_CopyFile(FILE *,FILE *);
 
 
 SERVICE_TABLE_ENTRY STE[2]={{Sname,Service_Main},{NULL,NULL}};
@@ -242,6 +248,7 @@ int _tmain(int argc,TCHAR const ** argv){
 }
 
 void Func_ResetFile(){
+	SYSTEMTIME st={0,0,0,0,0,0,0,0};
 	_tprintf(_T("\
 ------------------------------------------------------------\n\
 Hosts Tool for Windows Console by: Too-Naive\n\
@@ -250,7 +257,12 @@ Copyright (C) 2016 @Too-Naive License:MIT LICENSE(redefined)\n\
 	if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,BUFSIZ))
 		_tprintf(_T("    GetEnvironmentVariable() Error!(GetLastError():%ld)\n\
 \tCannot get system path!"),GetLastError()),abort();
+	GetLocalTime(&st);
 	_stprintf(buf1,_T("%s\\system32\\drivers\\etc\\hosts"),buf3);
+	_stprintf(buf2,_T("%s\\system32\\drivers\\etc\\hosts.%04d%02d%02d.%02d%02d%02d"),
+	buf3,st.wYear,st.wMonth,st.wDay,st.wHour,st.wMinute,st.wSecond);
+	if (CopyFile(buf1,buf2,FALSE))
+		_tprintf(_T("Backup File success\nFilename:%s\n\n"),buf2);
 	FILE *fp=_tfopen(buf1,_T("w"));
 	if (!fp) _tprintf(_T("Cannot open file!\n")),abort();
 	_ftprintf(fp,_T("%s"),szDefatult_hostsfile);
@@ -377,8 +389,8 @@ void Func_Service_Install(bool _q){
 	SC_HANDLE shMang=NULL,shSvc=NULL;
 	if (_q){
 		_tprintf(_T("    LICENSE:MIT LICENSE\n    Copyright (C) 2016 @Too-Naive\n\n"));
-		_tprintf(_T("    Bug report:sweheartiii[at]hotmail.com \n\t       Or open new issue\n\
-------------------------------------------------------\n\n"));
+		_tprintf(_T("    Bug report:sometimes.naive[at]hotmail.com \n\t       \
+Or open new issue\n------------------------------------------------------\n\n"));
 	}
 	try{
 		if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,BUFSIZ))
@@ -474,7 +486,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 	if (!bReserved){
 		_tprintf(_T("    LICENSE:MIT LICENSE\n%s\n    Copyright (C) 2016 @Too-Naive\n"),welcomeShow);
 		_tprintf(_T("    Project website:%s\n"),objectwebsite);
-		_tprintf(_T("    Bug report:sweheartiii[at]hotmail.com \n\t       Or open new issue\n\n\n"));
+		_tprintf(_T("    Bug report:sometimes.naive[at]hotmail.com \n\t       Or open new issue\n\n\n"));
 		_tprintf(_T("    Start replace hosts file:\n    Step1:Get System Driver..."));
 	}
 	else{
@@ -486,7 +498,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 		Func_FastPMNTS(_T("Open log file.\n"));
 		___checkEx(_T("LICENSE:MIT LICENSE\n"),1);
 		___checkEx(_T("Copyright (C) 2016 Too-Naive\n"),0);
-		___checkEx(_T("Bug report:sweheartiii[at]hotmail.com\n"),0);
+		___checkEx(_T("Bug report:sometimes.naive[at]hotmail.com\n"),0);
 		___checkEx(_T("           Or open new issue.(https://github.com/racaljk/hosts)\n"),0);
 	}
 	do {
@@ -530,6 +542,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 			memset(szline,0,sizeof(szline));
 			if (!((fp=_tfopen(buf1,_T("r"))) && (_=_tfopen(ReservedFile,_T("w")))));
 			while (!feof(fp)){
+				memset(szline,0,sizeof(szline));
 				_fgetts(szline,1000,fp);
 				if (*szline==_T('#')) 
 					if (_tcsstr(szline,_T("# Copyright (c) 2014")))
@@ -542,6 +555,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 				if (!(_=_tfopen(DownLocated,_T("w"))));
 				_fputts(szline,_);
 				while (!feof(fp)) {
+					memset(szline,0,sizeof(szline));
 					_fgetts(szline,1000,fp);
 					_fputts(szline,_);
 				}
@@ -571,14 +585,20 @@ Finish:Hosts file Not update.\n\n"));
 				if (!((fp=_tfopen(ChangeCTLR,_T("r"))) && (_=_tfopen(buf1,_T("a+")))))
 					THROWERR(_T("_tfopen() Error in copy hosts file."));
 				while (!feof(fp)){
+					memset(szline,0,sizeof(szline));
 					_fgetts(szline,1000,fp);
 					_fputts(szline,_);
 				}
 				fclose(fp);fclose(_);
-				if (!(DeleteFile(ChangeCTLR)&&DeleteFile(ReservedFile)&&DeleteFile(DownLocated)))
+				Sleep(500);
+				if (!(DeleteFile(ChangeCTLR)&&
+				DeleteFile(ReservedFile)&&
+				DeleteFile(DownLocated)))
 					_perrtext(_T("Delete tmpfile error.\n"),1);
 				if (!bReserved) _tprintf(_T("Replace File Successfully\n"));
 				else ___autocheckmess(_T("Replace File Successfully\n"));
+				if (!bReserved) MessageBox(NULL,_T("Hosts File Set Success!"),
+					_T("Congratulations!"),MB_ICONINFORMATION|MB_SETFOREGROUND);
 			}
 		}
 		catch(expection runtimeerr){
@@ -601,8 +621,6 @@ Finish:Hosts file Not update.\n\n"));
 		}
 		Sleep(bReserved?(request_client?5000:(29*60000)):0);
 	} while (bReserved);
-	if (!bReserved) MessageBox(NULL,_T("Hosts File Set Success!"),
-					_T("Congratulations!"),MB_ICONINFORMATION|MB_SETFOREGROUND);
 	return GetLastError();
 }
 
@@ -662,3 +680,11 @@ void WINAPI Service_Control(DWORD dwControl){
 	return ;
 }
 
+
+char _buf[2048];
+int FASTCALL Func_CopyFile(FILE *from,FILE *to){
+	size_t readByte=0;
+	while ((readByte=fread((void*)_buf,sizeof(char),2048,from)))
+		fwrite(_buf,sizeof(char),readByte,to);
+	return 0;
+}
