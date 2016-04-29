@@ -23,6 +23,8 @@
     <ClInclude Include="..\..\ptrerr.hpp" />
     <ClInclude Include="..\..\diff.hpp" />
     <ClInclude Include="..\..\mitlicense.hpp" />
+    <ClInclude Include="..\..\pipedebug.hpp" />
+    <ClInclude Include="..\..\default.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\tool.cpp" />

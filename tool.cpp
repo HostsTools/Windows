@@ -58,7 +58,7 @@
 #define objectwebsite _T("https://github.com/racaljk/hosts")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tools     Build time:Apr. 28th, '16")
+#define ConsoleTitle _T("racaljk-host tools     Build time:Apr. 29th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -149,7 +149,6 @@ DWORD __stdcall NormalEntry(LPVOID);
 void ___debug_point_reset(int);
 inline void __show_str(TCHAR const *,TCHAR const *);
 void Func_ResetFile();
-int FASTCALL Func_CopyFile(FILE *,FILE *);
 
 
 SERVICE_TABLE_ENTRY STE[2]={{Sname,Service_Main},{NULL,NULL}};
@@ -678,13 +677,4 @@ void WINAPI Service_Control(DWORD dwControl){
 		default:break;
 	}
 	return ;
-}
-
-
-char _buf[2048];
-int FASTCALL Func_CopyFile(FILE *from,FILE *to){
-	size_t readByte=0;
-	while ((readByte=fread((void*)_buf,sizeof(char),2048,from)))
-		fwrite(_buf,sizeof(char),readByte,to);
-	return 0;
 }

@@ -29,7 +29,7 @@ Server | Microsoft Windows Server 2003 Family
 
 程序不会将第一行过滤掉，而会从`# Copyright (c) 2014-2016, racaljk.`开始改写hosts文件。
 
-## 警告:
+## 警告
 
 **请不要删除`# Copyright (c) 2014-2016, racaljk.` 否则 有可能发生不可预料的后果**
 
