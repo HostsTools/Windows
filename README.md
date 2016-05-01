@@ -31,7 +31,8 @@ Server | Microsoft Windows Server 2003 Family
 
 ## 警告
 
-**请不要删除`# Copyright (c) 2014-2016, racaljk.` 否则 有可能发生不可预料的后果**
+1. **请不要删除`# Copyright (c) 2014-2016, racaljk.` 否则 有可能发生不可预料的后果**
+2. **如果先前没有使用本项目hosts文件 而使用了其他项目的hosts文件的 请重置hosts文件(具体方法看下方使用说明)后 再使用本程序**
 
 ## How to use?
 
@@ -40,16 +41,17 @@ Server | Microsoft Windows Server 2003 Family
 main program file: `tool.exe` 
 
  - 无参数运行`tool.exe` 用来更新hosts文件 如有更新 程序会备份原有的hosts文件
- - 带参数 `-fi` 运行`tool.exe` 安装一个名为`racaljk-hoststool`的服务
- - 带参数 `-fu` 运行`tool.exe` 卸载已经安装的`racaljk-hoststool`服务
-
-
+ - 带参数 `-fi` 运行 `tool.exe` 安装一个名为`racaljk-hoststool`的服务
+ - 带参数 `-fu` 运行 `tool.exe` 卸载已经安装的`racaljk-hoststool`服务
+ - 带参数 `-r`  运行 `tool.exe` 来重置hosts文件
+ - 带参数 `-?`  运行 `tool.exe` 来获得更多的使用方法
 
 ## 注意事项
 
 1. 如果安装服务 程序会往`%SystemRoot%`下复制一个`tool.exe`文件用来作为服务启动的主程序
 2. 安装服务后 日志文件会保存在`C:\Hosts_Tool_log.log`下 您可以通过查看日志观察服务的工作状态
 3. 卸载服务请使用原来的`tool.exe`文件 请不要在命令行中直接执行`hoststools -fu`(如执行 需要手动删除`%SystemRoot%`目录下的`hoststools.exe`)
+7. 本程序一切有更改hosts文件的行为前都会先备份hosts文件。
 4. 请间隔一段时间后清理`%SystemRoot%\system32\drivers\etc\`文件夹 (因为可能堆满了备份的文件)
 5. Bug Report: 请开新的issue并`@Too-Naive`或者发邮件给 sometimes.naive[at]hotmail.com (请记得带上日志文件)
 6. 已知Bug: 如果hosts文件有更新，临时文件可能不会被删除。

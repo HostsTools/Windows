@@ -15,22 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\download.hpp">
+    <ClInclude Include="..\..\hander\download.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ptrerr.hpp">
+    <ClInclude Include="..\..\hander\ptrerr.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\mitlicense.hpp">
+    <ClInclude Include="..\..\hander\mitlicense.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\diff.hpp">
+    <ClInclude Include="..\..\hander\diff.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\pipedebug.hpp">
+    <ClInclude Include="..\..\hander\pipedebug.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\default.hpp">
+    <ClInclude Include="..\..\hander\default.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

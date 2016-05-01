@@ -62,10 +62,10 @@ Function name | Description
 `Service_Main` | Service main function
 `Service_Control` | Service control function
 `Func_Service_Install` | Install service function
-`Func_Service_UnInstall;` | Uninstall service function
+`Func_Service_UnInstall` | Uninstall service function
 ` NormalEntry` | Replace/download hosts function
-`___debug_point_reset;` | Debug function(reserved)
-`__show_str;` | Show normal information
+`___debug_point_reset` | Debug function(reserved)
+`__show_str` | Show normal information
 `Func_ResetFile` | Reset hosts file function
 
 ## Program runtime process(Run without parameters)

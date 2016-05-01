@@ -32,15 +32,15 @@
 #include <windows.h>
 #include <stdio.h>
 #include <string.h>
-#include "download.hpp"
+#include "hander/download.hpp"
 #include <tchar.h>
 #include <stdlib.h>
-#include "ptrerr.hpp"
-#include "diff.hpp"
-#include "mitlicense.hpp"
+#include "hander/ptrerr.hpp"
+#include "hander/diff.hpp"
+#include "hander/mitlicense.hpp"
 #include <signal.h>
-#include "pipedebug.hpp"
-#include "default.hpp"
+#include "hander/pipedebug.hpp"
+#include "hander/default.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 
@@ -58,7 +58,7 @@
 #define objectwebsite _T("https://github.com/racaljk/hosts")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tools     Build time:Apr. 29th, '16")
+#define ConsoleTitle _T("racaljk-host tools     Build time:Apr. 30th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -141,11 +141,9 @@ bool request_client,bReserved;
 int __fastcall __Check_Parameters(int,TCHAR const**);
 void WINAPI Service_Main(DWORD, LPTSTR *);
 void WINAPI Service_Control(DWORD);
-DWORD CALLBACK Main_Thread(LPVOID);
 void Func_Service_Install(bool);
 void Func_Service_UnInstall(bool);
 DWORD __stdcall NormalEntry(LPVOID);
-//DWORD __stdcall HostThread(LPVOID);
 void ___debug_point_reset(int);
 inline void __show_str(TCHAR const *,TCHAR const *);
 void Func_ResetFile();
@@ -267,6 +265,7 @@ Copyright (C) 2016 @Too-Naive License:MIT LICENSE(redefined)\n\
 	_ftprintf(fp,_T("%s"),szDefatult_hostsfile);
 	fclose(fp);
 	_tprintf(_T("    Reset file successfully.\n"));
+	system("pause");
 	return ;
 }
 
@@ -525,7 +524,8 @@ DWORD __stdcall NormalEntry(LPVOID){
 			if (!bReserved) _tprintf(_T("\tDone.\n    Step3:Change Line Endings..."));
 			if (!((fp=_tfopen(DownLocated,_T("r"))) && (_=_tfopen(ChangeCTLR,_T("w")))))
 				THROWERR(_T("Open file Error!"));
-			while (!_tcsstr(szline,_T("# Modified hosts end"))){
+			while (!feof(fp)){
+				memset(szline,0,sizeof(szline));
 				_fgetts(szline,1000,fp);
 				_fputts(szline,_);
 			}
@@ -538,14 +538,14 @@ DWORD __stdcall NormalEntry(LPVOID){
 					_tprintf(_T("Delete tmpfile error.(%ld)\n"),GetLastError());
 			}
 			//new future
-			memset(szline,0,sizeof(szline));
 			if (!((fp=_tfopen(buf1,_T("r"))) && (_=_tfopen(ReservedFile,_T("w")))));
 			while (!feof(fp)){
 				memset(szline,0,sizeof(szline));
 				_fgetts(szline,1000,fp);
-				if (*szline==_T('#')) 
+				if (*szline==_T('#')) {
 					if (_tcsstr(szline,_T("# Copyright (c) 2014")))
 					break; else continue;
+				}
 				if (*szline==_T('\n')) continue;
 				_fputts(szline,_);
 			}
@@ -590,10 +590,9 @@ Finish:Hosts file Not update.\n\n"));
 				}
 				fclose(fp);fclose(_);
 				Sleep(500);
-				if (!(DeleteFile(ChangeCTLR)&&
-				DeleteFile(ReservedFile)&&
-				DeleteFile(DownLocated)))
-					_perrtext(_T("Delete tmpfile error.\n"),1);
+				DeleteFile(ChangeCTLR);
+				DeleteFile(ReservedFile);
+				DeleteFile(DownLocated);
 				if (!bReserved) _tprintf(_T("Replace File Successfully\n"));
 				else ___autocheckmess(_T("Replace File Successfully\n"));
 				if (!bReserved) MessageBox(NULL,_T("Hosts File Set Success!"),

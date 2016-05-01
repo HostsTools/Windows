@@ -19,12 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\download.hpp" />
-    <ClInclude Include="..\..\ptrerr.hpp" />
-    <ClInclude Include="..\..\diff.hpp" />
-    <ClInclude Include="..\..\mitlicense.hpp" />
-    <ClInclude Include="..\..\pipedebug.hpp" />
-    <ClInclude Include="..\..\default.hpp" />
+    <ClInclude Include="..\..\hander\download.hpp" />
+    <ClInclude Include="..\..\hander\ptrerr.hpp" />
+    <ClInclude Include="..\..\hander\diff.hpp" />
+    <ClInclude Include="..\..\hander\mitlicense.hpp" />
+    <ClInclude Include="..\..\hander\pipedebug.hpp" />
+    <ClInclude Include="..\..\hander\default.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\tool.cpp" />
