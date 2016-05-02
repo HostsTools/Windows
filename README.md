@@ -1,10 +1,10 @@
 # Download Executable File
 
-Last update: Apr. 29th , 2016
+Last update: Apr. 30th , 2016
 
 #### 下载地址:
-- [点我来下载](https://git.io/vwsqL)
-- [如果上面那个不行的话点我](https://yunpan.cn/cPseSVaAVwMBL)(code:5c40)
+ - [点我来下载](https://git.io/vwsqL)
+ - [如果上面那个不行的话点我](https://yunpan.cn/cPseSVaAVwMBL)(code:5c40)
 
 OS type | Minimun Supported Version
 --------|-------------------
@@ -24,6 +24,7 @@ Server | Microsoft Windows Server 2003 Family
 现在，可以在hosts的头部加上自定义的hosts，程序自动更新时不会覆盖掉自定义的hosts.例如
 
 	127.0.0.1 baidu.com
+	127.0.0.1 www.baidu.com
 	# Copyright (c) 2014-2016, racaljk.
 	# https://github.com/racaljk/hosts
 
@@ -33,6 +34,7 @@ Server | Microsoft Windows Server 2003 Family
 
 1. **请不要删除`# Copyright (c) 2014-2016, racaljk.` 否则 有可能发生不可预料的后果**
 2. **如果先前没有使用本项目hosts文件 而使用了其他项目的hosts文件的 请重置hosts文件(具体方法看下方使用说明)后 再使用本程序**
+3. **(在自定义的hosts中)程序会抛掉所有的注释`#`开头的语句**
 
 ## How to use?
 
@@ -54,7 +56,6 @@ main program file: `tool.exe`
 7. 本程序一切有更改hosts文件的行为前都会先备份hosts文件。
 4. 请间隔一段时间后清理`%SystemRoot%\system32\drivers\etc\`文件夹 (因为可能堆满了备份的文件)
 5. Bug Report: 请开新的issue并`@Too-Naive`或者发邮件给 sometimes.naive[at]hotmail.com (请记得带上日志文件)
-6. 已知Bug: 如果hosts文件有更新，临时文件可能不会被删除。
 
 ## for Developer
 
@@ -85,32 +86,8 @@ If you want to enter debug mode, follow the steps blow.
 
 *Notice:In debug mode, service run cycle is very sort*
 
-### How to Compile?
+### How to compile?
 
-#### for Mingw g++
-
-**Save `tool.exe.manifest` to directory first**
-
-Compile commandline:(or run `make.cmd`)
-
-```
-windres tool.rc -o toolr.o
-g++ -o tool.exe tool.cpp toolr.o -lwininet -O2 -s
-```
-
-File `tool.exe.manifest`:
-
-```xml
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-    <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-    <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
-        <security>
-            <requestedPrivileges>
-                <requestedExecutionLevel level="requireAdministrator" uiAccess="false"/>
-            </requestedPrivileges>
-        </security>
-    </trustInfo>
-</assembly>
-```
+Please see the documents.md
 
 <del>Sorry for my poor English.</del>
