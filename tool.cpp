@@ -58,7 +58,7 @@
 #define objectwebsite _T("https://github.com/racaljk/hosts")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tools     Build time:Apr. 30th, '16")
+#define ConsoleTitle _T("racaljk-host tools    v2.1.0  Build time:May 9th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -115,7 +115,7 @@ Options:\n\
 Example:\n\
     hosts_tool -fi\n\n\
     If you need more imformation about debug mode,\n\
-    Please see the page in: https:\x2f\x2fgit.io/vwg0c\n\n")
+    Please see the page in: https:\x2f\x2fgit.io/vwjyB\n\n")
 
 #define welcomeShow _T("\
     **********************************************\n\
@@ -169,7 +169,7 @@ enum _Parameters{
 	DEBUG_SERVICE_START		=1<<0x09,
 	DEBUG_SERVICE_REINSTALL		=1<<0x0a,
 	OPEN_LISTEN			=1<<0x0b,
-	RESET_FILE		=1<<0x0c,
+	RESET_FILE			=1<<0x0c,
 	PARAMETERS_RESERVED6		=1<<0x0d,
 	PARAMETERS_RESERVED7		=1<<0x0e,
 	PARAMETERS_RESERVED8		=1<<0x0f,
@@ -206,7 +206,7 @@ int __fastcall __Check_Parameters(int argc,TCHAR const **argv){
 		else if (argc==3 && _tcscmp(argv[2],szParameters[11])) BAD_EXIT;
 	switch (i){
 		case  0: bReserved=true;
-				 return EXEC_START_SERVICE;
+			 return EXEC_START_SERVICE;
 		case  1: return EXEC_START_INSTALL_SERVICE;
 		case  2: return EXEC_START_UNINSTALL_SERVICE;
 		case  6:
@@ -408,7 +408,8 @@ Or open new issue\n------------------------------------------------------\n\n"))
 			THROWERR(_T("OpenSCManager() failed."));
 		if (_q) _tprintf(_T("    Step3:Write service.\n"));
 		if (!(shSvc=CreateService(shMang,Sname,szServiceShowName,
-		SERVICE_ALL_ACCESS,SERVICE_WIN32_OWN_PROCESS,SERVICE_AUTO_START,SERVICE_ERROR_NORMAL,
+			SERVICE_ALL_ACCESS,SERVICE_WIN32_OWN_PROCESS,
+			request_client?SERVICE_DEMAND_START:SERVICE_AUTO_START,SERVICE_ERROR_NORMAL,
 			buf2,NULL,NULL,NULL,NULL,NULL))){
 			if (GetLastError()==ERROR_SERVICE_EXISTS){
 				if (!(shSvc=OpenService(shMang,Sname,SERVICE_ALL_ACCESS)))
@@ -419,8 +420,9 @@ Or open new issue\n------------------------------------------------------\n\n"))
 					THROWERR(_T("DeleteService() Error in Install Service."));
 				CloseServiceHandle(shSvc);
 				if (!(shSvc=CreateService(shMang,Sname,szServiceShowName,
-				SERVICE_ALL_ACCESS,SERVICE_WIN32_OWN_PROCESS,SERVICE_AUTO_START,SERVICE_ERROR_NORMAL,
-				buf2,NULL,NULL,NULL,NULL,NULL)))
+				SERVICE_ALL_ACCESS,SERVICE_WIN32_OWN_PROCESS,
+				request_client?SERVICE_DEMAND_START:SERVICE_AUTO_START,
+				SERVICE_ERROR_NORMAL,buf2,NULL,NULL,NULL,NULL,NULL)))
 					THROWERR(_T("CreateService() failed.(2)")),CloseServiceHandle(shMang);
 			}
 			else
@@ -621,7 +623,6 @@ Finish:Hosts file Not update.\n\n"));
 	} while (bReserved);
 	return GetLastError();
 }
-
 
 void WINAPI Service_Main(DWORD,LPTSTR *){
 	Func_SetErrorFile(LogFileLocate,_T("a+"));
