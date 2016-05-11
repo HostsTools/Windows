@@ -55,10 +55,10 @@
 #define hostsfile _T("http://localhost/hosts")
 #define hostsfile1 _T("http://localhost/hosts")
 #endif
-#define objectwebsite _T("https://github.com/racaljk/hosts")
+#define objectwebsite _T("https://github.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tools    v2.1.0  Build time:May 9th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.1  Build time:May 11th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -122,7 +122,7 @@ Example:\n\
     *                                            *\n\
     *                                            *\n\
     *                                            *\n\
-    *        Welcome to use hosts tools!         *\n\
+    *     Welcome to use racaljk/hosts tool!     *\n\
     *                                            *\n\
     *                                            *\n\
     *                    Powered by: @Too-Naive  *\n\
@@ -251,7 +251,7 @@ void Func_ResetFile(){
 Hosts Tool for Windows Console by: Too-Naive\n\
 Copyright (C) 2016 @Too-Naive License:MIT LICENSE(redefined)\n\
 ------------------------------------------------------------\n"));
-	if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,BUFSIZ))
+	if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,localbufsize))
 		_tprintf(_T("    GetEnvironmentVariable() Error!(GetLastError():%ld)\n\
 \tCannot get system path!"),GetLastError()),abort();
 	GetLocalTime(&st);
@@ -290,7 +290,7 @@ inline void __show_str(TCHAR const* st,TCHAR const * _ingore){
 void Func_Service_UnInstall(bool _quite){
 	SC_HANDLE shMang=NULL,shSvc=NULL;
 	try{
-		if (!GetEnvironmentVariable(_T("SystemRoot"),buf2,BUFSIZ))
+		if (!GetEnvironmentVariable(_T("SystemRoot"),buf2,localbufsize))
 			THROWERR(_T("GetEnvironmentVariable() Error in UnInstall Service."));
 		_stprintf(buf1,_T("%s\\hoststools.exe"),buf2);
 		if (!(shMang=OpenSCManager(NULL,NULL,SC_MANAGER_ALL_ACCESS)))
@@ -386,12 +386,13 @@ Please contact the application's support team for more information.\n"),
 void Func_Service_Install(bool _q){
 	SC_HANDLE shMang=NULL,shSvc=NULL;
 	if (_q){
-		_tprintf(_T("    LICENSE:MIT LICENSE\n    Copyright (C) 2016 @Too-Naive\n\n"));
+		_tprintf(_T("    LICENSE:MIT LICENSE(redefined)\n    \
+Copyright (C) 2016 @Too-Naive\n\n"));
 		_tprintf(_T("    Bug report:sometimes.naive[at]hotmail.com \n\t       \
 Or open new issue\n------------------------------------------------------\n\n"));
 	}
 	try{
-		if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,BUFSIZ))
+		if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,localbufsize))
 			THROWERR(_T("GetEnvironmentVariable() Error in Install Service."));
 		_stprintf(buf1,_T("%s\\hoststools.exe"),buf3);
 		_stprintf(buf2,_T("\"%s\\hoststools.exe\" -svc"),buf3);
@@ -490,7 +491,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 		_tprintf(_T("    Start replace hosts file:\n    Step1:Get System Driver..."));
 	}
 	else{
-		if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,BUFSIZ))
+		if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,localbufsize))
 			Func_FastPMNTS(_T("GetEnvironmentVariable() Error!(GetLastError():%ld)\n\
 \tCannot get system path!"),GetLastError()),abort();
 		_stprintf(buf1,_T("%s\\system32\\drivers\\etc\\hosts"),buf3);
@@ -499,14 +500,14 @@ DWORD __stdcall NormalEntry(LPVOID){
 		___checkEx(_T("LICENSE:MIT LICENSE\n"),1);
 		___checkEx(_T("Copyright (C) 2016 Too-Naive\n"),0);
 		___checkEx(_T("Bug report:sometimes.naive[at]hotmail.com\n"),0);
-		___checkEx(_T("           Or open new issue.(https://github.com/racaljk/hosts)\n"),0);
+		___checkEx(_T("           Or open new issue.(https://github.com/HostsTools/Windows)\n"),0);
 	}
 	do {
 		Sleep(bReserved?(request_client?0:60000):0);//Waiting for network
 		GetLocalTime(&st);
 		if (bReserved) ___autocheckmess(_T("Start replace hosts file.\n"));
 		try {
-			if (!bReserved)	if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,BUFSIZ))
+			if (!bReserved)	if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,localbufsize))
 				THROWERR(_T("GetEnvironmentVariable() Error!\n\tCannot get system path!"));
 			_stprintf(buf1,_T("%s\\system32\\drivers\\etc\\hosts"),buf3);
 			_stprintf(buf2,_T("%s\\system32\\drivers\\etc\\hosts.%04d%02d%02d.%02d%02d%02d"),
@@ -514,8 +515,8 @@ DWORD __stdcall NormalEntry(LPVOID){
 			if (!bReserved) _tprintf(_T("\t\tDone.\n    Step2:Download hosts file..."));
 			//download
 			if (bReserved) if (request_client) ___pipesentmessage(_T("Download files\n"));
-			for (int errcunt=0;(!Func_Download(hostsfile,DownLocated)&&
-				!Func_Download(hostsfile1,DownLocated));errcunt++)
+			for (int errcunt=0;(!Func_Download(hostsfile1,DownLocated)&&
+				!Func_Download(hostsfile,DownLocated));errcunt++)
 					if (errcunt>2) THROWERR(_T("DownLoad hosts file Error!"));
 					else if (!bReserved) {
 						_tprintf(pWait);
@@ -552,6 +553,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 				_fputts(szline,_);
 			}
 			fclose(_);
+			_=NULL;
 			if (!feof(fp)){
 				if (!(_=_tfopen(DownLocated,_T("w"))));
 				_fputts(szline,_);
@@ -592,11 +594,11 @@ Finish:Hosts file Not update.\n\n"));
 				}
 				fclose(fp);fclose(_);
 				Sleep(500);
-				DeleteFile(ChangeCTLR);
 				DeleteFile(ReservedFile);
 				DeleteFile(DownLocated);
 				if (!bReserved) _tprintf(_T("Replace File Successfully\n"));
 				else ___autocheckmess(_T("Replace File Successfully\n"));
+				DeleteFile(ChangeCTLR);
 				if (!bReserved) MessageBox(NULL,_T("Hosts File Set Success!"),
 					_T("Congratulations!"),MB_ICONINFORMATION|MB_SETFOREGROUND);
 			}

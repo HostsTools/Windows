@@ -1,8 +1,8 @@
 # Download Executable File
 
-Last update: May 9th , 2016
+Last update: May 11th , 2016
 
-#### 下载地址:(v2.1.0)
+#### 下载地址:(v2.1.1)
  - [点我来下载](https://git.io/vwsqL)
  - [如果上面那个不行的话点我](https://yunpan.cn/cPseSVaAVwMBL)(code:5c40)
 
@@ -55,7 +55,7 @@ main program file: `tool.exe`
 3. 卸载服务请使用原来的`tool.exe`文件 请不要在命令行中直接执行`hoststools -fu`(如执行 需要手动删除`%SystemRoot%`目录下的`hoststools.exe`)
 7. 本程序一切有更改hosts文件的行为前都会先备份hosts文件。
 4. 请间隔一段时间后清理`%SystemRoot%\system32\drivers\etc\`文件夹 (因为可能堆满了备份的文件)
-5. Bug Report: 请开新的issue 或者发邮件给 sometimes.naive[at]hotmail.com (请记得带上日志文件)
+5. Bug Report: 请开新的issue或者发邮件给 sometimes.naive[at]hotmail.com (如是服务问题请附上日志文件)
 
 ## for Developer
 
