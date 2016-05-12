@@ -164,8 +164,6 @@ inline void * __fastcall ___Func_Close_File_Stream(FILE * ___ptr_fp) throw(){
 	return NULL;
 }
 
-
-
 FILE * Func_SetErrorFileEx(const TCHAR * _FileName_,const TCHAR * _StreamStatus){
 	if (!(ptr_ErrorFileStream=_tfopen(_FileName_,_StreamStatus)))
 		MessageBox(NULL,_T("_tfopen() Error!"),_T("Fatal Error!"),MB_SETFOREGROUND|MB_ICONSTOP);
