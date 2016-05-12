@@ -1,0 +1,15 @@
+os:
+  - windows
+
+sudo: false
+
+language: c++
+
+script: ./configure --enable-debug && make && make test-full
+
+compiler:
+  - clang
+  - g++
+
+notifications:
+  email: false
