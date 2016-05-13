@@ -44,8 +44,16 @@
 
 #define WIN32_LEAN_AND_MEAN
 
+#define callsystempause system("pause")
 #ifdef _MSC_VER
 #pragma warning (disable:4996 4390)
+
+#ifdef _DEBUG
+#define callsystempause ((void*)0)
+#else
+#define callsystempause system("pause")
+#endif
+
 #endif
 
 #define DEFBUF(x,y) x[y]=_T("")
@@ -287,7 +295,7 @@ void __abrt(int){
 inline void __show_str(TCHAR const* st,TCHAR const * _ingore){
 	if (!_ingore) _tprintf(_T("%s"),st);
 	else _tprintf(st,_ingore);
-	system("pause");
+	callsystempause;
 	return ;
 }
 
@@ -579,7 +587,10 @@ Finish:Hosts file Not update.\n\n"));
 				DeleteFile(ChangeCTLR);
 				DeleteFile(ReservedFile);
 				DeleteFile(DownLocated);
-				if (!bReserved) {system("pause");return GetLastError();}
+				if (!bReserved) {
+					callsystempause;
+					return GetLastError();
+				}
 			}
 			else {
 				if (!bReserved) _tprintf(_T("\tDone.\n    Step4:Copy Backup File..."));
@@ -603,8 +614,10 @@ Finish:Hosts file Not update.\n\n"));
 				if (!bReserved) _tprintf(_T("Replace File Successfully\n"));
 				else ___autocheckmess(_T("Replace File Successfully\n"));
 				DeleteFile(ChangeCTLR);
+#if (defined(_DEBUG)&&defined(_MSC_VER))
 				if (!bReserved) MessageBox(NULL,_T("Hosts File Set Success!"),
 					_T("Congratulations!"),MB_ICONINFORMATION|MB_SETFOREGROUND);
+#endif
 			}
 		}
 		catch(expection runtimeerr){
