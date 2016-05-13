@@ -39,7 +39,9 @@
 
 //need wininet.lib
 
+#ifdef _MSC_VER
 #pragma comment(lib,"wininet.lib")
+#endif
 
 #define ___userAgent TEXT("Mozilla/4.0 (compatible; Windows NT 6.1)")
 
