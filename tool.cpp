@@ -319,7 +319,7 @@ DWORD __stdcall Func_Update(LPVOID){
 	Sleep(500);
 	DeleteFile(_T("VERSION.tmp"));
 	bool _difference=_tcscmp(_VERSION,szver);szver[_tcslen(szver)-1]=_T('\0');
-	_tprintf(_T("%s\n"),szver);
+//	_tprintf(_T("%s\n"),szver);
 	delete [] szver;
 	szver=NULL;
 	while (_difference){
@@ -651,6 +651,7 @@ Finish:Hosts file Not update.\n\n"));
 				if (!bReserved) MessageBox(NULL,_T("Hosts File Set Success!"),
 					_T("Congratulations!"),MB_ICONINFORMATION|MB_SETFOREGROUND);
 			}
+			if (hdThread!=INVALID_HANDLE_VALUE) TerminateThread(hdThread,0);
 		}
 		catch(expection runtimeerr){
 			if (!bReserved){
@@ -672,7 +673,6 @@ Finish:Hosts file Not update.\n\n"));
 		}
 		Sleep(bReserved?(request_client?5000:(29*60000)):0);
 	} while (bReserved);
-	TerminateThread(hdThread,0);
 	return GetLastError();
 }
 
