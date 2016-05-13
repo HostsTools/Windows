@@ -44,6 +44,10 @@
 
 #define WIN32_LEAN_AND_MEAN
 
+#ifdef _MSC_VER
+#pragma warning (disable:4996 4390)
+#endif
+
 #define DEFBUF(x,y) x[y]=_T("")
 #define THROWERR(x) throw expection(x)
 

@@ -162,7 +162,7 @@ namespace __Dpipe{
 				NULL,OPEN_EXISTING,0,NULL))!=INVALID_HANDLE_VALUE)
 				break;
 			if (GetLastError()!=ERROR_PIPE_BUSY) {
-				Func_FastPMNTS(_T("%s Error! (%ld)\n"),__func__,GetLastError());
+				Func_FastPMNTS(_T("%s Error! (%ld)\n"),_T("___pipeopen()"),GetLastError());
 				return INVALID_HANDLE_VALUE;
 			}
 			WaitNamedPipe(pipeName, 2000);
