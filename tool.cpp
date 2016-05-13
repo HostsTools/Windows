@@ -79,6 +79,7 @@
 #undef hostsfile1
 #define hostsfile _T("https://raw.githubusercontent.com/YoungIsSimple/Object-Release/testbranch/minHOSTS")
 #define hostsfile1 hostsfile
+#endif
 #define objectwebsite _T("https://github.com/HostsTools/Windows")
 //end.
 
