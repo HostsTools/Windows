@@ -44,17 +44,24 @@
 
 #define WIN32_LEAN_AND_MEAN
 
+//For microsoft visual studio debug(online)
+
 #define callsystempause system("pause")
 #ifdef _MSC_VER
 #pragma warning (disable:4996 4390)
 
 #ifdef _DEBUG
+#undef MessageBox
+#define MessageBox(Reserved1,x,reserved2,reserved3) \
+	_tprintf(_T("%s\n"),x)
 #define callsystempause ((void*)0)
 #else
 #define callsystempause system("pause")
 #endif
 
 #endif
+
+//end.
 
 #define DEFBUF(x,y) x[y]=_T("")
 #define THROWERR(x) throw expection(x)
@@ -70,7 +77,8 @@
 #define objectwebsite _T("https://github.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.1  Build time:May 11th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.3  Build time:May 13th, '16")
+#define _VERSION _T("2.1.3R")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -85,6 +93,7 @@ There seems something wrong in download file, we will retry after 5 seconds.\n")
 #define BAD_EXIT \
 		_tprintf(_T("Bad Parameters.\nUsing \"-?\" Parameter to show how to use.\n")),\
 		abort();
+#define _BAKFORMAT _T("%s\\system32\\drivers\\etc\\hosts.%04d%02d%02d.%02d%02d%02d.bak")
 
 //debug set
 #define LogFileLocate _T("c:\\Hosts_Tool_log.log")
@@ -159,6 +168,7 @@ DWORD __stdcall NormalEntry(LPVOID);
 void ___debug_point_reset(int);
 inline void __show_str(TCHAR const *,TCHAR const *);
 void Func_ResetFile();
+DWORD __stdcall Func_Update(LPVOID);
 
 
 SERVICE_TABLE_ENTRY STE[2]={{Sname,Service_Main},{NULL,NULL}};
@@ -268,8 +278,7 @@ Copyright (C) 2016 @Too-Naive License:MIT LICENSE(redefined)\n\
 \tCannot get system path!"),GetLastError()),abort();
 	GetLocalTime(&st);
 	_stprintf(buf1,_T("%s\\system32\\drivers\\etc\\hosts"),buf3);
-	_stprintf(buf2,_T("%s\\system32\\drivers\\etc\\hosts.%04d%02d%02d.%02d%02d%02d"),
-	buf3,st.wYear,st.wMonth,st.wDay,st.wHour,st.wMinute,st.wSecond);
+	_stprintf(buf2,_BAKFORMAT,buf3,st.wYear,st.wMonth,st.wDay,st.wHour,st.wMinute,st.wSecond);
 	if (CopyFile(buf1,buf2,FALSE))
 		_tprintf(_T("Backup File success\nFilename:%s\n\n"),buf2);
 	FILE *fp=_tfopen(buf1,_T("w"));
@@ -277,7 +286,7 @@ Copyright (C) 2016 @Too-Naive License:MIT LICENSE(redefined)\n\
 	_ftprintf(fp,_T("%s"),szDefatult_hostsfile);
 	fclose(fp);
 	_tprintf(_T("    Reset file successfully.\n"));
-	system("pause");
+	callsystempause;
 	return ;
 }
 
@@ -297,6 +306,29 @@ inline void __show_str(TCHAR const* st,TCHAR const * _ingore){
 	else _tprintf(st,_ingore);
 	callsystempause;
 	return ;
+}
+
+DWORD __stdcall Func_Update(LPVOID){
+	if (!Func_Download(_T("https://raw.githubusercontent.com/HostsTools/Windows/master/VERSION"),
+	_T("VERSION.tmp")))return ERROR_FILE_NOT_FOUND;
+	TCHAR * szver=new TCHAR[20];
+	memset(szver,0,sizeof(szver));
+	FILE *_=_tfopen(_T("VERSION.tmp"),_T("r"));
+	if (!_) return ERROR_OPEN_FAILED;//_tprintf(_T("Unable to open \"VERSION.tmp\"\n"))
+	_fgetts(szver,20,_);fclose(_);_=NULL;
+	Sleep(500);
+	DeleteFile(_T("VERSION.tmp"));
+	bool _difference=_tcscmp(_VERSION,szver);szver[_tcslen(szver)-1]=_T('\0');
+//	_tprintf(_T("%s\n"),szver);
+	delete [] szver;
+	szver=NULL;
+	while (_difference){
+		SetConsoleTitle(_T("!New version is avaliable!"));
+		Sleep(1000);
+		SetConsoleTitle(ConsoleTitle);
+		Sleep(1000);
+	}
+	return ERROR_SUCCESS;
 }
 
 void Func_Service_UnInstall(bool _quite){
@@ -441,7 +473,7 @@ Or open new issue\n------------------------------------------------------\n\n"))
 			else
 				THROWERR(_T("CreateService() failed."));
 		}
-		else //_T("Service installed successfully"),_T("Congratulations!"),MB_SETFOREGROUND|MB_ICONINFORMATION
+		else 
 			_tprintf(_T("Install service successfully.\n"));
 		if (!request_client){
 			if (!(shSvc=OpenService(shMang,Sname,SERVICE_START)))
@@ -496,7 +528,10 @@ inline void __fastcall _perrtext(const TCHAR * _str,bool _Reserved){
 DWORD __stdcall NormalEntry(LPVOID){
 	SYSTEMTIME st={0,0,0,0,0,0,0,0};
 	FILE * fp=NULL,*_=NULL;
+	HANDLE hdThread=INVALID_HANDLE_VALUE;
 	if (!bReserved){
+		if ((hdThread=CreateThread(NULL,0,Func_Update,NULL,0,NULL))==INVALID_HANDLE_VALUE)
+			_tprintf(_T("CreateThread() Failed in getnewversion(%ld)\n"),GetLastError());
 		_tprintf(_T("    LICENSE:MIT LICENSE\n%s\n    Copyright (C) 2016 @Too-Naive\n"),welcomeShow);
 		_tprintf(_T("    Project website:%s\n"),objectwebsite);
 		_tprintf(_T("    Bug report:sometimes.naive[at]hotmail.com \n\t       Or open new issue\n\n\n"));
@@ -522,8 +557,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 			if (!bReserved)	if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,localbufsize))
 				THROWERR(_T("GetEnvironmentVariable() Error!\n\tCannot get system path!"));
 			_stprintf(buf1,_T("%s\\system32\\drivers\\etc\\hosts"),buf3);
-			_stprintf(buf2,_T("%s\\system32\\drivers\\etc\\hosts.%04d%02d%02d.%02d%02d%02d"),
-			buf3,st.wYear,st.wMonth,st.wDay,st.wHour,st.wMinute,st.wSecond);
+			_stprintf(buf2,_BAKFORMAT,buf3,st.wYear,st.wMonth,st.wDay,st.wHour,st.wMinute,st.wSecond);
 			if (!bReserved) _tprintf(_T("\t\tDone.\n    Step2:Download hosts file..."));
 			//download
 			if (bReserved) if (request_client) ___pipesentmessage(_T("Download files\n"));
@@ -614,11 +648,10 @@ Finish:Hosts file Not update.\n\n"));
 				if (!bReserved) _tprintf(_T("Replace File Successfully\n"));
 				else ___autocheckmess(_T("Replace File Successfully\n"));
 				DeleteFile(ChangeCTLR);
-#if (defined(_DEBUG)&&defined(_MSC_VER))
 				if (!bReserved) MessageBox(NULL,_T("Hosts File Set Success!"),
 					_T("Congratulations!"),MB_ICONINFORMATION|MB_SETFOREGROUND);
-#endif
 			}
+			if (hdThread!=INVALID_HANDLE_VALUE) TerminateThread(hdThread,0);
 		}
 		catch(expection runtimeerr){
 			if (!bReserved){
