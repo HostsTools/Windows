@@ -71,13 +71,14 @@
 #define hostsfile _T("https://raw.githubusercontent.com/racaljk/hosts/master/hosts")
 #define hostsfile1 _T("https://coding.net/u/scaffrey/p/hosts/git/raw/master/hosts")
 #else
-#ifdef _TESTONLINE
-#define hostsfile _T("https://raw.githubusercontent.com/YoungIsSimple/Object-Release/testbranch/minHOSTS")
-#define hostsfile1 hostsfile
-#else
 #define hostsfile _T("http://localhost/hosts")
 #define hostsfile1 hostsfile
 #endif
+#ifdef _TESTONLINE
+#undef hostsfile
+#undef hostsfile1
+#define hostsfile _T("https://raw.githubusercontent.com/YoungIsSimple/Object-Release/testbranch/minHOSTS")
+#define hostsfile1 hostsfile
 #define objectwebsite _T("https://github.com/HostsTools/Windows")
 //end.
 
