@@ -67,17 +67,23 @@
 #define THROWERR(x) throw expection(x)
 
 //Hosts file web address set
-#ifndef DEBUG
+#ifndef localDEBUG
 #define hostsfile _T("https://raw.githubusercontent.com/racaljk/hosts/master/hosts")
 #define hostsfile1 _T("https://coding.net/u/scaffrey/p/hosts/git/raw/master/hosts")
 #else
 #define hostsfile _T("http://localhost/hosts")
-#define hostsfile1 _T("http://localhost/hosts")
+#define hostsfile1 hostsfile
+#endif
+#ifdef _TESTONLINE
+#undef hostsfile
+#undef hostsfile1
+#define hostsfile _T("https://raw.githubusercontent.com/YoungIsSimple/Object-Release/testbranch/minHOSTS")
+#define hostsfile1 hostsfile
 #endif
 #define objectwebsite _T("https://github.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.3  Build time:May 13th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.3  Build time:May 14th, '16")
 #define _VERSION _T("2.1.3R")
 
 #define CASE(x,y) case x : y; break;
