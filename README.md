@@ -1,4 +1,4 @@
-# Download Executable File [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows)
+# Download Executable File [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
 
 Last update: May 12th , 2016
 
