@@ -318,7 +318,7 @@ DWORD __stdcall Func_Update(LPVOID){
 	_fgetts(szver,20,_);fclose(_);_=NULL;
 	Sleep(500);
 	DeleteFile(_T("VERSION.tmp"));
-	bool _difference=(bool)_tcscmp(_VERSION,szver);szver[_tcslen(szver)-1]=_T('\0');
+	bool _difference=(_tcscmp(_VERSION,szver)?true:false);szver[_tcslen(szver)-1]=_T('\0');
 //	_tprintf(_T("%s\n"),szver);
 	delete [] szver;
 	szver=NULL;
