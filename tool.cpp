@@ -48,8 +48,8 @@
 
 #define callsystempause system("pause")
 #ifdef _MSC_VER
+#undef callsystempause
 #pragma warning (disable:4996 4390)
-
 #ifdef _DEBUG
 #undef MessageBox
 #define MessageBox(Reserved1,x,reserved2,reserved3) \
@@ -318,7 +318,7 @@ DWORD __stdcall Func_Update(LPVOID){
 	_fgetts(szver,20,_);fclose(_);_=NULL;
 	Sleep(500);
 	DeleteFile(_T("VERSION.tmp"));
-	bool _difference=_tcscmp(_VERSION,szver);szver[_tcslen(szver)-1]=_T('\0');
+	bool _difference=(bool)_tcscmp(_VERSION,szver);szver[_tcslen(szver)-1]=_T('\0');
 //	_tprintf(_T("%s\n"),szver);
 	delete [] szver;
 	szver=NULL;
