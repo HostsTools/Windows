@@ -13,11 +13,15 @@ Server | Microsoft Windows Server 2003 Family
 
 >If you choose `Download`, It means you agreed the MIT license(redefined).
 
+# 一个月后才能推出新的更新
+目前`build passing`如有其他疑问请在issue中提出问题    
+最新的版本更新是 把备份的文件后缀统一改为了`.bak`
+
 # Hosts Tool
 
 这个工具可以帮助你全自动的更换 备份原来的hosts文件 所有麻烦的事情只需要打开一个程序就能搞定 如果你愿意，程序还可以作为服务安装随系统启动 每次开机后每隔30分钟会自动检测hosts文件的更新噢！
 
-**在此特别感谢[@qwerty258](https://github.com/qwerty258)为本程序提供了Visual  Studio的工程文件**
+**在此特别感谢[@qwerty258](https://github.com/qwerty258)为本程序提供了Visual Studio的工程文件**
 
 ##New Feature
 
