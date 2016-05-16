@@ -1,6 +1,6 @@
 # Download Executable File [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
 
-Last update: May 13th , 2016
+Last update: May 16th , 2016
 
 #### 下载地址:(v2.1.3)
  - [点我来下载](https://git.io/vwsqL)
@@ -14,7 +14,7 @@ Server | Microsoft Windows Server 2003 Family
 >If you choose `Download`, It means you agreed the MIT license(redefined).
 
 # 一个月后才能推出新的更新
-目前`build passing`如有其他疑问请在issue中提出问题    
+目前`build passing` , 如有其他疑问请在issue中提出问题    
 最新的版本更新是 把备份的文件后缀统一改为了`.bak`
 
 # Hosts Tool
@@ -59,7 +59,7 @@ main program file: `tool.exe`
 3. 卸载服务请使用原来的`tool.exe`文件 请不要在命令行中直接执行`hoststools -fu`(如执行 需要手动删除`%SystemRoot%`目录下的`hoststools.exe`)
 7. 本程序一切有更改hosts文件的行为前都会先备份hosts文件。
 4. 请间隔一段时间后清理`%SystemRoot%\system32\drivers\etc\`文件夹 (因为可能堆满了备份的文件)
-5. Bug Report: 请开新的issue或者发邮件给 sometimes.naive[at]hotmail.com (如是服务问题请附上日志文件)
+5. Bug Report: 请开新的issue或者发邮件到 sometimes.naive[at]hotmail.com (如是服务问题请附上日志文件)
 
 ## for Developer
 

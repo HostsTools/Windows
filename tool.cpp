@@ -46,19 +46,17 @@
 
 //For microsoft visual studio debug(online)
 
-#define callsystempause system("pause")
 #ifdef _MSC_VER
-#undef callsystempause
 #pragma warning (disable:4996 4390)
-#ifdef _DEBUG
+#endif
+
+#ifdef _TESTONLINE
 #undef MessageBox
 #define MessageBox(Reserved1,x,reserved2,reserved3) \
 	_tprintf(_T("%s\n"),x)
 #define callsystempause ((void*)0)
 #else
 #define callsystempause system("pause")
-#endif
-
 #endif
 
 //end.
@@ -83,8 +81,8 @@
 #define objectwebsite _T("https://github.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.3  Build time:May 14th, '16")
-#define _VERSION _T("2.1.3R")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.4p  Build time:May 16th, '16")
+#define _VERSION _T("2.1.4b")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
