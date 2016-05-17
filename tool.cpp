@@ -81,8 +81,8 @@
 #define objectwebsite _T("https://github.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.4p  Build time:May 16th, '16")
-#define _VERSION _T("2.1.4b")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.5t  Build time:May 17th, '16")
+#define _VERSION _T("2.1.5a")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
