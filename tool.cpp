@@ -65,24 +65,25 @@
 #define THROWERR(x) throw expection(x)
 
 //Hosts file web address set
-#ifndef localDEBUG
 #define hostsfile _T("https://raw.githubusercontent.com/racaljk/hosts/master/hosts")
 #define hostsfile1 _T("https://coding.net/u/scaffrey/p/hosts/git/raw/master/hosts")
-#else
-#define hostsfile _T("http://localhost/hosts")
-#define hostsfile1 hostsfile
-#endif
+
 #ifdef _TESTONLINE
-#undef hostsfile
-#undef hostsfile1
-#define hostsfile _T("https://raw.githubusercontent.com/YoungIsSimple/Object-Release/testbranch/minHOSTS")
-#define hostsfile1 hostsfile
+	#undef hostsfile
+	#undef hostsfile1
+	#ifdef _LOCAL
+		#define hostsfile _T("http://localhost/hosts")
+		#define hostsfile1 hostsfile
+	#else
+		#define hostsfile _T("https://raw.githubusercontent.com/YoungIsSimple/Object-Release/testbranch/minHOSTS")
+		#define hostsfile1 hostsfile
+	#endif
 #endif
 #define objectwebsite _T("https://github.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.5t  Build time:May 17th, '16")
-#define _VERSION _T("2.1.5a")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.5t1  Build time:May 18th, '16")
+#define _VERSION 215
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -99,7 +100,7 @@ There seems something wrong in download file, we will retry after 5 seconds.\n")
 		abort();
 #define _BAKFORMAT _T("%s\\system32\\drivers\\etc\\hosts.%04d%02d%02d.%02d%02d%02d.bak")
 
-//debug set
+//debug & log file set
 #define LogFileLocate _T("c:\\Hosts_Tool_log.log")
 const TCHAR * pipeName=_T("\\\\.\\pipe\\hoststoolnamepipe");
 #define szErrMeg _T("\nFatal Error:\n%s (GetLastError():%ld)\n\
@@ -107,6 +108,7 @@ Please contact the application's support team for more information.\n")
 using namespace __Dpipe;
 //end.
 
+//service name
 //for backward compatibility DO NOT CHANGE IT
 TCHAR Sname[]=_T("racaljk-hoststool");
 TCHAR const *SzName[]={
@@ -129,16 +131,16 @@ struct expection{
 Hosts Tool for Windows Console by: Too-Naive\n\
 Copyright (C) 2016 @Too-Naive License:MIT LICENSE(redefined)\n\
 ------------------------------------------------------------\n\n\
-Usage: hosts_tool [-? | -r | -fi | -fu | -show | --debug-pipe]\n\n\
+Usage: tool [-? | -r | -fi | -fu | -show | --debug-pipe]\n\n\
 Options:\n\
     -?    : Show this help message.\n\
     -r    : Reset system hosts file to default.\n\
     -fi   : Install Auto-Update hosts service(Service Name:%s).\n\
     -fu   : Uninstall service.\n\
     -show : Show the MIT license(redefined)\n\
-    --debug-pipe : Debug Mode(reserved)\n\
+    --debug-pipe : Debug Mode(reserved for deverloper)\n\
 Example:\n\
-    hosts_tool -fi\n\n\
+    tool -fi\n\n\
     If you need more imformation about debug mode,\n\
     Please see the page in: https:\x2f\x2fgit.io/vwjyB\n\n")
 
@@ -180,35 +182,34 @@ SERVICE_TABLE_ENTRY STE[2]={{Sname,Service_Main},{NULL,NULL}};
 //define buffer
 TCHAR DEFBUF(buf1,localbufsize),DEFBUF(buf2,localbufsize),
 	DEFBUF(buf3,localbufsize),DEFBUF(szline,localbufsize);
+//end.
 
 //define parameters
-enum _Parameters{
-	EXEC_START_NORMAL		=1<<0x00,
-//	EXEC_START_RUNAS		=1<<0x01,
-	EXEC_START_SERVICE		=1<<0x02,
-	EXEC_START_INSTALL_SERVICE	=1<<0x03,
-	EXEC_START_UNINSTALL_SERVICE	=1<<0x04,
-	EXEC_START_HELP			=1<<0x05,
-	EXEC_DEBUG_RESET		=1<<0x06,
-	SHOW_LICENSE			=1<<0x07,
-	DEBUG_SERVICE_STOP		=1<<0x08,
-	DEBUG_SERVICE_START		=1<<0x09,
-	DEBUG_SERVICE_REINSTALL		=1<<0x0a,
-	OPEN_LISTEN			=1<<0x0b,
-	RESET_FILE			=1<<0x0c,
-	PARAMETERS_RESERVED6		=1<<0x0d,
-	PARAMETERS_RESERVED7		=1<<0x0e,
-	PARAMETERS_RESERVED8		=1<<0x0f,
-	PARAMETERS_RESERVED9		=1<<0x10,
-	EXEC_BAD_PARAMETERS		=1073741824
-};
+#define	EXEC_START_NORMAL		(1<<0x00)
+//#define 	EXEC_START_RUNAS		(1<<0x01)
+#define	EXEC_START_SERVICE		(1<<0x02)
+#define	EXEC_START_INSTALL_SERVICE	(1<<0x03)
+#define	EXEC_START_UNINSTALL_SERVICE	(1<<0x04)
+#define	EXEC_START_HELP			(1<<0x05)
+#define	SHOW_LICENSE			(1<<0x06)
+#define	RESET_FILE			(1<<0x07)
+#define	EXEC_BAD_PARAMETERS		(1073741824)
+
+
+#define DEBUG_ENTRY 			(1<<0x00)
+#define	EXEC_DEBUG_RESET		(DEBUG_ENTRY|(1<<0x01))
+#define	DEBUG_SERVICE_STOP		(DEBUG_ENTRY|(1<<0x02))
+#define	DEBUG_SERVICE_START		(DEBUG_ENTRY|(1<<0x03))
+#define	DEBUG_SERVICE_REINSTALL		(DEBUG_ENTRY|(1<<0x04))
+#define	OPEN_LISTEN			(DEBUG_ENTRY|(1<<0x05))
+//end.
 
 //define _In_ parameters string
 TCHAR const *szParameters[]={
-	_T("svc"),//for backward compatibility
+	_T("svc"),				//for backward compatibility
 	_T("fi"),				//1
 	_T("fu"),				//2
-	_T("h"),				//3
+	_T("\x02\x03"),				//3
 	_T("-debug-reset"),			//4
 	_T("show"),				//5
 	_T("?"),				//6
@@ -220,14 +221,16 @@ TCHAR const *szParameters[]={
 	_T("r")					//12
 };
 
+//Check parameters function
 int __fastcall __Check_Parameters(int argc,TCHAR const **argv){
 	if (argc==1) return EXEC_START_NORMAL;
-	if (argc>3||!((argv[1][0]==_T('/') ||
+	if (argc>3||!(( argv[1][0]==_T('/') ||
 		argv[1][0]==_T('-')) && argv[1][1]!=_T('\0'))) BAD_EXIT;
 	size_t i=0;
 	for (;_tcscmp(&(argv[1][1]),szParameters[i]) &&
 		i<sizeof(szParameters)/sizeof(szParameters[0]);i++);
-	if (!(i==0 || i==1 ||i==9) && argc>2) BAD_EXIT;
+	if (!(i==0 || i==1 ||i==9) 
+		&& argc>2) BAD_EXIT;
 	if (argc==3 && !_tcscmp(argv[2],szParameters[11])) request_client=1;
 		else if (argc==3 && _tcscmp(argv[2],szParameters[11])) BAD_EXIT;
 	switch (i){
@@ -235,19 +238,19 @@ int __fastcall __Check_Parameters(int argc,TCHAR const **argv){
 			 return EXEC_START_SERVICE;
 		case  1: return EXEC_START_INSTALL_SERVICE;
 		case  2: return EXEC_START_UNINSTALL_SERVICE;
-		case  6:
-		case  3: return EXEC_START_HELP;
-		case  4: return EXEC_DEBUG_RESET;//restart service
+		case  4: return EXEC_DEBUG_RESET;	//restart service
 		case  5: return SHOW_LICENSE;
-		case  7: return DEBUG_SERVICE_STOP;//stop service
-		case  8: return DEBUG_SERVICE_START;//start service
+		case  6: return EXEC_START_HELP;
+		case  7: return DEBUG_SERVICE_STOP;	//stop service
+		case  8: return DEBUG_SERVICE_START;	//start service
 		case  9: return DEBUG_SERVICE_REINSTALL;//reinstall service
 		case 10: return OPEN_LISTEN;
 		case 12: return RESET_FILE;
 		default: BAD_EXIT;
 	}
-	BAD_EXIT
+	BAD_EXIT;
 }
+//end.
 
 //main entry
 int _tmain(int argc,TCHAR const ** argv){
@@ -295,7 +298,8 @@ Copyright (C) 2016 @Too-Naive License:MIT LICENSE(redefined)\n\
 }
 
 void __abrt(int){
-	_tprintf(_T("Received signal SIGINT\n"));
+	SetConsoleTitle(TEXT("Recieved signal SIGINT"));
+	_tprintf(_T("Received signal SIGINT\nPlease waiting program exit!\n"));
 	request_client=0;
 	_tprintf(_T("Uninstall service.\n"));
 	Func_Service_UnInstall(false);
@@ -315,17 +319,21 @@ inline void __show_str(TCHAR const* st,TCHAR const * _ingore){
 DWORD __stdcall Func_Update(LPVOID){
 	if (!Func_Download(_T("https://raw.githubusercontent.com/HostsTools/Windows/master/VERSION"),
 	_T("VERSION.tmp")))return ERROR_FILE_NOT_FOUND;
-	TCHAR * szver=new TCHAR[20];
-	memset(szver,0,sizeof(szver));
+//	TCHAR * szver=new TCHAR[20];
+	DWORD dwVersion=0;
+//	memset(szver,0,sizeof(szver));
 	FILE *_=_tfopen(_T("VERSION.tmp"),_T("r"));
 	if (!_) return ERROR_OPEN_FAILED;//_tprintf(_T("Unable to open \"VERSION.tmp\"\n"))
-	_fgetts(szver,20,_);fclose(_);_=NULL;
+	_fgettc(_);
+	_ftscanf(_,_T("%ld"),&dwVersion);
+	fclose(_);
+//	_fgetts(szver,20,_);fclose(_);_=NULL;
 	Sleep(500);
 	DeleteFile(_T("VERSION.tmp"));
-	bool _difference=(_tcscmp(_VERSION,szver)?true:false);szver[_tcslen(szver)-1]=_T('\0');
+	bool _difference=(_VERSION<dwVersion);//(_tcscmp(_VERSION,szver)?true:false);szver[_tcslen(szver)-1]=_T('\0');
 //	_tprintf(_T("%s\n"),szver);
-	delete [] szver;
-	szver=NULL;
+//	delete [] szver;
+//	szver=NULL;
 	while (_difference){
 		SetConsoleTitle(_T("!New version is avaliable!"));
 		Sleep(1000);
@@ -398,7 +406,7 @@ void ___debug_point_reset(int _par){
 			case OPEN_LISTEN:
 				if (_par!=EXEC_DEBUG_RESET){
 					signal(SIGINT,__abrt);
-_tprintf(_T("    Warning:\n    \
+					_tprintf(_T("    Warning:\n    \
 You are in debug mode, please press CTRL+C to exit the debug mode.\n\t\t\
 DO NOT CLOSE THE CONSOLE DIRECT!!!\n"));
 					request_client=1;
@@ -456,10 +464,20 @@ Or open new issue\n------------------------------------------------------\n\n"))
 		if (!(shMang=OpenSCManager(NULL,NULL,SC_MANAGER_ALL_ACCESS)))
 			THROWERR(_T("OpenSCManager() failed."));
 		if (_q) _tprintf(_T("    Step3:Write service.\n"));
-		if (!(shSvc=CreateService(shMang,Sname,szServiceShowName,
-			SERVICE_ALL_ACCESS,SERVICE_WIN32_OWN_PROCESS,
-			request_client?SERVICE_DEMAND_START:SERVICE_AUTO_START,SERVICE_ERROR_NORMAL,
-			buf2,NULL,NULL,NULL,NULL,NULL))){
+		if (!(shSvc=CreateService(shMang,
+			Sname,
+			szServiceShowName,
+			SERVICE_ALL_ACCESS,
+			SERVICE_WIN32_OWN_PROCESS,
+			request_client?SERVICE_DEMAND_START:SERVICE_AUTO_START,
+			SERVICE_ERROR_NORMAL,
+			buf2,//Program located
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL
+			))){
 			if (GetLastError()==ERROR_SERVICE_EXISTS){
 				if (!(shSvc=OpenService(shMang,Sname,SERVICE_ALL_ACCESS)))
 					THROWERR(_T("OpenService() Error in install service."));/*
@@ -468,10 +486,20 @@ Or open new issue\n------------------------------------------------------\n\n"))
 				if (!DeleteService(shSvc))
 					THROWERR(_T("DeleteService() Error in Install Service."));
 				CloseServiceHandle(shSvc);
-				if (!(shSvc=CreateService(shMang,Sname,szServiceShowName,
-				SERVICE_ALL_ACCESS,SERVICE_WIN32_OWN_PROCESS,
-				request_client?SERVICE_DEMAND_START:SERVICE_AUTO_START,
-				SERVICE_ERROR_NORMAL,buf2,NULL,NULL,NULL,NULL,NULL)))
+				if (!(shSvc=CreateService(shMang,
+					Sname,
+					szServiceShowName,
+					SERVICE_ALL_ACCESS,
+					SERVICE_WIN32_OWN_PROCESS,
+					request_client?SERVICE_DEMAND_START:SERVICE_AUTO_START,
+					SERVICE_ERROR_NORMAL,
+					buf2,
+					NULL,
+					NULL,
+					NULL,
+					NULL,
+					NULL
+					)))
 					THROWERR(_T("CreateService() failed.(2)")),CloseServiceHandle(shMang);
 			}
 			else
@@ -533,22 +561,22 @@ DWORD __stdcall NormalEntry(LPVOID){
 	SYSTEMTIME st={0,0,0,0,0,0,0,0};
 	FILE * fp=NULL,*_=NULL;
 	HANDLE hdThread=INVALID_HANDLE_VALUE;
+	if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,localbufsize))
+		Func_PMNTTS(_T("GetEnvironmentVariable() Error!(GetLastError():%ld)\n\
+\tCannot get system path!"),GetLastError()),abort();
+//	int service_reserved=0;
 	if (!bReserved){
 		if ((hdThread=CreateThread(NULL,0,Func_Update,NULL,0,NULL))==INVALID_HANDLE_VALUE)
 			_tprintf(_T("CreateThread() Failed in getnewversion(%ld)\n"),GetLastError());
-		_tprintf(_T("    LICENSE:MIT LICENSE\n%s\n    Copyright (C) 2016 @Too-Naive\n"),welcomeShow);
+		_tprintf(_T("    LICENSE:MIT LICENSE(redefined)\n%s\n    Copyright (C) 2016 @Too-Naive\n"),welcomeShow);
 		_tprintf(_T("    Project website:%s\n"),objectwebsite);
 		_tprintf(_T("    Bug report:sometimes.naive[at]hotmail.com \n\t       Or open new issue\n\n\n"));
-		_tprintf(_T("    Start replace hosts file:\n    Step1:Get System Driver..."));
+		_tprintf(_T("    Start replace hosts file:\n"));//    Step1:Get System Driver..."));
 	}
 	else{
-		if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,localbufsize))
-			Func_FastPMNTS(_T("GetEnvironmentVariable() Error!(GetLastError():%ld)\n\
-\tCannot get system path!"),GetLastError()),abort();
-		_stprintf(buf1,_T("%s\\system32\\drivers\\etc\\hosts"),buf3);
 		if (request_client) ___pipeopen(),___pipesentmessage(_T("\nMessage from service:\n\n"));
 		Func_FastPMNTS(_T("Open log file.\n"));
-		___checkEx(_T("LICENSE:MIT LICENSE\n"),1);
+		___checkEx(_T("LICENSE:MIT LICENSE(redefined)\n"),1);
 		___checkEx(_T("Copyright (C) 2016 Too-Naive\n"),0);
 		___checkEx(_T("Bug report:sometimes.naive[at]hotmail.com\n"),0);
 		___checkEx(_T("           Or open new issue.(https://github.com/HostsTools/Windows)\n"),0);
@@ -557,12 +585,11 @@ DWORD __stdcall NormalEntry(LPVOID){
 		Sleep(bReserved?(request_client?0:60000):0);//Waiting for network
 		GetLocalTime(&st);
 		if (bReserved) ___autocheckmess(_T("Start replace hosts file.\n"));
+		_stprintf(buf1,_T("%s\\system32\\drivers\\etc\\hosts"),buf3);
+		_stprintf(buf2,_BAKFORMAT,buf3,st.wYear,st.wMonth,st.wDay,st.wHour,st.wMinute,st.wSecond);
+		SetFileAttributes(buf1,FILE_ATTRIBUTE_NORMAL); //for avoid CopyFile or _tfopen failed.
 		try {
-			if (!bReserved)	if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,localbufsize))
-				THROWERR(_T("GetEnvironmentVariable() Error!\n\tCannot get system path!"));
-			_stprintf(buf1,_T("%s\\system32\\drivers\\etc\\hosts"),buf3);
-			_stprintf(buf2,_BAKFORMAT,buf3,st.wYear,st.wMonth,st.wDay,st.wHour,st.wMinute,st.wSecond);
-			if (!bReserved) _tprintf(_T("\t\tDone.\n    Step2:Download hosts file..."));
+			if (!bReserved) _tprintf(_T("    Step1:Download hosts file..."));
 			//download
 			if (bReserved) if (request_client) ___pipesentmessage(_T("Download files\n"));
 			for (int errcunt=0;(!Func_Download(hostsfile1,DownLocated)&&
@@ -574,9 +601,9 @@ DWORD __stdcall NormalEntry(LPVOID){
 						if (!bReserved) _tprintf(_T("\tDownload hosts file..."));
 					}
 			//end.
-			if (!bReserved) _tprintf(_T("\tDone.\n    Step3:Change Line Endings..."));
+			if (!bReserved) _tprintf(_T("\tDone.\n    Step2:Change Line Endings..."));
 			if (!((fp=_tfopen(DownLocated,_T("r"))) && (_=_tfopen(ChangeCTLR,_T("w")))))
-				THROWERR(_T("Open file Error!"));
+				THROWERR(_T("Open file Error!(1)"));
 			while (!feof(fp)){
 				memset(szline,0,sizeof(szline));
 				_fgetts(szline,1000,fp);
@@ -590,7 +617,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 				else
 					_tprintf(_T("Delete tmpfile error.(%ld)\n"),GetLastError());
 			}
-			//new future
+			//new feature
 			if (!((fp=_tfopen(buf1,_T("r"))) && (_=_tfopen(ReservedFile,_T("w")))));
 			while (!feof(fp)){
 				memset(szline,0,sizeof(szline));
@@ -617,7 +644,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 			fclose(fp);
 			fp=NULL,_=NULL;
 			//end
-			if (Func_CheckDiff(ChangeCTLR,DownLocated)){
+			if (!Func_CheckDiff(ChangeCTLR,DownLocated)){
 				if (!bReserved) _tprintf(_T("\tDone.\n\n    \
 diff exited with value 0(0x00)\n    \
 Finish:Hosts file Not update.\n\n"));
@@ -631,11 +658,10 @@ Finish:Hosts file Not update.\n\n"));
 				}
 			}
 			else {
-				if (!bReserved) _tprintf(_T("\tDone.\n    Step4:Copy Backup File..."));
-				SetFileAttributes(buf1,FILE_ATTRIBUTE_NORMAL); //for avoid CopyFile failed.
+//				if (!bReserved) _tprintf(_T("\tDone.\n    Step3:Copy Backup File..."));
 				if (!CopyFile(buf1,buf2,FALSE))
 					THROWERR(_T("CopyFile() Error on copy a backup file"));
-				if (!bReserved) _tprintf(_T("\t\tDone.\n    Step5:Replace Default Hosts File..."));
+				if (!bReserved) _tprintf(_T("\t\tDone.\n    Step3:Replace Default Hosts File..."));
 				if (!CopyFile(ReservedFile,buf1,FALSE))
 					THROWERR(_T("CopyFile() Error on copy hosts file to system path"));
 				if (!((fp=_tfopen(ChangeCTLR,_T("r"))) && (_=_tfopen(buf1,_T("a+")))))
@@ -675,8 +701,9 @@ Finish:Hosts file Not update.\n\n"));
 				abort();
 			}
 		}
+//		if (request_client) service_reserved++;
 		Sleep(bReserved?(request_client?5000:(29*60000)):0);
-	} while (bReserved);
+	} while (bReserved);// && (service_reserved<5));
 	return GetLastError();
 }
 
