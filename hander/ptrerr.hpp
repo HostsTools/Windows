@@ -78,7 +78,8 @@ https://msdn.microsoft.com/en-us/library/hh567368.aspx
 		Func_PET(ptr_ErrorFileStream),\
 		__END__
 
-#if (defined(__GXX_EXPERIMENTAL_CXX0X__)||(defined(_MSC_VER)&&(_MSC_VER>=1800)))
+#if (defined(__GXX_EXPERIMENTAL_CXX0X__)||\
+    (defined(_MSC_VER)&&(_MSC_VER>=1800)))
 	#pragma message("C++11 Feature supported, using \"Variable-templates\"")
 	template <typename... Args>
 	void Func_PrintMessage(FILE * ___ptr_fp,Args... arg){

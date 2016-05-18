@@ -38,7 +38,7 @@ bool Func_CheckDiff(const TCHAR *lFilePath, const TCHAR * rFilePath) throw(){
 	const size_t BUFFER_SIZE=2048;
 	FILE * lFile=_tfopen(lFilePath,_T("rb")),*rFile=_tfopen(rFilePath,_T("rb"));
 	if(!(lFile && rFile))
-		return false;
+		return true;
 	char *lBuffer = new char[BUFFER_SIZE];
 	char *rBuffer = new char[BUFFER_SIZE];
 	if (!lBuffer||!rBuffer)
@@ -54,12 +54,12 @@ bool Func_CheckDiff(const TCHAR *lFilePath, const TCHAR * rFilePath) throw(){
 			delete [] rBuffer;
 			fclose(lFile);
 			fclose(rFile);
-			return false;
+			return true;
 		}
 	} while ((!feof(lFile))&&(!feof(rFile)));
 	delete [] lBuffer;
 	delete [] rBuffer;
 	fclose(lFile);
 	fclose(rFile);
-	return true;
+	return false;
 }

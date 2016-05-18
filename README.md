@@ -1,6 +1,7 @@
-# Download Executable File [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
+# Download Executable File 
 
-Last update: May 16th , 2016
+[![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
+Last update: May 18th , 2016
 
 #### 下载地址:(v2.1.3)
  - [点我来下载](https://git.io/vwsqL)
@@ -13,13 +14,16 @@ Server | Microsoft Windows Server 2003 Family
 
 >If you choose `Download`, It means you agreed the MIT license(redefined).
 
-# 一个月后才能推出新的更新
+# 一个月后才会继续推出新的更新
 目前`build passing` , 如有其他疑问请在issue中提出问题    
 最新的版本更新是 把备份的文件后缀统一改为了`.bak`
 
 # Hosts Tool
 
-这个工具可以帮助你全自动的更换 备份原来的hosts文件 所有麻烦的事情只需要打开一个程序就能搞定 如果你愿意，程序还可以作为服务安装随系统启动 每次开机后每隔30分钟会自动检测hosts文件的更新噢！
+这个工具可以帮助你全自动的更换 备份原来的hosts文件 
+所有麻烦的事情只需要打开一个程序就能搞定 
+如果你愿意，程序还可以作为服务安装随系统启动 
+每次开机后每隔30分钟会自动检测hosts文件的更新噢！
 
 **在此特别感谢[@qwerty258](https://github.com/qwerty258)为本程序提供了Visual Studio的工程文件**
 
@@ -89,6 +93,8 @@ If you want to enter debug mode, follow the steps blow.
 **WARNING: IN DEBUG MODE, DO NOT CLOSE THE CONSOLE DIRECT**
 
 *Notice:In debug mode, service run cycle is very sort*
+
+Fixed: if exit program unexpectally, service will run with system start.(and then sent unexpect data)
 
 ### How to compile?
 
