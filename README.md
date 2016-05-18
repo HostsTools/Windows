@@ -1,5 +1,6 @@
-# Download Executable File [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
+# Download Executable File 
 
+[![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
 Last update: May 18th , 2016
 
 #### 下载地址:(v2.1.3)
