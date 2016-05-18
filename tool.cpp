@@ -53,7 +53,7 @@
 #ifdef _TESTONLINE
 #undef MessageBox
 #define MessageBox(Reserved1,x,reserved2,reserved3) \
-	_tprintf(_T("%s\n"),x)
+	_tprintf(_T("%s\n"),x),exit(0)
 #define callsystempause ((void*)0)
 #else
 #define callsystempause system("pause")
