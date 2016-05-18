@@ -65,8 +65,8 @@
 #define THROWERR(x) throw expection(x)
 
 //Hosts file web address set
-#define hostsfile _T("https://raw.githubusercontent.com/racaljk/hosts/master/hosts")
-#define hostsfile1 _T("https://coding.net/u/scaffrey/p/hosts/git/raw/master/hosts")
+#define hostsfile _T("https:\x2f\x2fraw.githubusercontent.com/racaljk/hosts/master/hosts")
+#define hostsfile1 _T("https:\x2f\x2fcoding.net/u/scaffrey/p/hosts/git/raw/master/hosts")
 
 #ifdef _TESTONLINE
 	#undef hostsfile
@@ -75,11 +75,11 @@
 		#define hostsfile _T("http://localhost/hosts")
 		#define hostsfile1 hostsfile
 	#else
-		#define hostsfile _T("https://raw.githubusercontent.com/YoungIsSimple/Object-Release/testbranch/minHOSTS")
+		#define hostsfile _T("https:\x2f\x2fraw.githubusercontent.com/YoungIsSimple/Object-Release/testbranch/minHOSTS")
 		#define hostsfile1 hostsfile
 	#endif
 #endif
-#define objectwebsite _T("https://github.com/HostsTools/Windows")
+#define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
 #define ConsoleTitle _T("racaljk-host tool    v2.1.5t1  Build time:May 18th, '16")
