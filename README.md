@@ -1,7 +1,7 @@
 # Download Executable File 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
-Last update: May 18th , 2016
+Last update: May 25th , 2016
 
 #### 下载地址:(v2.1.3)
  - [点我来下载](https://git.io/vwsqL)
@@ -14,7 +14,7 @@ Server | Microsoft Windows Server 2003 Family
 
 >If you choose `Download`, It means you agreed the MIT license(redefined).
 
-# 一个月后才会继续推出新的更新
+# 13天后才会继续推出新的更新
 目前`build passing` , 如有其他疑问请在issue中提出问题    
 最新的版本更新是 把备份的文件后缀统一改为了`.bak`
 
@@ -40,7 +40,7 @@ Server | Microsoft Windows Server 2003 Family
 
 ## 警告
 
-1. **请不要删除`# Copyright (c) 2014-2016, racaljk.` 否则 有可能发生不可预料的后果**
+1. **请不要删除`# Copyright (c) 2014-2016, racaljk.`(作为程序的识别位点) 否则 有可能发生不可预料的后果**
 2. **如果先前没有使用本项目hosts文件 而使用了其他项目的hosts文件的 请重置hosts文件(具体方法看下方使用说明)后 再使用本程序**
 3. **(在自定义的hosts中)程序会抛掉所有的注释`#`开头的语句**
 
@@ -53,8 +53,8 @@ main program file: `tool.exe`
  - 无参数运行`tool.exe` 用来更新hosts文件 如有更新 程序会备份原有的hosts文件
  - 带参数 `-fi` 运行 `tool.exe` 安装一个名为`racaljk-hoststool`的服务
  - 带参数 `-fu` 运行 `tool.exe` 卸载已经安装的`racaljk-hoststool`服务
- - 带参数 `-r`  运行 `tool.exe` 来重置hosts文件
- - 带参数 `-?`  运行 `tool.exe` 来获得更多的使用方法
+ - 带参数 `-r` 运行 `tool.exe` 来重置hosts文件
+ - 带参数 `-?` 运行 `tool.exe` 来获得更多的使用方法
 
 ## 注意事项
 
