@@ -39,8 +39,8 @@
 
 FILE * ptr_ErrorFileStream=stderr;
 bool is_ErrorFileSet=0;
-const TCHAR * sz__ErrorFileName__=NULL;
-const TCHAR * sz__ErrorFileStream__=NULL;
+const TCHAR * sz__ErrorFileName__=_ptrresev_NULL_;
+const TCHAR * sz__ErrorFileStream__=_ptrresev_NULL_;
 
 FILE * Func_SetErrorFile(const TCHAR*, const TCHAR*);
 inline void * __fastcall ___Func_Close_File_Stream(FILE *) throw();
@@ -48,7 +48,7 @@ inline int __fastcall ___Func_PrintErrorTimeToFileStream(FILE *) throw();
 inline void * ___Func__Check_File_Set(void);
 
 #define __BEGIN__ Func_SetErrorFileEx(sz__ErrorFileName__,sz__ErrorFileStream__)
-#define __END__ ___Func_Close_File_Stream(NULL)
+#define __END__ ___Func_Close_File_Stream(_ptrresev_NULL_)
 
 
 /*
@@ -60,6 +60,14 @@ how-to-detect-if-im-compiling-code-with-visual-studio-2008
 https://msdn.microsoft.com/en-us/library/hh567368.aspx
 */
 
+#ifndef _ptrresev_NULL_
+#if (defined(__GXX_EXPERIMENTAL_CXX0X__)||\
+    (defined(_MSC_VER)&&(_MSC_VER>=1800)))
+	#define _ptrresev_NULL_ nullptr
+#else
+	#define _ptrresev_NULL_ NULL
+#endif
+#endif
 
 #define Func_PETTFS ___Func_PrintErrorTimeToFileStream
 #define Func_PETTStdout \
@@ -81,6 +89,7 @@ https://msdn.microsoft.com/en-us/library/hh567368.aspx
 #if (defined(__GXX_EXPERIMENTAL_CXX0X__)||\
     (defined(_MSC_VER)&&(_MSC_VER>=1800)))
 	#pragma message("C++11 Feature supported, using \"Variable-templates\"")
+
 	template <typename... Args>
 	void Func_PrintMessage(FILE * ___ptr_fp,Args... arg){
 		_ftprintf(___ptr_fp,arg...);
@@ -144,6 +153,7 @@ https://msdn.microsoft.com/en-us/library/hh567368.aspx
 	
 #else /*If Not support C++11*/
 	#pragma message("using variable marco")
+	#define _ptrresev_NULL_ NULL
 	#ifndef _MSC_VER /*Microsoft Visual C++ Compile*/
 		#define Func_PrintMessage(___ptr_fp,arg...) \
 			_ftprintf(___ptr_fp, ##arg)
@@ -231,18 +241,18 @@ https://msdn.microsoft.com/en-us/library/hh567368.aspx
 
 inline void * ___Func__Check_File_Set(void){
 	if (!is_ErrorFileSet) SetLastError(ERROR_FILE_OFFLINE);
-	return NULL;
+	return _ptrresev_NULL_;
 }
 
 inline void * __fastcall ___Func_Close_File_Stream(FILE * ___ptr_fp) throw(){
 	if (!___ptr_fp && ptr_ErrorFileStream) fclose(ptr_ErrorFileStream);
 	else fclose(___ptr_fp);
-	return NULL;
+	return _ptrresev_NULL_;
 }
 
 FILE * Func_SetErrorFileEx(const TCHAR * _FileName_,const TCHAR * _StreamStatus){
 	if (!(ptr_ErrorFileStream=_tfopen(_FileName_,_StreamStatus)))
-		MessageBox(NULL,_T("_tfopen() Error!"),_T("Fatal Error!"),MB_SETFOREGROUND|MB_ICONSTOP);
+		MessageBox(_ptrresev_NULL_,_T("_tfopen() Error!"),_T("Fatal Error!"),MB_SETFOREGROUND|MB_ICONSTOP);
 	return ptr_ErrorFileStream;
 }
 
@@ -250,7 +260,7 @@ FILE * Func_SetErrorFile(const TCHAR * _FileName_,const TCHAR * _StreamStatus){
 	sz__ErrorFileName__=_FileName_;
 	sz__ErrorFileStream__=_StreamStatus;
 	if (!(ptr_ErrorFileStream=_tfopen(_FileName_,_StreamStatus)))
-		MessageBox(NULL,_T("_tfopen() Error!"),_T("Fatal Error!"),MB_SETFOREGROUND|MB_ICONSTOP);
+		MessageBox(_ptrresev_NULL_,_T("_tfopen() Error!"),_T("Fatal Error!"),MB_SETFOREGROUND|MB_ICONSTOP);
 	return ptr_ErrorFileStream;
 }
 

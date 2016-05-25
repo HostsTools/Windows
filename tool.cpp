@@ -82,7 +82,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.5t1  Build time:May 18th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.5t2  Build time:May 25th, '16")
 #define _VERSION 215
 
 #define CASE(x,y) case x : y; break;
@@ -177,7 +177,7 @@ void Func_ResetFile();
 DWORD __stdcall Func_Update(LPVOID);
 
 
-SERVICE_TABLE_ENTRY STE[2]={{Sname,Service_Main},{NULL,NULL}};
+SERVICE_TABLE_ENTRY STE[2]={{Sname,Service_Main},{_ptrresev_NULL_,_ptrresev_NULL_}};
 
 //define buffer
 TCHAR DEFBUF(buf1,localbufsize),DEFBUF(buf2,localbufsize),
@@ -256,13 +256,13 @@ int __fastcall __Check_Parameters(int argc,TCHAR const **argv){
 int _tmain(int argc,TCHAR const ** argv){
 	SetConsoleTitle(ConsoleTitle);
 	switch (__Check_Parameters(argc,argv)){
-		CASE(EXEC_START_NORMAL,NormalEntry(NULL));
+		CASE(EXEC_START_NORMAL,NormalEntry(_ptrresev_NULL_));
 		CASE(EXEC_START_INSTALL_SERVICE,Func_Service_Install(true));
 		CASE(EXEC_START_UNINSTALL_SERVICE,Func_Service_UnInstall(true));
 		CASE(EXEC_START_SERVICE,StartServiceCtrlDispatcher(STE));
 		CASE(EXEC_START_HELP,__show_str(SHOW_HELP,Sname));
 		CASE(EXEC_DEBUG_RESET,___debug_point_reset(EXEC_DEBUG_RESET));
-		CASE(SHOW_LICENSE,__show_str(szMitLicense_Raw,NULL));
+		CASE(SHOW_LICENSE,__show_str(szMitLicense_Raw,_ptrresev_NULL_));
 		CASE(DEBUG_SERVICE_STOP,___debug_point_reset(DEBUG_SERVICE_STOP));
 		CASE(DEBUG_SERVICE_START,___debug_point_reset(DEBUG_SERVICE_START));
 		CASE(DEBUG_SERVICE_REINSTALL,___debug_point_reset(DEBUG_SERVICE_REINSTALL));
@@ -327,13 +327,13 @@ DWORD __stdcall Func_Update(LPVOID){
 	_fgettc(_);
 	_ftscanf(_,_T("%ld"),&dwVersion);
 	fclose(_);
-//	_fgetts(szver,20,_);fclose(_);_=NULL;
+//	_fgetts(szver,20,_);fclose(_);_=_ptrresev_NULL_;
 	Sleep(500);
 	DeleteFile(_T("VERSION.tmp"));
 	bool _difference=(_VERSION<dwVersion);//(_tcscmp(_VERSION,szver)?true:false);szver[_tcslen(szver)-1]=_T('\0');
 //	_tprintf(_T("%s\n"),szver);
 //	delete [] szver;
-//	szver=NULL;
+//	szver=_ptrresev_NULL_;
 	while (_difference){
 		SetConsoleTitle(_T("!New version is avaliable!"));
 		Sleep(1000);
@@ -344,12 +344,12 @@ DWORD __stdcall Func_Update(LPVOID){
 }
 
 void Func_Service_UnInstall(bool _quite){
-	SC_HANDLE shMang=NULL,shSvc=NULL;
+	SC_HANDLE shMang=_ptrresev_NULL_,shSvc=_ptrresev_NULL_;
 	try{
 		if (!GetEnvironmentVariable(_T("SystemRoot"),buf2,localbufsize))
 			THROWERR(_T("GetEnvironmentVariable() Error in UnInstall Service."));
 		_stprintf(buf1,_T("%s\\hoststools.exe"),buf2);
-		if (!(shMang=OpenSCManager(NULL,NULL,SC_MANAGER_ALL_ACCESS)))
+		if (!(shMang=OpenSCManager(_ptrresev_NULL_,_ptrresev_NULL_,SC_MANAGER_ALL_ACCESS)))
 			THROWERR(_T("OpenSCManager() Error in Uninstall service."));
 		if (!(shSvc=OpenService(shMang,Sname,SERVICE_ALL_ACCESS)))
 			if (_quite) THROWERR(_T("OpenService() Error in Uninstall service.\nIs service exist?"));
@@ -382,7 +382,7 @@ Please contact the application's support team for more information.\n"),
 }
 
 void ___debug_point_reset(int _par){
-	SC_HANDLE shMang=NULL,shSvc=NULL;
+	SC_HANDLE shMang=_ptrresev_NULL_,shSvc=_ptrresev_NULL_;
 //	_tprintf(_T("Entry Debug Function.\n"));
 	if (_par==DEBUG_SERVICE_REINSTALL){
 		Func_Service_UnInstall(false);
@@ -391,7 +391,7 @@ void ___debug_point_reset(int _par){
 	}
 	try {
 		if (_par!=OPEN_LISTEN) {
-			if (!(shMang=OpenSCManager(NULL,NULL,SC_MANAGER_ALL_ACCESS)))
+			if (!(shMang=OpenSCManager(_ptrresev_NULL_,_ptrresev_NULL_,SC_MANAGER_ALL_ACCESS)))
 				THROWERR(_T("OpenSCManager() Error in debug_reset."));
 			if (!(shSvc=OpenService(shMang,Sname,SERVICE_STOP|SERVICE_START)))
 				THROWERR(_T("OpenService() Error in debug_reset."));
@@ -413,7 +413,7 @@ DO NOT CLOSE THE CONSOLE DIRECT!!!\n"));
 					_tprintf(_T("Reinstall service\n"));
 					___debug_point_reset(DEBUG_SERVICE_REINSTALL);
 					___debug_point_reset(DEBUG_SERVICE_START);
-					if ((lphdThread[0]=CreateThread(NULL,0,OpenPipeService,NULL,0,NULL))==INVALID_HANDLE_VALUE)
+					if ((lphdThread[0]=CreateThread(_ptrresev_NULL_,0,OpenPipeService,_ptrresev_NULL_,0,_ptrresev_NULL_))==INVALID_HANDLE_VALUE)
 						THROWERR(_T("CreateThread() Error!"));
 					WaitForSingleObject(lphdThread[0],INFINITE);
 					CloseHandle(hdPipe);
@@ -440,7 +440,7 @@ Please contact the application's support team for more information.\n"),
 }
 
 void Func_Service_Install(bool _q){
-	SC_HANDLE shMang=NULL,shSvc=NULL;
+	SC_HANDLE shMang=_ptrresev_NULL_,shSvc=_ptrresev_NULL_;
 	if (_q){
 		_tprintf(_T("    LICENSE:MIT LICENSE(redefined)\n    \
 Copyright (C) 2016 @Too-Naive\n\n"));
@@ -455,13 +455,13 @@ Or open new issue\n------------------------------------------------------\n\n"))
 		if (request_client)
 			_stprintf(szline,_T("%s %s"),buf2,szParameters[11]),
 			_tcscpy(buf2,szline),memset(szline,0,sizeof(szline)/sizeof(TCHAR));
-		if (!GetModuleFileName(NULL,szline,sizeof(szline)/sizeof(TCHAR)))
+		if (!GetModuleFileName(_ptrresev_NULL_,szline,sizeof(szline)/sizeof(TCHAR)))
 			THROWERR(_T("GetModuleFileName() Error in Install Service."));
 		if (_q) _tprintf(_T("    Step1:Copy file.\n"));
 		if (!CopyFile(szline,buf1,FALSE))
 			THROWERR(_T("CopyFile() Error in Install Service.(Is service has been installed?)"));
 		if (_q) _tprintf(_T("    Step2:Connect to SCM.\n"));
-		if (!(shMang=OpenSCManager(NULL,NULL,SC_MANAGER_ALL_ACCESS)))
+		if (!(shMang=OpenSCManager(_ptrresev_NULL_,_ptrresev_NULL_,SC_MANAGER_ALL_ACCESS)))
 			THROWERR(_T("OpenSCManager() failed."));
 		if (_q) _tprintf(_T("    Step3:Write service.\n"));
 		if (!(shSvc=CreateService(shMang,
@@ -472,11 +472,11 @@ Or open new issue\n------------------------------------------------------\n\n"))
 			request_client?SERVICE_DEMAND_START:SERVICE_AUTO_START,
 			SERVICE_ERROR_NORMAL,
 			buf2,//Program located
-			NULL,
-			NULL,
-			NULL,
-			NULL,
-			NULL
+			_ptrresev_NULL_,
+			_ptrresev_NULL_,
+			_ptrresev_NULL_,
+			_ptrresev_NULL_,
+			_ptrresev_NULL_
 			))){
 			if (GetLastError()==ERROR_SERVICE_EXISTS){
 				if (!(shSvc=OpenService(shMang,Sname,SERVICE_ALL_ACCESS)))
@@ -494,11 +494,11 @@ Or open new issue\n------------------------------------------------------\n\n"))
 					request_client?SERVICE_DEMAND_START:SERVICE_AUTO_START,
 					SERVICE_ERROR_NORMAL,
 					buf2,
-					NULL,
-					NULL,
-					NULL,
-					NULL,
-					NULL
+					_ptrresev_NULL_,
+					_ptrresev_NULL_,
+					_ptrresev_NULL_,
+					_ptrresev_NULL_,
+					_ptrresev_NULL_
 					)))
 					THROWERR(_T("CreateService() failed.(2)")),CloseServiceHandle(shMang);
 			}
@@ -514,7 +514,7 @@ Or open new issue\n------------------------------------------------------\n\n"))
 				if (!StartService(shSvc,1,SzName))
 					THROWERR(_T("StartService() Failed."));
 					else
-				MessageBox(NULL,_T("Service started successfully"),_T("Congratulations!"),
+				MessageBox(_ptrresev_NULL_,_T("Service started successfully"),_T("Congratulations!"),
 				MB_SETFOREGROUND|MB_ICONINFORMATION);
 		}
 	}
@@ -559,14 +559,14 @@ inline void __fastcall _perrtext(const TCHAR * _str,bool _Reserved){
 
 DWORD __stdcall NormalEntry(LPVOID){
 	SYSTEMTIME st={0,0,0,0,0,0,0,0};
-	FILE * fp=NULL,*_=NULL;
+	FILE * fp=_ptrresev_NULL_,*_=_ptrresev_NULL_;
 	HANDLE hdThread=INVALID_HANDLE_VALUE;
 	if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,localbufsize))
 		Func_PMNTTS(_T("GetEnvironmentVariable() Error!(GetLastError():%ld)\n\
 \tCannot get system path!"),GetLastError()),abort();
 //	int service_reserved=0;
 	if (!bReserved){
-		if ((hdThread=CreateThread(NULL,0,Func_Update,NULL,0,NULL))==INVALID_HANDLE_VALUE)
+		if ((hdThread=CreateThread(_ptrresev_NULL_,0,Func_Update,_ptrresev_NULL_,0,_ptrresev_NULL_))==INVALID_HANDLE_VALUE)
 			_tprintf(_T("CreateThread() Failed in getnewversion(%ld)\n"),GetLastError());
 		_tprintf(_T("    LICENSE:MIT LICENSE(redefined)\n%s\n    Copyright (C) 2016 @Too-Naive\n"),welcomeShow);
 		_tprintf(_T("    Project website:%s\n"),objectwebsite);
@@ -610,7 +610,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 				_fputts(szline,_);
 			}
 			fclose(fp);fclose(_);
-			fp=NULL,_=NULL;
+			fp=_ptrresev_NULL_,_=_ptrresev_NULL_;
 			if (!DeleteFile(DownLocated)){
 				if (bReserved)
 					Func_FastPMNTS(_T("Delete tmpfile error.(%ld)\n"),GetLastError());
@@ -630,7 +630,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 				_fputts(szline,_);
 			}
 			fclose(_);
-			_=NULL;
+			_=_ptrresev_NULL_;
 			if (!feof(fp)){
 				if (!(_=_tfopen(DownLocated,_T("w"))));
 				_fputts(szline,_);
@@ -642,7 +642,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 				fclose(_);
 			}
 			fclose(fp);
-			fp=NULL,_=NULL;
+			fp=_ptrresev_NULL_,_=_ptrresev_NULL_;
 			//end
 			if (!Func_CheckDiff(ChangeCTLR,DownLocated)){
 				if (!bReserved) _tprintf(_T("\tDone.\n\n    \
@@ -678,7 +678,7 @@ Finish:Hosts file Not update.\n\n"));
 				if (!bReserved) _tprintf(_T("Replace File Successfully\n"));
 				else ___autocheckmess(_T("Replace File Successfully\n"));
 				DeleteFile(ChangeCTLR);
-				if (!bReserved) MessageBox(NULL,_T("Hosts File Set Success!"),
+				if (!bReserved) MessageBox(_ptrresev_NULL_,_T("Hosts File Set Success!"),
 					_T("Congratulations!"),MB_ICONINFORMATION|MB_SETFOREGROUND);
 			}
 			if (hdThread!=INVALID_HANDLE_VALUE) TerminateThread(hdThread,0);
@@ -724,7 +724,7 @@ Cannot start service!\n"),GetLastError()),abort();
 	ss.dwCheckPoint=0;
 	ss.dwWaitHint=0;
 	SetServiceStatus(ssh,&ss);
-	if (!(lphdThread[0]=CreateThread(NULL,0,NormalEntry,NULL,0,NULL))){
+	if (!(lphdThread[0]=CreateThread(_ptrresev_NULL_,0,NormalEntry,_ptrresev_NULL_,0,_ptrresev_NULL_))){
 		Func_FastPMNTS(_T("CreateThread() Error with %ld \n\
 Cannot start main thread to update hosts!\n"),GetLastError());
 		ss.dwWin32ExitCode=ERROR_SERVICE_NO_THREAD;
