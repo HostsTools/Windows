@@ -153,7 +153,6 @@ https://msdn.microsoft.com/en-us/library/hh567368.aspx
 	
 #else /*If Not support C++11*/
 	#pragma message("using variable marco")
-	#define _ptrresev_NULL_ NULL
 	#ifndef _MSC_VER /*Microsoft Visual C++ Compile*/
 		#define Func_PrintMessage(___ptr_fp,arg...) \
 			_ftprintf(___ptr_fp, ##arg)
