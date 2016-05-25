@@ -68,7 +68,7 @@
 #define hostsfile _T("https://raw.githubusercontent.com/racaljk/hosts/master/hosts")
 #define hostsfile1 _T("https://coding.net/u/scaffrey/p/hosts/git/raw/master/hosts")
 
-#ifdef _TESTONLINE
+#ifdef _LOCAL
 	#undef hostsfile
 	#undef hostsfile1
 	#ifdef _LOCAL
