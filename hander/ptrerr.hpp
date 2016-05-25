@@ -37,6 +37,15 @@
 #include <windows.h>
 
 
+#ifndef _ptrresev_NULL_
+#if (defined(__GXX_EXPERIMENTAL_CXX0X__)||\
+    (defined(_MSC_VER)&&(_MSC_VER>=1800)))
+	#define _ptrresev_NULL_ nullptr
+#else
+	#define _ptrresev_NULL_ NULL
+#endif
+#endif
+
 FILE * ptr_ErrorFileStream=stderr;
 bool is_ErrorFileSet=0;
 const TCHAR * sz__ErrorFileName__=_ptrresev_NULL_;
@@ -60,14 +69,6 @@ how-to-detect-if-im-compiling-code-with-visual-studio-2008
 https://msdn.microsoft.com/en-us/library/hh567368.aspx
 */
 
-#ifndef _ptrresev_NULL_
-#if (defined(__GXX_EXPERIMENTAL_CXX0X__)||\
-    (defined(_MSC_VER)&&(_MSC_VER>=1800)))
-	#define _ptrresev_NULL_ nullptr
-#else
-	#define _ptrresev_NULL_ NULL
-#endif
-#endif
 
 #define Func_PETTFS ___Func_PrintErrorTimeToFileStream
 #define Func_PETTStdout \
