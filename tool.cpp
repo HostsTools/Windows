@@ -413,7 +413,7 @@ DO NOT CLOSE THE CONSOLE DIRECT!!!\n"));
 					_tprintf(_T("Reinstall service\n"));
 					___debug_point_reset(DEBUG_SERVICE_REINSTALL);
 					___debug_point_reset(DEBUG_SERVICE_START);
-					if ((lphdThread[0]=CreateThread(_ptrresev_NULL_,0,OpenPipeService,_ptrresev_NULL_,0,_ptrresev_NULL_))==INVALID_HANDLE_VALUE)
+					if (!(lphdThread[0]=CreateThread(_ptrresev_NULL_,0,OpenPipeService,_ptrresev_NULL_,0,_ptrresev_NULL_)))
 						THROWERR(_T("CreateThread() Error!"));
 					WaitForSingleObject(lphdThread[0],INFINITE);
 					CloseHandle(hdPipe);
@@ -566,7 +566,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 \tCannot get system path!"),GetLastError()),abort();
 //	int service_reserved=0;
 	if (!bReserved){
-		if ((hdThread=CreateThread(_ptrresev_NULL_,0,Func_Update,_ptrresev_NULL_,0,_ptrresev_NULL_))==INVALID_HANDLE_VALUE)
+		if (!(hdThread=CreateThread(_ptrresev_NULL_,0,Func_Update,_ptrresev_NULL_,0,_ptrresev_NULL_)))
 			_tprintf(_T("CreateThread() Failed in getnewversion(%ld)\n"),GetLastError());
 		_tprintf(_T("    LICENSE:MIT LICENSE(redefined)\n%s\n    Copyright (C) 2016 @Too-Naive\n"),welcomeShow);
 		_tprintf(_T("    Project website:%s\n"),objectwebsite);
@@ -681,7 +681,7 @@ Finish:Hosts file Not update.\n\n"));
 				if (!bReserved) MessageBox(_ptrresev_NULL_,_T("Hosts File Set Success!"),
 					_T("Congratulations!"),MB_ICONINFORMATION|MB_SETFOREGROUND);
 			}
-			if (hdThread!=INVALID_HANDLE_VALUE) TerminateThread(hdThread,0);
+			if (!hdThread) TerminateThread(hdThread,0);
 		}
 		catch(expection runtimeerr){
 			if (!bReserved){
