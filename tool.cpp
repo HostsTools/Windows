@@ -82,7 +82,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.5t2  Build time:May 25th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.5-p  Build time:May 26th, '16")
 #define _VERSION 215
 
 #define CASE(x,y) case x : y; break;
@@ -624,7 +624,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 				_fgetts(szline,1000,fp);
 				if (*szline==_T('#')) {
 					if (_tcsstr(szline,_T("# Copyright (c) 2014")))
-					break; else continue;
+					break;// else continue;//deleted in new feature
 				}
 				if (*szline==_T('\n')) continue;
 				_fputts(szline,_);
@@ -661,7 +661,7 @@ Finish:Hosts file Not update.\n\n"));
 //				if (!bReserved) _tprintf(_T("\tDone.\n    Step3:Copy Backup File..."));
 				if (!CopyFile(buf1,buf2,FALSE))
 					THROWERR(_T("CopyFile() Error on copy a backup file"));
-				if (!bReserved) _tprintf(_T("\t\tDone.\n    Step3:Replace Default Hosts File..."));
+				if (!bReserved) _tprintf(_T("\tDone.\n    Step3:Replace Default Hosts File..."));
 				if (!CopyFile(ReservedFile,buf1,FALSE))
 					THROWERR(_T("CopyFile() Error on copy hosts file to system path"));
 				if (!((fp=_tfopen(ChangeCTLR,_T("r"))) && (_=_tfopen(buf1,_T("a+")))))
