@@ -35,7 +35,7 @@
 
 #include <windows.h>
 #include <wininet.h>
-#include "ptrerr.hpp"
+#include <tchar.h>
 
 //need wininet.lib
 
