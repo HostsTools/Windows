@@ -292,7 +292,7 @@ inline void __show_str(TCHAR const* st,TCHAR const * _ingore){
 	return ;
 }
 
-DWORD __stdcall Func_Update(LPVOID){
+/*DWORD __stdcall Func_Update(LPVOID){
 	if (!Func_Download(_T("https://raw.githubusercontent.com/HostsTools/Windows/master/VERSION"),
 	_T("VERSION.tmp")))return ERROR_FILE_NOT_FOUND;
 //	TCHAR * szver=new TCHAR[20];
@@ -317,7 +317,7 @@ DWORD __stdcall Func_Update(LPVOID){
 		Sleep(1000);
 	}
 	return ERROR_SUCCESS;
-}
+}*/
 
 void Func_Service_UnInstall(bool _quite){
 	SC_HANDLE shMang=_ptrresev_NULL_,shSvc=_ptrresev_NULL_;
