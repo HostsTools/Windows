@@ -1,32 +1,8 @@
 /*
- * The MIT License(MIT)(redefined)
+ * This source code was published under GPL v3
  *
  * Copyright (C) 2016 Too-Naive E-mail:sometimes.naive@hotmail.com
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files(the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, and to permit persons to
- * whom the Software is furnished to do so, BUT DO NOT SUBLICENSE, AND / OR SELL
- * OF THE SOFTWARE,subject to the following conditions :
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- * If you use the project's source code or its derivative products (including
- * but not limited to the executable file), it means that you have agreed to the
- * terms of this license and comply with the terms of the license. If you do not
- * agree to this license agreement, please do not use this project's source
- * code and its derivatives (including but not limited to the executable
- * file).
  */
 
 #include <windows.h>
@@ -37,7 +13,7 @@
 #include <stdlib.h>
 #include "hander/ptrerr.hpp"
 #include "hander/diff.hpp"
-#include "hander/mitlicense.hpp"
+#include "hander/gpllicense.hpp"
 #include <signal.h>
 #include "hander/pipedebug.hpp"
 #include "hander/default.hpp"
@@ -71,19 +47,19 @@
 #ifdef _LOCAL
 	#undef hostsfile
 	#undef hostsfile1
-	#ifdef _LOCAL
+//	#ifdef _LOCAL
 		#define hostsfile _T("http://localhost/hosts")
 		#define hostsfile1 hostsfile
-	#else
+/*	#else
 		#define hostsfile _T("https://raw.githubusercontent.com/YoungIsSimple/Object-Release/testbranch/minHOSTS")
 		#define hostsfile1 hostsfile
-	#endif
+	#endif*/
 #endif
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.5-p  Build time:May 26th, '16")
-#define _VERSION 215
+#define ConsoleTitle _T("racaljk-host tool    v2.1.5t2  Build time:May 28th, '16")
+//#define _VERSION 215
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -129,7 +105,7 @@ struct expection{
 #define SHOW_HELP _T("\
 ------------------------------------------------------------\n\
 Hosts Tool for Windows Console by: Too-Naive\n\
-Copyright (C) 2016 @Too-Naive License:MIT LICENSE(redefined)\n\
+Copyright (C) 2016 @Too-Naive License:General Public License\n\
 ------------------------------------------------------------\n\n\
 Usage: tool [-? | -r | -fi | -fu | -show | --debug-pipe]\n\n\
 Options:\n\
@@ -137,7 +113,7 @@ Options:\n\
     -r    : Reset system hosts file to default.\n\
     -fi   : Install Auto-Update hosts service(Service Name:%s).\n\
     -fu   : Uninstall service.\n\
-    -show : Show the MIT license(redefined)\n\
+    -show : Show the General Public License\n\
     --debug-pipe : Debug Mode(reserved for deverloper)\n\
 Example:\n\
     tool -fi\n\n\
@@ -262,7 +238,7 @@ int _tmain(int argc,TCHAR const ** argv){
 		CASE(EXEC_START_SERVICE,StartServiceCtrlDispatcher(STE));
 		CASE(EXEC_START_HELP,__show_str(SHOW_HELP,Sname));
 		CASE(EXEC_DEBUG_RESET,___debug_point_reset(EXEC_DEBUG_RESET));
-		CASE(SHOW_LICENSE,__show_str(szMitLicense_Raw,_ptrresev_NULL_));
+		CASE(SHOW_LICENSE,__show_str(szgpl_Raw,_ptrresev_NULL_));
 		CASE(DEBUG_SERVICE_STOP,___debug_point_reset(DEBUG_SERVICE_STOP));
 		CASE(DEBUG_SERVICE_START,___debug_point_reset(DEBUG_SERVICE_START));
 		CASE(DEBUG_SERVICE_REINSTALL,___debug_point_reset(DEBUG_SERVICE_REINSTALL));
@@ -278,7 +254,7 @@ void Func_ResetFile(){
 	_tprintf(_T("\
 ------------------------------------------------------------\n\
 Hosts Tool for Windows Console by: Too-Naive\n\
-Copyright (C) 2016 @Too-Naive License:MIT LICENSE(redefined)\n\
+Copyright (C) 2016 @Too-Naive License:General Public License\n\
 ------------------------------------------------------------\n"));
 	if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,localbufsize))
 		_tprintf(_T("    GetEnvironmentVariable() Error!(GetLastError():%ld)\n\
@@ -442,7 +418,7 @@ Please contact the application's support team for more information.\n"),
 void Func_Service_Install(bool _q){
 	SC_HANDLE shMang=_ptrresev_NULL_,shSvc=_ptrresev_NULL_;
 	if (_q){
-		_tprintf(_T("    LICENSE:MIT LICENSE(redefined)\n    \
+		_tprintf(_T("    LICENSE:General Public License\n    \
 Copyright (C) 2016 @Too-Naive\n\n"));
 		_tprintf(_T("    Bug report:sometimes.naive[at]hotmail.com \n\t       \
 Or open new issue\n------------------------------------------------------\n\n"));
@@ -568,7 +544,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 	if (!bReserved){
 		if (!(hdThread=CreateThread(_ptrresev_NULL_,0,Func_Update,_ptrresev_NULL_,0,_ptrresev_NULL_)))
 			_tprintf(_T("CreateThread() Failed in getnewversion(%ld)\n"),GetLastError());
-		_tprintf(_T("    LICENSE:MIT LICENSE(redefined)\n%s\n    Copyright (C) 2016 @Too-Naive\n"),welcomeShow);
+		_tprintf(_T("    LICENSE:General Public License\n%s\n    Copyright (C) 2016 @Too-Naive\n"),welcomeShow);
 		_tprintf(_T("    Project website:%s\n"),objectwebsite);
 		_tprintf(_T("    Bug report:sometimes.naive[at]hotmail.com \n\t       Or open new issue\n\n\n"));
 		_tprintf(_T("    Start replace hosts file:\n"));//    Step1:Get System Driver..."));
@@ -576,7 +552,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 	else{
 		if (request_client) ___pipeopen(),___pipesentmessage(_T("\nMessage from service:\n\n"));
 		Func_FastPMNTS(_T("Open log file.\n"));
-		___checkEx(_T("LICENSE:MIT LICENSE(redefined)\n"),1);
+		___checkEx(_T("LICENSE:General Public License\n"),1);
 		___checkEx(_T("Copyright (C) 2016 Too-Naive\n"),0);
 		___checkEx(_T("Bug report:sometimes.naive[at]hotmail.com\n"),0);
 		___checkEx(_T("           Or open new issue.(https://github.com/HostsTools/Windows)\n"),0);

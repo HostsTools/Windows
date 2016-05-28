@@ -1,7 +1,7 @@
 # Download Executable File 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
-Last update: May 26th , 2016
+Last update: May 28th , 2016
 
 #### 下载地址:(v2.1.5p)
  - [点我来下载](https://git.io/vwsqL)
@@ -14,7 +14,7 @@ Server | Microsoft Windows Server 2003 Family
 
 >If you choose `Download`, It means you agreed the MIT license(redefined).
 
-# 12天后才会继续推出新的更新
+# 10天后才会继续推出新的更新
 目前`build passing` , 如有其他疑问请在issue中提出问题    
 最新的版本更新是 现在程序不会忽略`#`开头的注释语句
 
@@ -69,15 +69,7 @@ main program file: `tool.exe`
 
 ### Code license:
 
->The MIT License(MIT)(redefined)
-
->Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, and to permit persons to  whom the Software is furnished to do so, BUT DO NOT SUBLICENSE, AND / OR SELL OF THE SOFTWARE,subject to the following conditions :
-
->The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
->THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
->If you use the project's source code or its derivative products (including but not limited to the executable file), it means that you have agreed to the terms of this license and comply with the terms of the license. If you do not agree to this license agreement, please do not use this project's source code and its derivatives (including but not limited to the executable file).
+General public license version 3
 
 ### Service Debug Mode :
 

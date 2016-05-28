@@ -30,7 +30,7 @@
     <ClInclude Include="..\..\hander\download.hpp" />
     <ClInclude Include="..\..\hander\ptrerr.hpp" />
     <ClInclude Include="..\..\hander\diff.hpp" />
-    <ClInclude Include="..\..\hander\mitlicense.hpp" />
+    <ClInclude Include="..\..\hander\gpllicense.hpp" />
     <ClInclude Include="..\..\hander\pipedebug.hpp" />
     <ClInclude Include="..\..\hander\default.hpp" />
   </ItemGroup>
