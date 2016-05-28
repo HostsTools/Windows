@@ -57,7 +57,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.5t2  Build time:May 28th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.5t2  Build time:May 29th, '16")
 //#define _VERSION 215
 
 #define CASE(x,y) case x : y; break;
@@ -156,6 +156,7 @@ SERVICE_TABLE_ENTRY STE[2]={{Sname,Service_Main},{_ptrresev_NULL_,_ptrresev_NULL
 //define buffer
 TCHAR DEFBUF(buf1,localbufsize),DEFBUF(buf2,localbufsize),
 	DEFBUF(buf3,localbufsize),DEFBUF(szline,localbufsize);
+char iobuffer[localbufsize];
 //end.
 
 //define parameters
@@ -636,15 +637,21 @@ Finish:Hosts file Not update.\n\n"));
 				if (!CopyFile(buf1,buf2,FALSE))
 					THROWERR(_T("CopyFile() Error on copy a backup file"));
 				if (!bReserved) _tprintf(_T("\tDone.\n    Step3:Replace Default Hosts File..."));
-				if (!CopyFile(ReservedFile,buf1,FALSE))
+				if (!CopyFile(ChangeCTLR,buf1,FALSE))
 					THROWERR(_T("CopyFile() Error on copy hosts file to system path"));
-				if (!((fp=_tfopen(ChangeCTLR,_T("r"))) && (_=_tfopen(buf1,_T("a+")))))
+				if (!((fp=_tfopen(ReservedFile,_T("rb"))) && (_=_tfopen(buf1,_T("ab+")))))
+					THROWERR(_T("_tfopen() Error in copy hosts file."));
+				if (fseek(_,0,SEEK_SET)) THROWERR(_T("fseek() Error!"));
+				size_t readbyte=0;
+				while ((readbyte=fread(iobuffer,sizeof(char),localbufsize,fp)))
+					fwrite(iobuffer,sizeof(char),readbyte,_);
+/*				if (!((fp=_tfopen(ChangeCTLR,_T("r"))) && (_=_tfopen(buf1,_T("a+")))))
 					THROWERR(_T("_tfopen() Error in copy hosts file."));
 				while (!feof(fp)){
 					memset(szline,0,sizeof(szline));
 					_fgetts(szline,1000,fp);
 					_fputts(szline,_);
-				}
+				}*/
 				fclose(fp);fclose(_);
 				Sleep(500);
 				DeleteFile(ReservedFile);

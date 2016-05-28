@@ -1,7 +1,7 @@
 # Download Executable File 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
-Last update: May 28th , 2016
+Last update: May 29th , 2016
 
 #### 下载地址:(v2.1.5p)
  - [点我来下载](https://git.io/vwsqL)
@@ -14,7 +14,7 @@ Server | Microsoft Windows Server 2003 Family
 
 >If you choose `Download`, It means you agreed the MIT license(redefined).
 
-# 10天后才会继续推出新的更新
+# 9天后才会继续推出新的更新
 目前`build passing` , 如有其他疑问请在issue中提出问题    
 最新的版本更新是 现在程序不会忽略`#`开头的注释语句
 
