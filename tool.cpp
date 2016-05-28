@@ -13,7 +13,6 @@
 #include <stdlib.h>
 #include "hander/ptrerr.hpp"
 #include "hander/diff.hpp"
-#include "hander/gpllicense.hpp"
 #include <signal.h>
 #include "hander/pipedebug.hpp"
 #include "hander/default.hpp"
@@ -107,13 +106,12 @@ struct expection{
 Hosts Tool for Windows Console by: Too-Naive\n\
 Copyright (C) 2016 @Too-Naive License:General Public License\n\
 ------------------------------------------------------------\n\n\
-Usage: tool [-? | -r | -fi | -fu | -show | --debug-pipe]\n\n\
+Usage: tool [-? | -r | -fi | -fu | --debug-pipe]\n\n\
 Options:\n\
     -?    : Show this help message.\n\
     -r    : Reset system hosts file to default.\n\
     -fi   : Install Auto-Update hosts service(Service Name:%s).\n\
     -fu   : Uninstall service.\n\
-    -show : Show the General Public License\n\
     --debug-pipe : Debug Mode(reserved for deverloper)\n\
 Example:\n\
     tool -fi\n\n\
@@ -150,7 +148,7 @@ DWORD __stdcall NormalEntry(LPVOID);
 void ___debug_point_reset(int);
 inline void __show_str(TCHAR const *,TCHAR const *);
 void Func_ResetFile();
-DWORD __stdcall Func_Update(LPVOID);
+//DWORD __stdcall Func_Update(LPVOID);
 
 
 SERVICE_TABLE_ENTRY STE[2]={{Sname,Service_Main},{_ptrresev_NULL_,_ptrresev_NULL_}};
@@ -167,7 +165,7 @@ TCHAR DEFBUF(buf1,localbufsize),DEFBUF(buf2,localbufsize),
 #define	EXEC_START_INSTALL_SERVICE	(1<<0x03)
 #define	EXEC_START_UNINSTALL_SERVICE	(1<<0x04)
 #define	EXEC_START_HELP			(1<<0x05)
-#define	SHOW_LICENSE			(1<<0x06)
+//#define	SHOW_LICENSE			(1<<0x06)
 #define	RESET_FILE			(1<<0x07)
 #define	EXEC_BAD_PARAMETERS		(1073741824)
 
@@ -187,7 +185,7 @@ TCHAR const *szParameters[]={
 	_T("fu"),				//2
 	_T("\x02\x03"),				//3
 	_T("-debug-reset"),			//4
-	_T("show"),				//5
+	_T("\x02\x03"),				//5
 	_T("?"),				//6
 	_T("-debug-stop"),			//7
 	_T("-debug-start"),			//8
@@ -215,7 +213,7 @@ int __fastcall __Check_Parameters(int argc,TCHAR const **argv){
 		case  1: return EXEC_START_INSTALL_SERVICE;
 		case  2: return EXEC_START_UNINSTALL_SERVICE;
 		case  4: return EXEC_DEBUG_RESET;	//restart service
-		case  5: return SHOW_LICENSE;
+//		case  5: return SHOW_LICENSE;
 		case  6: return EXEC_START_HELP;
 		case  7: return DEBUG_SERVICE_STOP;	//stop service
 		case  8: return DEBUG_SERVICE_START;	//start service
@@ -238,7 +236,7 @@ int _tmain(int argc,TCHAR const ** argv){
 		CASE(EXEC_START_SERVICE,StartServiceCtrlDispatcher(STE));
 		CASE(EXEC_START_HELP,__show_str(SHOW_HELP,Sname));
 		CASE(EXEC_DEBUG_RESET,___debug_point_reset(EXEC_DEBUG_RESET));
-		CASE(SHOW_LICENSE,__show_str(szgpl_Raw,_ptrresev_NULL_));
+//		CASE(SHOW_LICENSE,__show_str(szgpl_Raw,_ptrresev_NULL_));
 		CASE(DEBUG_SERVICE_STOP,___debug_point_reset(DEBUG_SERVICE_STOP));
 		CASE(DEBUG_SERVICE_START,___debug_point_reset(DEBUG_SERVICE_START));
 		CASE(DEBUG_SERVICE_REINSTALL,___debug_point_reset(DEBUG_SERVICE_REINSTALL));
@@ -541,9 +539,9 @@ DWORD __stdcall NormalEntry(LPVOID){
 		Func_PMNTTS(_T("GetEnvironmentVariable() Error!(GetLastError():%ld)\n\
 \tCannot get system path!"),GetLastError()),abort();
 //	int service_reserved=0;
-	if (!bReserved){
+	if (!bReserved){/*
 		if (!(hdThread=CreateThread(_ptrresev_NULL_,0,Func_Update,_ptrresev_NULL_,0,_ptrresev_NULL_)))
-			_tprintf(_T("CreateThread() Failed in getnewversion(%ld)\n"),GetLastError());
+			_tprintf(_T("CreateThread() Failed in getnewversion(%ld)\n"),GetLastError());*/
 		_tprintf(_T("    LICENSE:General Public License\n%s\n    Copyright (C) 2016 @Too-Naive\n"),welcomeShow);
 		_tprintf(_T("    Project website:%s\n"),objectwebsite);
 		_tprintf(_T("    Bug report:sometimes.naive[at]hotmail.com \n\t       Or open new issue\n\n\n"));

@@ -38,7 +38,6 @@ tool.cpp | Main program file
 default.hpp | Default hosts file
 diff.hpp | Support file check different
 download.hpp | Download support
-mitlicense.hpp | MIT license string file
 make.cmd | Compile script
 pipedebug.hpp | Debug tool for service mode
 ptrerr.hpp | Log file support
