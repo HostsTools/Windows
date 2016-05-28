@@ -602,7 +602,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 					if (_tcsstr(szline,_T("# Copyright (c) 2014")))
 					break;// else continue;//deleted in new feature
 				}
-				if (*szline==_T('\n')) continue;
+				//if (*szline==_T('\n')) continue;
 				_fputts(szline,_);
 			}
 			fclose(_);
