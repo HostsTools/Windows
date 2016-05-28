@@ -21,9 +21,6 @@
     <ClInclude Include="..\..\hander\ptrerr.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <?ClInclude Include="..\..\hander\gpllicense.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude?>
     <ClInclude Include="..\..\hander\diff.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
