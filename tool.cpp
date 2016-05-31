@@ -57,8 +57,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.5t2  Build time:May 29th, '16")
-//#define _VERSION 215
+#define ConsoleTitle _T("racaljk-host tool    v2.1.5t3  Build time:May 31th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -73,7 +72,7 @@ There seems something wrong in download file, we will retry after 5 seconds.\n")
 #define BAD_EXIT \
 		_tprintf(_T("Bad Parameters.\nUsing \"-?\" Parameter to show how to use.\n")),\
 		abort();
-#define _BAKFORMAT _T("%s\\system32\\drivers\\etc\\hosts.%04d%02d%02d.%02d%02d%02d.bak")
+#define _BAKFORMAT _T("%s\\drivers\\etc\\hosts.%04d%02d%02d.%02d%02d%02d.bak")
 
 //debug & log file set
 #define LogFileLocate _T("c:\\Hosts_Tool_log.log")
@@ -255,11 +254,11 @@ void Func_ResetFile(){
 Hosts Tool for Windows Console by: Too-Naive\n\
 Copyright (C) 2016 @Too-Naive License:General Public License\n\
 ------------------------------------------------------------\n"));
-	if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,localbufsize))
-		_tprintf(_T("    GetEnvironmentVariable() Error!(GetLastError():%ld)\n\
+	if (!GetSystemDirectory(buf3,localbufsize))
+		_tprintf(_T("    GetSystemDirectory() Error!(GetLastError():%ld)\n\
 \tCannot get system path!"),GetLastError()),abort();
 	GetLocalTime(&st);
-	_stprintf(buf1,_T("%s\\system32\\drivers\\etc\\hosts"),buf3);
+	_stprintf(buf1,_T("%s\\drivers\\etc\\hosts"),buf3);
 	_stprintf(buf2,_BAKFORMAT,buf3,st.wYear,st.wMonth,st.wDay,st.wHour,st.wMinute,st.wSecond);
 	if (CopyFile(buf1,buf2,FALSE))
 		_tprintf(_T("Backup File success\nFilename:%s\n\n"),buf2);
@@ -288,71 +287,6 @@ inline void __show_str(TCHAR const* st,TCHAR const * _ingore){
 	if (!_ingore) _tprintf(_T("%s"),st);
 	else _tprintf(st,_ingore);
 	callsystempause;
-	return ;
-}
-
-/*DWORD __stdcall Func_Update(LPVOID){
-	if (!Func_Download(_T("https://raw.githubusercontent.com/HostsTools/Windows/master/VERSION"),
-	_T("VERSION.tmp")))return ERROR_FILE_NOT_FOUND;
-//	TCHAR * szver=new TCHAR[20];
-	DWORD dwVersion=0;
-//	memset(szver,0,sizeof(szver));
-	FILE *_=_tfopen(_T("VERSION.tmp"),_T("r"));
-	if (!_) return ERROR_OPEN_FAILED;//_tprintf(_T("Unable to open \"VERSION.tmp\"\n"))
-	_fgettc(_);
-	_ftscanf(_,_T("%ld"),&dwVersion);
-	fclose(_);
-//	_fgetts(szver,20,_);fclose(_);_=_ptrresev_NULL_;
-	Sleep(500);
-	DeleteFile(_T("VERSION.tmp"));
-	bool _difference=(_VERSION<dwVersion);//(_tcscmp(_VERSION,szver)?true:false);szver[_tcslen(szver)-1]=_T('\0');
-//	_tprintf(_T("%s\n"),szver);
-//	delete [] szver;
-//	szver=_ptrresev_NULL_;
-	while (_difference){
-		SetConsoleTitle(_T("!New version is avaliable!"));
-		Sleep(1000);
-		SetConsoleTitle(ConsoleTitle);
-		Sleep(1000);
-	}
-	return ERROR_SUCCESS;
-}*/
-
-void Func_Service_UnInstall(bool _quite){
-	SC_HANDLE shMang=_ptrresev_NULL_,shSvc=_ptrresev_NULL_;
-	try{
-		if (!GetEnvironmentVariable(_T("SystemRoot"),buf2,localbufsize))
-			THROWERR(_T("GetEnvironmentVariable() Error in UnInstall Service."));
-		_stprintf(buf1,_T("%s\\hoststools.exe"),buf2);
-		if (!(shMang=OpenSCManager(_ptrresev_NULL_,_ptrresev_NULL_,SC_MANAGER_ALL_ACCESS)))
-			THROWERR(_T("OpenSCManager() Error in Uninstall service."));
-		if (!(shSvc=OpenService(shMang,Sname,SERVICE_ALL_ACCESS)))
-			if (_quite) THROWERR(_T("OpenService() Error in Uninstall service.\nIs service exist?"));
-		if (!ControlService(shSvc,SERVICE_CONTROL_STOP,&ss))
-			if (_quite) _tprintf(_T("ControlService() Error in Uninstall service.\n%s"),
-				_T("Service may not in running.\n"));
-		Sleep(2000);//Wait for service stop
-		if (!DeleteService(shSvc))
-			if (_quite) THROWERR(_T("DeleteService() Error in UnInstall service."));
-		if (!DeleteFile(buf1))
-			if (_quite) {
-				_tprintf(_T("Executable File located:%s\n"),buf1);
-				THROWERR(_T("DeleteFile() Error in Uninstall service.\n\
-You may should delete it manually."));
-		}
-	}
-	catch (expection _r){
-		_tprintf(_T("\nFatal Error:\n%s (GetLastError():%ld)\n\
-Please contact the application's support team for more information.\n"),
-		_r.Message,GetLastError());
-		_tprintf(_T("\n[Debug Message]\n%s\n%s\n"),buf1,buf2);
-		CloseServiceHandle(shSvc);
-		CloseServiceHandle(shMang);
-		if (_quite) abort();
-	}
-	CloseServiceHandle(shSvc);
-	CloseServiceHandle(shMang);
-	_tprintf(_T("Service Uninstall Successfully\n"));
 	return ;
 }
 
@@ -414,6 +348,44 @@ Please contact the application's support team for more information.\n"),
 	return ;
 }
 
+void Func_Service_UnInstall(bool _quite){
+	SC_HANDLE shMang=_ptrresev_NULL_,shSvc=_ptrresev_NULL_;
+	try{
+		if (!GetSystemDirectory(buf3,localbufsize))
+			THROWERR(_T("GetSystemDirectory() Error in UnInstall Service."));
+		_stprintf(buf1,_T("%s\\..\\hoststools.exe"),buf3);
+		if (!(shMang=OpenSCManager(_ptrresev_NULL_,_ptrresev_NULL_,SC_MANAGER_ALL_ACCESS)))
+			THROWERR(_T("OpenSCManager() Error in Uninstall service."));
+		if (!(shSvc=OpenService(shMang,Sname,SERVICE_ALL_ACCESS)))
+			if (_quite) THROWERR(_T("OpenService() Error in Uninstall service.\nIs service exist?"));
+		if (!ControlService(shSvc,SERVICE_CONTROL_STOP,&ss))
+			if (_quite) _tprintf(_T("ControlService() Error in Uninstall service.\n%s"),
+				_T("Service may not in running.\n"));
+		Sleep(2000);//Wait for service stop
+		if (!DeleteService(shSvc))
+			if (_quite) THROWERR(_T("DeleteService() Error in UnInstall service."));
+		if (!DeleteFile(buf1))
+			if (_quite) {
+				_tprintf(_T("Executable File located:%s\n"),buf1);
+				THROWERR(_T("DeleteFile() Error in Uninstall service.\n\
+You may should delete it manually."));
+		}
+	}
+	catch (expection _r){
+		_tprintf(_T("\nFatal Error:\n%s (GetLastError():%ld)\n\
+Please contact the application's support team for more information.\n"),
+		_r.Message,GetLastError());
+		_tprintf(_T("\n[Debug Message]\n%s\n%s\n"),buf1,buf2);
+		CloseServiceHandle(shSvc);
+		CloseServiceHandle(shMang);
+		if (_quite) abort();
+	}
+	CloseServiceHandle(shSvc);
+	CloseServiceHandle(shMang);
+	_tprintf(_T("Service Uninstall Successfully\n"));
+	return ;
+}
+
 void Func_Service_Install(bool _q){
 	SC_HANDLE shMang=_ptrresev_NULL_,shSvc=_ptrresev_NULL_;
 	if (_q){
@@ -423,10 +395,12 @@ Copyright (C) 2016 @Too-Naive\n\n"));
 Or open new issue\n------------------------------------------------------\n\n"));
 	}
 	try{
-		if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,localbufsize))
-			THROWERR(_T("GetEnvironmentVariable() Error in Install Service."));
-		_stprintf(buf1,_T("%s\\hoststools.exe"),buf3);
-		_stprintf(buf2,_T("\"%s\\hoststools.exe\" -svc"),buf3);
+/*		if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,localbufsize))
+			THROWERR(_T("GetEnvironmentVariable() Error in Install Service."));*/
+		if (!GetSystemDirectory(buf3,localbufsize))
+			THROWERR(_T("GetSystemDirectory() Error in Install Service."));
+		_stprintf(buf1,_T("%s\\..\\hoststools.exe"),buf3);
+		_stprintf(buf2,_T("\"%s\\..\\hoststools.exe\" -svc"),buf3);
 		if (request_client)
 			_stprintf(szline,_T("%s %s"),buf2,szParameters[11]),
 			_tcscpy(buf2,szline),memset(szline,0,sizeof(szline)/sizeof(TCHAR));
@@ -536,13 +510,10 @@ DWORD __stdcall NormalEntry(LPVOID){
 	SYSTEMTIME st={0,0,0,0,0,0,0,0};
 	FILE * fp=_ptrresev_NULL_,*_=_ptrresev_NULL_;
 	HANDLE hdThread=INVALID_HANDLE_VALUE;
-	if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,localbufsize))
-		Func_PMNTTS(_T("GetEnvironmentVariable() Error!(GetLastError():%ld)\n\
+	if (!GetSystemDirectory(buf3,localbufsize))
+		Func_PMNTTS(_T("GetSystemDirectory() Error!(GetLastError():%ld)\n\
 \tCannot get system path!"),GetLastError()),abort();
-//	int service_reserved=0;
-	if (!bReserved){/*
-		if (!(hdThread=CreateThread(_ptrresev_NULL_,0,Func_Update,_ptrresev_NULL_,0,_ptrresev_NULL_)))
-			_tprintf(_T("CreateThread() Failed in getnewversion(%ld)\n"),GetLastError());*/
+	if (!bReserved){
 		_tprintf(_T("    LICENSE:General Public License\n%s\n    Copyright (C) 2016 @Too-Naive\n"),welcomeShow);
 		_tprintf(_T("    Project website:%s\n"),objectwebsite);
 		_tprintf(_T("    Bug report:sometimes.naive[at]hotmail.com \n\t       Or open new issue\n\n\n"));
@@ -560,7 +531,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 		Sleep(bReserved?(request_client?0:60000):0);//Waiting for network
 		GetLocalTime(&st);
 		if (bReserved) ___autocheckmess(_T("Start replace hosts file.\n"));
-		_stprintf(buf1,_T("%s\\system32\\drivers\\etc\\hosts"),buf3);
+		_stprintf(buf1,_T("%s\\drivers\\etc\\hosts"),buf3);
 		_stprintf(buf2,_BAKFORMAT,buf3,st.wYear,st.wMonth,st.wDay,st.wHour,st.wMinute,st.wSecond);
 		SetFileAttributes(buf1,FILE_ATTRIBUTE_NORMAL); //for avoid CopyFile or _tfopen failed.
 		try {
@@ -633,7 +604,6 @@ Finish:Hosts file Not update.\n\n"));
 				}
 			}
 			else {
-//				if (!bReserved) _tprintf(_T("\tDone.\n    Step3:Copy Backup File..."));
 				if (!CopyFile(buf1,buf2,FALSE))
 					THROWERR(_T("CopyFile() Error on copy a backup file"));
 				if (!bReserved) _tprintf(_T("\tDone.\n    Step3:Replace Default Hosts File..."));
@@ -645,13 +615,6 @@ Finish:Hosts file Not update.\n\n"));
 				size_t readbyte=0;
 				while ((readbyte=fread(iobuffer,sizeof(char),localbufsize,fp)))
 					fwrite(iobuffer,sizeof(char),readbyte,_);
-/*				if (!((fp=_tfopen(ChangeCTLR,_T("r"))) && (_=_tfopen(buf1,_T("a+")))))
-					THROWERR(_T("_tfopen() Error in copy hosts file."));
-				while (!feof(fp)){
-					memset(szline,0,sizeof(szline));
-					_fgetts(szline,1000,fp);
-					_fputts(szline,_);
-				}*/
 				fclose(fp);fclose(_);
 				Sleep(500);
 				DeleteFile(ReservedFile);
@@ -682,7 +645,6 @@ Finish:Hosts file Not update.\n\n"));
 				abort();
 			}
 		}
-//		if (request_client) service_reserved++;
 		Sleep(bReserved?(request_client?5000:(29*60000)):0);
 	} while (bReserved);// && (service_reserved<5));
 	return GetLastError();
