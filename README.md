@@ -90,6 +90,4 @@ Fixed: if exit program unexpectally, service will run with system start.(and the
 
 ### How to compile?
 
-Please see the documents.md
-
-<del>Sorry for my poor English.</del>
+Please see the [documents.md](https://github.com/HostsTools/Windows/blob/master/documents.md)
