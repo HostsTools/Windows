@@ -34,8 +34,8 @@ TCHAR const * showNotice="\
     1. Run normaly\n\
     2. Install automanic update service\n\
     3. Uninstall automanic update service\n\
-	4. Reset Hosts File\n\
-	5. Show help message\n\
+    4. Reset Hosts File\n\
+    5. Show help message\n\
     6. Open debug mode to listen service\n\
     7. Stop Service\n\
     8. Start Service\n\
