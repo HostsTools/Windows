@@ -258,6 +258,7 @@ int _tmain(int argc,TCHAR const ** argv){
 }
 
 void Func_CheckProFile(){
+	SetLastError(ERROR_SUCCESS);
 	if (!GetPrivateProfileString(privateAppName,privateCommitName,_T("false"),szline,localbufsize,privateFileName));
 //	printf("%ld",GetLastError());
 	if (GetLastError()==ERROR_FILE_NOT_FOUND){
@@ -639,7 +640,6 @@ DWORD __stdcall NormalEntry(LPVOID){
 				else
 					_tprintf(_T("Delete tmpfile error.(%ld)\n"),GetLastError());
 			}
-			//new feature
 			if (!((fp=_tfopen(buf1,_T("r"))) && (_=_tfopen(ReservedFile,_T("w")))));
 			while (!feof(fp)){
 				memset(szline,0,sizeof(szline));
@@ -647,7 +647,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 				if (*szline==_T('#')) {
 					if (_tcsstr(szline,_T("# Copyright (c) 2014")))
 					break; else 
-					if (bIgnoreCommit) continue;//deleted in new feature
+					if (bIgnoreCommit) continue;
 				}
 				if (!bIgnoreNewline && *szline==_T('\n')) continue;
 				_fputts(szline,_);
@@ -666,7 +666,6 @@ DWORD __stdcall NormalEntry(LPVOID){
 			}
 			fclose(fp);
 			fp=_ptrresev_NULL_,_=_ptrresev_NULL_;
-			//end
 			if (!Func_CheckDiff(ChangeCTLR,DownLocated)){
 				if (!bReserved) _tprintf(_T("\tDone.\n\n    \
 diff exited with value 0(0x00)\n    \
@@ -700,7 +699,7 @@ Finish:Hosts file Not update.\n\n"));
 			}
 		}
 		Sleep(bReserved?(request_client?5000:(29*60000)):0);
-	} while (bReserved);// && (service_reserved<5));
+	} while (bReserved);
 	return GetLastError();
 }
 

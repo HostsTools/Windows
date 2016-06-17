@@ -39,6 +39,7 @@ TCHAR const * showNotice="\
     6. Open debug mode to listen service\n\
     7. Stop Service\n\
     8. Start Service\n\
+    9. Open \".ini\" file\n\
     ";
 const int max_input_int=8;
 
@@ -62,6 +63,8 @@ int _tmain(int,TCHAR const **){
 		case 6:str=szParameters[10];break;
 		case 7:str=szParameters[7];break;
 		case 8:str=szParameters[8];break;
+		case 9:ShellExecute(NULL,_T("open"),_T("notepad"),_T(" %windir%\\hstool.ini"),NULL,SW_SHOWDEFAULT);
+			exit(0);
 	}
 	_stprintf(_,_T("-%s"),str);
 	ShellExecute(NULL,_T("open"),_T("tool.exe"),_,NULL,SW_SHOWNORMAL);
