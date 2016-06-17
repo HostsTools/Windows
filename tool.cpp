@@ -57,7 +57,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.5t3  Build time:May 31th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.5  Build time:Jun. 17th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -92,6 +92,13 @@ const TCHAR * szServiceShowName=_T("racaljk-hosts Tool");
 //end
 
 const size_t localbufsize=1024;
+
+//private file const set
+const TCHAR * privateFileName=_T("hstool.ini");
+const TCHAR * privateAppName=_T("toolIgnore");
+const TCHAR * privateCommitName=_T("Commit");
+const TCHAR * privateNewLineName=_T("NewLine");
+//end
 
 struct expection{
 	const TCHAR *Message;
@@ -134,7 +141,7 @@ SERVICE_STATUS ss;
 HANDLE lphdThread[]={
 	INVALID_HANDLE_VALUE,INVALID_HANDLE_VALUE
 };
-bool request_client,bReserved;
+bool request_client,bReserved,bIgnoreNewline,bIgnoreCommit;
 //end.
 
 //function declaration
@@ -147,6 +154,9 @@ DWORD __stdcall NormalEntry(LPVOID);
 void ___debug_point_reset(int);
 inline void __show_str(TCHAR const *,TCHAR const *);
 void Func_ResetFile();
+void ___Func_pipeCallBack(TCHAR const*);
+void Func_CallCopyHostsFile();
+void Func_CheckProFile();
 //DWORD __stdcall Func_Update(LPVOID);
 
 
@@ -247,6 +257,19 @@ int _tmain(int argc,TCHAR const ** argv){
 	return 0;
 }
 
+void Func_CheckProFile(){
+	if (!GetPrivateProfileString(privateAppName,privateCommitName,_T("false"),szline,localbufsize,privateFileName));
+//	printf("%ld",GetLastError());
+	if (GetLastError()==ERROR_FILE_NOT_FOUND){
+		if (WritePrivateProfileString(privateAppName,privateCommitName,_T("false"),privateFileName));
+		if (WritePrivateProfileString(privateAppName,privateNewLineName,_T("false"),privateFileName));
+	}
+	if (!_tcscmp(szline,_T("true"))) bIgnoreCommit=true;
+	if (!GetPrivateProfileString(privateAppName,privateNewLineName,_T("false"),szline,localbufsize,privateFileName));
+	if (!_tcscmp(szline,_T("true"))) bIgnoreNewline=true;
+	return ;
+}
+
 void Func_ResetFile(){
 	SYSTEMTIME st={0,0,0,0,0,0,0,0};
 	_tprintf(_T("\
@@ -344,16 +367,28 @@ Please contact the application's support team for more information.\n"),
 	}
 	CloseServiceHandle(shSvc);
 	CloseServiceHandle(shMang);
-//	_tprintf(_T("Exited debug mode.(%d)\n"),_par);
 	return ;
 }
 
 void Func_Service_UnInstall(bool _quite){
 	SC_HANDLE shMang=_ptrresev_NULL_,shSvc=_ptrresev_NULL_;
+	Sleep(1000);
 	try{
 		if (!GetSystemDirectory(buf3,localbufsize))
 			THROWERR(_T("GetSystemDirectory() Error in UnInstall Service."));
 		_stprintf(buf1,_T("%s\\..\\hoststools.exe"),buf3);
+		if (!GetModuleFileName(_ptrresev_NULL_,buf2,localbufsize))
+			THROWERR(_T("GetModuleFileName() Error in UnInstall Service."));
+		if (!_tcscmp(buf1,buf2)){
+			if (!GetEnvironmentVariable(_T("TEMP"),buf3,localbufsize))
+				THROWERR(_T("GetEnvironmentVariable() Error in UnInstall Service."));
+			_stprintf(buf1,_T("%s\\Au__.exe"),buf3);
+			if (!CopyFile(buf2,buf1,FALSE))
+				THROWERR(_T("CopyFile() Error in UnInstall Service."));
+			if (!ShellExecute(NULL,_T("open"),buf1,_T("-fu"),NULL,SW_SHOWNORMAL))
+				THROWERR(_T("ShellExecute() Error in UnInstall Service."));
+			exit(0);
+		}
 		if (!(shMang=OpenSCManager(_ptrresev_NULL_,_ptrresev_NULL_,SC_MANAGER_ALL_ACCESS)))
 			THROWERR(_T("OpenSCManager() Error in Uninstall service."));
 		if (!(shSvc=OpenService(shMang,Sname,SERVICE_ALL_ACCESS)))
@@ -502,6 +537,36 @@ inline void __fastcall _perrtext(const TCHAR * _str,bool _Reserved){
 	return ;
 }
 
+void ___Func_pipeCallBack(const TCHAR * str){
+	_tprintf(_T("%s"),str);
+	return ;
+}
+
+void Func_CallCopyHostsFile(){
+	FILE * fp,*_;
+	if (!CopyFile(buf1,buf2,FALSE))
+		THROWERR(_T("CopyFile() Error on copy a backup file"));
+	if (!bReserved) _tprintf(_T("\tDone.\n    Step3:Replace Default Hosts File..."));
+	if (!CopyFile(ChangeCTLR,buf1,FALSE))
+		THROWERR(_T("CopyFile() Error on copy hosts file to system path"));
+	if (!((fp=_tfopen(ReservedFile,_T("rb"))) && (_=_tfopen(buf1,_T("ab+")))))
+		THROWERR(_T("_tfopen() Error in copy hosts file."));
+	if (fseek(_,0,SEEK_SET)) THROWERR(_T("fseek() Error!"));
+	size_t readbyte=0;
+	while ((readbyte=fread(iobuffer,sizeof(char),localbufsize,fp)))
+		fwrite(iobuffer,sizeof(char),readbyte,_);
+	fclose(fp);fclose(_);
+	Sleep(500);
+//	DeleteFile(ReservedFile);
+//	DeleteFile(DownLocated);
+	if (!bReserved) _tprintf(_T("Replace File Successfully\n"));
+	else ___autocheckmess(_T("Replace File Successfully\n"));
+//	DeleteFile(ChangeCTLR);
+	if (!bReserved) MessageBox(_ptrresev_NULL_,_T("Hosts File Set Success!"),
+		_T("Congratulations!"),MB_ICONINFORMATION|MB_SETFOREGROUND);
+	return ;
+}
+
 
 //TODO: temp string length only 1000(TCHAR)
 //is safe for this program? I don't know.
@@ -510,9 +575,20 @@ DWORD __stdcall NormalEntry(LPVOID){
 	SYSTEMTIME st={0,0,0,0,0,0,0,0};
 	FILE * fp=_ptrresev_NULL_,*_=_ptrresev_NULL_;
 	HANDLE hdThread=INVALID_HANDLE_VALUE;
+	Func_CheckProFile();
 	if (!GetSystemDirectory(buf3,localbufsize))
 		Func_PMNTTS(_T("GetSystemDirectory() Error!(GetLastError():%ld)\n\
 \tCannot get system path!"),GetLastError()),abort();
+	_stprintf(buf1,_T("%s\\.."),buf3);
+//	printf(buf1);
+	SetCurrentDirectory(buf1);
+	Func_CheckProFile();
+	if (!GetEnvironmentVariable(_T("TEMP"),szline,localbufsize))
+		Func_PMNTTS(_T("GetEnvironmentVariable() Error!(GetLastError():%ld)\n\
+\tCannot get %%TEMP%% path!"),GetLastError()),abort();
+	SetCurrentDirectory(szline);/*
+	GetCurrentDirectory(localbufsize,buf1);
+	_tprintf(_T("Current directory:%s\n"),szline);*/
 	if (!bReserved){
 		_tprintf(_T("    LICENSE:General Public License\n%s\n    Copyright (C) 2016 @Too-Naive\n"),welcomeShow);
 		_tprintf(_T("    Project website:%s\n"),objectwebsite);
@@ -570,9 +646,10 @@ DWORD __stdcall NormalEntry(LPVOID){
 				_fgetts(szline,1000,fp);
 				if (*szline==_T('#')) {
 					if (_tcsstr(szline,_T("# Copyright (c) 2014")))
-					break;// else continue;//deleted in new feature
+					break; else 
+					if (bIgnoreCommit) continue;//deleted in new feature
 				}
-				//if (*szline==_T('\n')) continue;
+				if (!bIgnoreNewline && *szline==_T('\n')) continue;
 				_fputts(szline,_);
 			}
 			fclose(_);
@@ -595,36 +672,13 @@ DWORD __stdcall NormalEntry(LPVOID){
 diff exited with value 0(0x00)\n    \
 Finish:Hosts file Not update.\n\n"));
 				else ___autocheckmess(_T("Finish:Hosts file Not update.\n\n"));
-				DeleteFile(ChangeCTLR);
-				DeleteFile(ReservedFile);
-				DeleteFile(DownLocated);
+//				DeleteFile(ChangeCTLR);DeleteFile(ReservedFile);DeleteFile(DownLocated);
 				if (!bReserved) {
 					callsystempause;
 					return GetLastError();
 				}
 			}
-			else {
-				if (!CopyFile(buf1,buf2,FALSE))
-					THROWERR(_T("CopyFile() Error on copy a backup file"));
-				if (!bReserved) _tprintf(_T("\tDone.\n    Step3:Replace Default Hosts File..."));
-				if (!CopyFile(ChangeCTLR,buf1,FALSE))
-					THROWERR(_T("CopyFile() Error on copy hosts file to system path"));
-				if (!((fp=_tfopen(ReservedFile,_T("rb"))) && (_=_tfopen(buf1,_T("ab+")))))
-					THROWERR(_T("_tfopen() Error in copy hosts file."));
-				if (fseek(_,0,SEEK_SET)) THROWERR(_T("fseek() Error!"));
-				size_t readbyte=0;
-				while ((readbyte=fread(iobuffer,sizeof(char),localbufsize,fp)))
-					fwrite(iobuffer,sizeof(char),readbyte,_);
-				fclose(fp);fclose(_);
-				Sleep(500);
-				DeleteFile(ReservedFile);
-				DeleteFile(DownLocated);
-				if (!bReserved) _tprintf(_T("Replace File Successfully\n"));
-				else ___autocheckmess(_T("Replace File Successfully\n"));
-				DeleteFile(ChangeCTLR);
-				if (!bReserved) MessageBox(_ptrresev_NULL_,_T("Hosts File Set Success!"),
-					_T("Congratulations!"),MB_ICONINFORMATION|MB_SETFOREGROUND);
-			}
+			else Func_CallCopyHostsFile();
 			if (!hdThread) TerminateThread(hdThread,0);
 		}
 		catch(expection runtimeerr){
