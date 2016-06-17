@@ -28,8 +28,8 @@ const TCHAR * sz__ErrorFileName__=_ptrresev_NULL_;
 const TCHAR * sz__ErrorFileStream__=_ptrresev_NULL_;
 
 FILE * Func_SetErrorFile(const TCHAR*, const TCHAR*);
-inline void * __fastcall ___Func_Close_File_Stream(FILE *) throw();
-inline int __fastcall ___Func_PrintErrorTimeToFileStream(FILE *) throw();
+inline void * __fastcall ___Func_Close_File_Stream(FILE *);
+inline int __fastcall ___Func_PrintErrorTimeToFileStream(FILE *);
 inline void * ___Func__Check_File_Set(void);
 
 #define __BEGIN__ Func_SetErrorFileEx(sz__ErrorFileName__,sz__ErrorFileStream__)
@@ -220,7 +220,7 @@ inline void * ___Func__Check_File_Set(void){
 	return _ptrresev_NULL_;
 }
 
-inline void * __fastcall ___Func_Close_File_Stream(FILE * ___ptr_fp) throw(){
+inline void * __fastcall ___Func_Close_File_Stream(FILE * ___ptr_fp){
 	if (!___ptr_fp && ptr_ErrorFileStream) fclose(ptr_ErrorFileStream);
 	else fclose(___ptr_fp);
 	return _ptrresev_NULL_;
@@ -240,7 +240,7 @@ FILE * Func_SetErrorFile(const TCHAR * _FileName_,const TCHAR * _StreamStatus){
 	return ptr_ErrorFileStream;
 }
 
-inline int __fastcall ___Func_PrintErrorTimeToFileStream(FILE * ___ptr_fp) throw(){
+inline int __fastcall ___Func_PrintErrorTimeToFileStream(FILE * ___ptr_fp){
 	SYSTEMTIME _st_={0,0,0,0,0,0,0,0};
 	GetLocalTime(&_st_);
 	return _ftprintf(___ptr_fp,_T("%04d/%02d/%02d %02d:%02d:%02d "),_st_.wYear,_st_.wMonth,

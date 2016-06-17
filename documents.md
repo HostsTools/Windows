@@ -69,6 +69,23 @@ Function name | Description
 6. Delete temp file
 
 
+## Service Debug Mode :
+
+If you want to enter debug mode, follow the steps blow.
+
+1. Open the console.
+2. Change the working directory where is the `tool.exe` position.
+3. Input `tool --debug-pipe` and press enter.
+4. Now you can see the current working status of service.
+5. Press **Ctrl+C** to Exit debug mode.
+6. Exit debug mode will cause service uninstall.
+
+**WARNING: IN DEBUG MODE, DO NOT CLOSE THE CONSOLE DIRECT**
+
+*Notice:In debug mode, service run cycle is very sort*
+
+Fixed: if exit program unexpectally, service will run with system start.(and then sent unexpect data)
+
 ## Hosts Backup file(Windows 7+)
 
 ```

@@ -11,6 +11,7 @@
 
 extern const TCHAR * pipeName;
 HANDLE hdPipe=INVALID_HANDLE_VALUE;
+extern void ___Func_pipeCallBack(TCHAR const *);
 namespace __Dpipe{
 //for pipe debug
 	const DWORD PIPE_TIMEOUT=5000;
@@ -126,7 +127,8 @@ namespace __Dpipe{
 	}
 	inline void GetAnswerToRequest(LPPIPEINST pipe)
 	{
-		_tprintf( TEXT("%s"), pipe->chRequest);
+		___Func_pipeCallBack(pipe->chRequest);
+//		_tprintf( TEXT("%s"), pipe->chRequest);
 		//reserved:
 	/*	_tprintf( TEXT("[%p] %s"), pipe->hPipeInst, pipe->chRequest);
 		lstrcpyn( pipe->chReply,  TEXT("") ,BUFSIZE);
