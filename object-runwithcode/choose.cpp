@@ -41,7 +41,7 @@ TCHAR const * showNotice="\
     8. Start Service\n\
     9. Open \".ini\" file\n\
     ";
-const int max_input_int=8;
+const int max_input_int=9;
 
 
 TCHAR _[20]=_T("");
@@ -55,7 +55,8 @@ int _tmain(int,TCHAR const **){
 	_tscanf(_T("%d"),&inputn);
 	if (inputn>max_input_int || inputn<1) abort();
 	switch (inputn){
-		case 1:str=_T("");break;
+		case 1:ShellExecute(NULL,_T("open"),_T("tool.exe"),NULL,NULL,SW_SHOWNORMAL);
+				exit(0);
 		case 2:str=_T("fi");break;
 		case 3:str=_T("fu");break;
 		case 4:str=_T("r");break;
