@@ -57,7 +57,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.5  Build time:Jun. 17th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.7  Build time:Jun. 23th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -142,6 +142,7 @@ HANDLE lphdThread[]={
 	INVALID_HANDLE_VALUE,INVALID_HANDLE_VALUE
 };
 bool request_client,bReserved,bIgnoreNewline,bIgnoreCommit;
+WIN32_FIND_DATA wfd={0,{0,0},{0,0},{0,0},0,0,0,0,{0},{0}};
 //end.
 
 //function declaration
@@ -157,6 +158,8 @@ void Func_ResetFile();
 void ___Func_pipeCallBack(TCHAR const*);
 void Func_CallCopyHostsFile();
 void Func_CheckProFile();
+TCHAR * dotdotcheck(TCHAR *);
+void Func_countBackupFile(SYSTEMTIME *);
 //DWORD __stdcall Func_Update(LPVOID);
 
 
@@ -371,6 +374,25 @@ Please contact the application's support team for more information.\n"),
 	return ;
 }
 
+
+TCHAR * dotdotcheck(TCHAR * str){
+	TCHAR * _;	TCHAR *_tmp=new TCHAR[100];//,*_2=new TCHAR[100];
+	memset(_tmp,0,sizeof(_tmp));
+//	memset(_2,0,sizeof(_2));
+//	while (!(_=_tcsstr(_T(".."))))
+	if ((_=_tcsstr(str,_T("..")))){
+		_stscanf(_+2,_T("%100s"),_tmp);
+//		printf("%s\n",_tmp);
+		while ((*(--_))!='\\');
+		while ((*(--_))!='\\');
+		_stprintf(_,_T("%s"),_tmp);
+//		_tcscpy(str,_2);
+	}
+//	printf("%s\n",str);
+	return str;
+}
+
+//#define pt(x) printf("%s:%s\n",#x,x)
 void Func_Service_UnInstall(bool _quite){
 	SC_HANDLE shMang=_ptrresev_NULL_,shSvc=_ptrresev_NULL_;
 	Sleep(1000);
@@ -380,7 +402,9 @@ void Func_Service_UnInstall(bool _quite){
 		_stprintf(buf1,_T("%s\\..\\hoststools.exe"),buf3);
 		if (!GetModuleFileName(_ptrresev_NULL_,buf2,localbufsize))
 			THROWERR(_T("GetModuleFileName() Error in UnInstall Service."));
-		if (!_tcscmp(buf1,buf2)){
+//			pt(buf1);pt(buf2);pt(buf3);
+		if (!_tcscmp(dotdotcheck(buf1),buf2)){
+//			pt(buf1);
 			if (!GetEnvironmentVariable(_T("TEMP"),buf3,localbufsize))
 				THROWERR(_T("GetEnvironmentVariable() Error in UnInstall Service."));
 			_stprintf(buf1,_T("%s\\Au__.exe"),buf3);
@@ -390,6 +414,7 @@ void Func_Service_UnInstall(bool _quite){
 				THROWERR(_T("ShellExecute() Error in UnInstall Service."));
 			exit(0);
 		}
+//		pt(buf1);
 		if (!(shMang=OpenSCManager(_ptrresev_NULL_,_ptrresev_NULL_,SC_MANAGER_ALL_ACCESS)))
 			THROWERR(_T("OpenSCManager() Error in Uninstall service."));
 		if (!(shSvc=OpenService(shMang,Sname,SERVICE_ALL_ACCESS)))
@@ -612,6 +637,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 		_stprintf(buf2,_BAKFORMAT,buf3,st.wYear,st.wMonth,st.wDay,st.wHour,st.wMinute,st.wSecond);
 		SetFileAttributes(buf1,FILE_ATTRIBUTE_NORMAL); //for avoid CopyFile or _tfopen failed.
 		try {
+			if (!bReserved) Func_countBackupFile(&st);
 			if (!bReserved) _tprintf(_T("    Step1:Download hosts file..."));
 			//download
 			if (bReserved) if (request_client) ___pipesentmessage(_T("Download files\n"));
@@ -668,7 +694,6 @@ DWORD __stdcall NormalEntry(LPVOID){
 			fp=_ptrresev_NULL_,_=_ptrresev_NULL_;
 			if (!Func_CheckDiff(ChangeCTLR,DownLocated)){
 				if (!bReserved) _tprintf(_T("\tDone.\n\n    \
-diff exited with value 0(0x00)\n    \
 Finish:Hosts file Not update.\n\n"));
 				else ___autocheckmess(_T("Finish:Hosts file Not update.\n\n"));
 //				DeleteFile(ChangeCTLR);DeleteFile(ReservedFile);DeleteFile(DownLocated);
@@ -701,6 +726,41 @@ Finish:Hosts file Not update.\n\n"));
 		Sleep(bReserved?(request_client?5000:(29*60000)):0);
 	} while (bReserved);
 	return GetLastError();
+}
+
+void Func_countBackupFile(SYSTEMTIME *){
+	HANDLE hdHandle=INVALID_HANDLE_VALUE;
+	DWORD __count__=0;
+	TCHAR * sizbuf=new TCHAR[localbufsize];
+/*	if (!GetSystemDirectory(buf3,localbufsize))
+		Func_PMNTTS(_T("GetSystemDirectory() Error!(GetLastError():%ld)\n\
+\tCannot get system path!"),GetLastError()),abort();*/
+	_stprintf(sizbuf,_T("%s\\drivers\\etc\\hosts.*.bak"),buf3);
+//	SetCurrentDirectory(buf1);
+	hdHandle=FindFirstFile(buf1,&wfd);
+//	SetLastError(0);
+//	_tprintf(_T("%s\n"),buf1);
+	if (hdHandle==INVALID_HANDLE_VALUE) //&& GetLastError()!=ERROR_FILE_NOT_FOUND)
+		_tprintf(TEXT("FindFirstFile() Error!(%ld)\n"),GetLastError());
+//	_tprintf(_T("%ld\n"),GetLastError());
+//	if (GetLastError()==ERROR_FILE_NOT_FOUND) goto closef;
+	do {
+		if (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) continue;
+		//time optimize? 
+		//Optimize it in FindFirstFile() function
+		//(invalid)
+//		if (_tcsstr(_T("hosts"),wfd.cFileName) && _tcsstr(_T(".bak"),wfd.cFileName)) 
+			__count__++;
+//		_tprintf(_T("cFileName:%s\n__count__:%ld\n"),wfd.cFileName,__count__);
+	} while (FindNextFile(hdHandle,&wfd));
+	FindClose(hdHandle);
+	if (__count__>20) {
+		hdHandle=GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleTextAttribute(hdHandle,FOREGROUND_INTENSITY|FOREGROUND_RED);
+		_tprintf(_T("    You number of backup file is more than 20.\n"));
+		SetConsoleTextAttribute(hdHandle,FOREGROUND_INTENSITY|FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE);
+	}
+	return ;
 }
 
 void WINAPI Service_Main(DWORD,LPTSTR *){

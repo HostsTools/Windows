@@ -1,9 +1,9 @@
 # Download Executable File 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
-Last update: Jun. 18th , 2016
+Last update: Jun. 23th , 2016
 
-#### 下载地址:(v2.1.6)
+#### 下载地址:(v2.1.7)
 
  - zip Package (Include `tool.exe` and `choose.exe`)
   - [点我来下载](https://git.io/vozMx)
@@ -54,10 +54,10 @@ main program file: `tool.exe`
 
 ## 注意事项
 
-1. 如果安装服务 程序会往`%SystemRoot%`下复制一个`tool.exe`文件用来作为服务启动的主程序
+1. 如果安装服务 程序会往`%SystemRoot%`下复制一个`hoststools.exe`文件用来作为服务启动的主程序
 2. 安装服务后 日志文件会保存在`C:\Hosts_Tool_log.log`下 您可以通过查看日志观察服务的工作状态
 7. 本程序一切有更改hosts文件的行为前都会先备份hosts文件。
-4. 请间隔一段时间后清理`%SystemRoot%\system32\drivers\etc\`文件夹 (因为可能堆满了备份的文件)
+4. 请间隔一段时间后清理`%SystemRoot%\system32\drivers\etc\`文件夹 (程序已经加入了检查备份文件个数的功能)
 5. 如有任何疑问或bug反馈，请开新的issue或者发邮件到 sometimes.naive[at]hotmail.com (如是服务问题请附上日志文件)
 
 
