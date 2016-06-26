@@ -57,7 +57,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.7  Build time:Jun. 23th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.8  Build time:Jun. 27th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -160,6 +160,8 @@ void Func_CallCopyHostsFile();
 void Func_CheckProFile();
 TCHAR * dotdotcheck(TCHAR *);
 void Func_countBackupFile(SYSTEMTIME *);
+bool Func_checkBackupFileTime(const SYSTEMTIME & , TCHAR const *);
+
 //DWORD __stdcall Func_Update(LPVOID);
 
 
@@ -568,7 +570,7 @@ void ___Func_pipeCallBack(const TCHAR * str){
 	return ;
 }
 
-void Func_CallCopyHostsFile(){
+void Func_CallCopyHostsFile(SYSTEMTIME & st){
 	FILE * fp,*_;
 	if (!CopyFile(buf1,buf2,FALSE))
 		THROWERR(_T("CopyFile() Error on copy a backup file"));
@@ -588,7 +590,7 @@ void Func_CallCopyHostsFile(){
 	if (!bReserved) _tprintf(_T("Replace File Successfully\n"));
 	else ___autocheckmess(_T("Replace File Successfully\n"));
 //	DeleteFile(ChangeCTLR);
-	if (!bReserved) MessageBox(_ptrresev_NULL_,_T("Hosts File Set Success!"),
+	if (!bReserved) Func_countBackupFile(&st),MessageBox(_ptrresev_NULL_,_T("Hosts File Set Success!"),
 		_T("Congratulations!"),MB_ICONINFORMATION|MB_SETFOREGROUND);
 	return ;
 }
@@ -637,7 +639,6 @@ DWORD __stdcall NormalEntry(LPVOID){
 		_stprintf(buf2,_BAKFORMAT,buf3,st.wYear,st.wMonth,st.wDay,st.wHour,st.wMinute,st.wSecond);
 		SetFileAttributes(buf1,FILE_ATTRIBUTE_NORMAL); //for avoid CopyFile or _tfopen failed.
 		try {
-			if (!bReserved) Func_countBackupFile(&st);
 			if (!bReserved) _tprintf(_T("    Step1:Download hosts file..."));
 			//download
 			if (bReserved) if (request_client) ___pipesentmessage(_T("Download files\n"));
@@ -666,7 +667,8 @@ DWORD __stdcall NormalEntry(LPVOID){
 				else
 					_tprintf(_T("Delete tmpfile error.(%ld)\n"),GetLastError());
 			}
-			if (!((fp=_tfopen(buf1,_T("r"))) && (_=_tfopen(ReservedFile,_T("w")))));
+			if (!((fp=_tfopen(buf1,_T("r"))) && (_=_tfopen(ReservedFile,_T("w")))))
+				THROWERR(_T("_tfopen() Error"));
 			while (!feof(fp)){
 				memset(szline,0,sizeof(szline));
 				_fgetts(szline,1000,fp);
@@ -675,7 +677,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 					break; else 
 					if (bIgnoreCommit) continue;
 				}
-				if (!bIgnoreNewline && *szline==_T('\n')) continue;
+				if (bIgnoreNewline && *szline==_T('\n')) continue;
 				_fputts(szline,_);
 			}
 			fclose(_);
@@ -698,11 +700,12 @@ Finish:Hosts file Not update.\n\n"));
 				else ___autocheckmess(_T("Finish:Hosts file Not update.\n\n"));
 //				DeleteFile(ChangeCTLR);DeleteFile(ReservedFile);DeleteFile(DownLocated);
 				if (!bReserved) {
+					Func_countBackupFile(&st);
 					callsystempause;
 					return GetLastError();
 				}
 			}
-			else Func_CallCopyHostsFile();
+			else Func_CallCopyHostsFile(st);
 			if (!hdThread) TerminateThread(hdThread,0);
 		}
 		catch(expection runtimeerr){
@@ -728,38 +731,67 @@ Finish:Hosts file Not update.\n\n"));
 	return GetLastError();
 }
 
-void Func_countBackupFile(SYSTEMTIME *){
+inline long Func_time2long(const SYSTEMTIME & st){
+	return st.wYear*365+st.wMonth*30+st.wDay;
+}
+
+inline long Func_time2long(const WORD & year, const WORD & month, const WORD & day){
+	return year*365+month*30+day;
+}
+
+bool Func_checkBackupFileTime(const SYSTEMTIME & st,TCHAR const * name){
+	//#define _BAKFORMAT _T("%s\\drivers\\etc\\hosts.%04d%02d%02d.%02d%02d%02d.bak")
+	WORD year,month,day;
+	if (_stscanf(name,_T("hosts.%4hd%2hd%2hd.%*2d%*2d%*2d"),&year,&month,&day)!=3)
+		return false;
+//	printf(" %ld\n",labs(Func_time2long(st)-Func_time2long(year,month,day)));
+	if (labs(Func_time2long(st)-Func_time2long(year,month,day))>=60)
+		return true;
+	return false;
+}
+
+void Func_countBackupFile(SYSTEMTIME * st){
 	HANDLE hdHandle=INVALID_HANDLE_VALUE;
 	DWORD __count__=0;
 	TCHAR * sizbuf=new TCHAR[localbufsize];
-/*	if (!GetSystemDirectory(buf3,localbufsize))
-		Func_PMNTTS(_T("GetSystemDirectory() Error!(GetLastError():%ld)\n\
-\tCannot get system path!"),GetLastError()),abort();*/
-	_stprintf(sizbuf,_T("%s\\drivers\\etc\\hosts.*.bak"),buf3);
-//	SetCurrentDirectory(buf1);
-	hdHandle=FindFirstFile(buf1,&wfd);
-//	SetLastError(0);
-//	_tprintf(_T("%s\n"),buf1);
-	if (hdHandle==INVALID_HANDLE_VALUE) //&& GetLastError()!=ERROR_FILE_NOT_FOUND)
+	_stprintf(sizbuf,_T("%s\\drivers\\etc\\hosts.20*"),buf3);
+	if ((hdHandle=FindFirstFile(sizbuf,&wfd))==INVALID_HANDLE_VALUE)
 		_tprintf(TEXT("FindFirstFile() Error!(%ld)\n"),GetLastError());
-//	_tprintf(_T("%ld\n"),GetLastError());
-//	if (GetLastError()==ERROR_FILE_NOT_FOUND) goto closef;
 	do {
 		if (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) continue;
-		//time optimize? 
-		//Optimize it in FindFirstFile() function
-		//(invalid)
-//		if (_tcsstr(_T("hosts"),wfd.cFileName) && _tcsstr(_T(".bak"),wfd.cFileName)) 
+		if (_tcsstr(wfd.cFileName,_T("hosts.")))
 			__count__++;
-//		_tprintf(_T("cFileName:%s\n__count__:%ld\n"),wfd.cFileName,__count__);
 	} while (FindNextFile(hdHandle,&wfd));
 	FindClose(hdHandle);
-	if (__count__>20) {
+#ifndef _TESTONLINE
+	if (__count__>20) /*{
 		hdHandle=GetStdHandle(STD_OUTPUT_HANDLE);
 		SetConsoleTextAttribute(hdHandle,FOREGROUND_INTENSITY|FOREGROUND_RED);
 		_tprintf(_T("    You number of backup file is more than 20.\n"));
 		SetConsoleTextAttribute(hdHandle,FOREGROUND_INTENSITY|FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE);
-	}
+	}*/
+		if (MessageBox(NULL,_T("You number of backup file is more than 20.\n\n\
+Do you want to delete out of date(Over 60 days) backup file?"),
+			_T("Delete request"),
+			MB_ICONQUESTION|MB_YESNO|MB_SETFOREGROUND|MB_DEFBUTTON2)
+			==IDYES){
+				if ((hdHandle=FindFirstFile(sizbuf,&wfd))==INVALID_HANDLE_VALUE)
+					_tprintf(TEXT("FindFirstFile() Error!(%ld)\n"),GetLastError());
+				_stprintf(buf1,_T("%s\\drivers\\etc"),buf3);
+				SetCurrentDirectory(buf1);
+				do {
+					if (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) continue;
+//					_tprintf(_T("%s"),wfd.cFileName);
+					if (Func_checkBackupFileTime(*st,wfd.cFileName))
+						if (DeleteFile(wfd.cFileName))
+							_tprintf(_T("    \
+Delete file \"%s\" successfully\n"),wfd.cFileName);
+				} while (FindNextFile(hdHandle,&wfd));
+				FindClose(hdHandle);
+			}
+#endif 
+	delete [] sizbuf;
+	sizbuf=_ptrresev_NULL_;
 	return ;
 }
 
