@@ -763,13 +763,13 @@ void Func_countBackupFile(SYSTEMTIME * st){
 			__count__++;
 	} while (FindNextFile(hdHandle,&wfd));
 	FindClose(hdHandle);
+#ifndef _TESTONLINE
 	if (__count__>20) /*{
 		hdHandle=GetStdHandle(STD_OUTPUT_HANDLE);
 		SetConsoleTextAttribute(hdHandle,FOREGROUND_INTENSITY|FOREGROUND_RED);
 		_tprintf(_T("    You number of backup file is more than 20.\n"));
 		SetConsoleTextAttribute(hdHandle,FOREGROUND_INTENSITY|FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE);
 	}*/
-#ifndef _TESTONLINE
 		if (MessageBox(NULL,_T("You number of backup file is more than 20.\n\n\
 Do you want to delete out of date(Over 60 days) backup file?"),
 			_T("Delete request"),
