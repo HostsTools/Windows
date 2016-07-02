@@ -57,7 +57,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.8  Build time:Jun. 27th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.9  Build time:Jul. 2nd, '16")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -264,14 +264,30 @@ int _tmain(int argc,TCHAR const ** argv){
 
 void Func_CheckProFile(){
 	SetLastError(ERROR_SUCCESS);
-	if (!GetPrivateProfileString(privateAppName,privateCommitName,_T("false"),szline,localbufsize,privateFileName));
+	if (!GetPrivateProfileString(privateAppName,
+								 privateCommitName,
+								 _T("false"),
+								 szline,
+								 localbufsize,
+								 privateFileName));
 //	printf("%ld",GetLastError());
 	if (GetLastError()==ERROR_FILE_NOT_FOUND){
-		if (WritePrivateProfileString(privateAppName,privateCommitName,_T("false"),privateFileName));
-		if (WritePrivateProfileString(privateAppName,privateNewLineName,_T("false"),privateFileName));
+		if (WritePrivateProfileString(privateAppName,
+									  privateCommitName,
+									  _T("false"),
+									  privateFileName));
+		if (WritePrivateProfileString(privateAppName,
+									  privateNewLineName,
+									  _T("false"),
+									  privateFileName));
 	}
 	if (!_tcscmp(szline,_T("true"))) bIgnoreCommit=true;
-	if (!GetPrivateProfileString(privateAppName,privateNewLineName,_T("false"),szline,localbufsize,privateFileName));
+	if (!GetPrivateProfileString(privateAppName,
+								 privateNewLineName,
+								 _T("false"),
+								 szline,
+								 localbufsize,
+								 privateFileName));
 	if (!_tcscmp(szline,_T("true"))) bIgnoreNewline=true;
 	return ;
 }
@@ -376,25 +392,18 @@ Please contact the application's support team for more information.\n"),
 	return ;
 }
 
-
 TCHAR * dotdotcheck(TCHAR * str){
-	TCHAR * _;	TCHAR *_tmp=new TCHAR[100];//,*_2=new TCHAR[100];
+	TCHAR * _;	TCHAR *_tmp=new TCHAR[100];
 	memset(_tmp,0,sizeof(_tmp));
-//	memset(_2,0,sizeof(_2));
-//	while (!(_=_tcsstr(_T(".."))))
 	if ((_=_tcsstr(str,_T("..")))){
 		_stscanf(_+2,_T("%100s"),_tmp);
-//		printf("%s\n",_tmp);
 		while ((*(--_))!='\\');
 		while ((*(--_))!='\\');
 		_stprintf(_,_T("%s"),_tmp);
-//		_tcscpy(str,_2);
 	}
-//	printf("%s\n",str);
 	return str;
 }
 
-//#define pt(x) printf("%s:%s\n",#x,x)
 void Func_Service_UnInstall(bool _quite){
 	SC_HANDLE shMang=_ptrresev_NULL_,shSvc=_ptrresev_NULL_;
 	Sleep(1000);
@@ -404,9 +413,7 @@ void Func_Service_UnInstall(bool _quite){
 		_stprintf(buf1,_T("%s\\..\\hoststools.exe"),buf3);
 		if (!GetModuleFileName(_ptrresev_NULL_,buf2,localbufsize))
 			THROWERR(_T("GetModuleFileName() Error in UnInstall Service."));
-//			pt(buf1);pt(buf2);pt(buf3);
 		if (!_tcscmp(dotdotcheck(buf1),buf2)){
-//			pt(buf1);
 			if (!GetEnvironmentVariable(_T("TEMP"),buf3,localbufsize))
 				THROWERR(_T("GetEnvironmentVariable() Error in UnInstall Service."));
 			_stprintf(buf1,_T("%s\\Au__.exe"),buf3);
@@ -416,7 +423,6 @@ void Func_Service_UnInstall(bool _quite){
 				THROWERR(_T("ShellExecute() Error in UnInstall Service."));
 			exit(0);
 		}
-//		pt(buf1);
 		if (!(shMang=OpenSCManager(_ptrresev_NULL_,_ptrresev_NULL_,SC_MANAGER_ALL_ACCESS)))
 			THROWERR(_T("OpenSCManager() Error in Uninstall service."));
 		if (!(shSvc=OpenService(shMang,Sname,SERVICE_ALL_ACCESS)))
@@ -458,8 +464,6 @@ Copyright (C) 2016 @Too-Naive\n\n"));
 Or open new issue\n------------------------------------------------------\n\n"));
 	}
 	try{
-/*		if (!GetEnvironmentVariable(_T("SystemRoot"),buf3,localbufsize))
-			THROWERR(_T("GetEnvironmentVariable() Error in Install Service."));*/
 		if (!GetSystemDirectory(buf3,localbufsize))
 			THROWERR(_T("GetSystemDirectory() Error in Install Service."));
 		_stprintf(buf1,_T("%s\\..\\hoststools.exe"),buf3);
@@ -492,9 +496,7 @@ Or open new issue\n------------------------------------------------------\n\n"))
 			))){
 			if (GetLastError()==ERROR_SERVICE_EXISTS){
 				if (!(shSvc=OpenService(shMang,Sname,SERVICE_ALL_ACCESS)))
-					THROWERR(_T("OpenService() Error in install service."));/*
-				if (!ControlService(shSvc,SERVICE_CONTROL_STOP,&ss))
-					_tprintf(_T("ControlService() Error in install service."));*/
+					THROWERR(_T("OpenService() Error in install service."));
 				if (!DeleteService(shSvc))
 					THROWERR(_T("DeleteService() Error in Install Service."));
 				CloseServiceHandle(shSvc);
@@ -585,11 +587,8 @@ void Func_CallCopyHostsFile(SYSTEMTIME & st){
 		fwrite(iobuffer,sizeof(char),readbyte,_);
 	fclose(fp);fclose(_);
 	Sleep(500);
-//	DeleteFile(ReservedFile);
-//	DeleteFile(DownLocated);
 	if (!bReserved) _tprintf(_T("Replace File Successfully\n"));
 	else ___autocheckmess(_T("Replace File Successfully\n"));
-//	DeleteFile(ChangeCTLR);
 	if (!bReserved) Func_countBackupFile(&st),MessageBox(_ptrresev_NULL_,_T("Hosts File Set Success!"),
 		_T("Congratulations!"),MB_ICONINFORMATION|MB_SETFOREGROUND);
 	return ;
@@ -614,9 +613,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 	if (!GetEnvironmentVariable(_T("TEMP"),szline,localbufsize))
 		Func_PMNTTS(_T("GetEnvironmentVariable() Error!(GetLastError():%ld)\n\
 \tCannot get %%TEMP%% path!"),GetLastError()),abort();
-	SetCurrentDirectory(szline);/*
-	GetCurrentDirectory(localbufsize,buf1);
-	_tprintf(_T("Current directory:%s\n"),szline);*/
+	SetCurrentDirectory(szline);
 	if (!bReserved){
 		_tprintf(_T("    LICENSE:General Public License\n%s\n    Copyright (C) 2016 @Too-Naive\n"),welcomeShow);
 		_tprintf(_T("    Project website:%s\n"),objectwebsite);
@@ -698,7 +695,6 @@ DWORD __stdcall NormalEntry(LPVOID){
 				if (!bReserved) _tprintf(_T("\tDone.\n\n    \
 Finish:Hosts file Not update.\n\n"));
 				else ___autocheckmess(_T("Finish:Hosts file Not update.\n\n"));
-//				DeleteFile(ChangeCTLR);DeleteFile(ReservedFile);DeleteFile(DownLocated);
 				if (!bReserved) {
 					Func_countBackupFile(&st);
 					callsystempause;
@@ -744,8 +740,9 @@ bool Func_checkBackupFileTime(const SYSTEMTIME & st,TCHAR const * name){
 	WORD year,month,day;
 	if (_stscanf(name,_T("hosts.%4hd%2hd%2hd.%*2d%*2d%*2d"),&year,&month,&day)!=3)
 		return false;
+	long systime=Func_time2long(st);
 //	printf(" %ld\n",labs(Func_time2long(st)-Func_time2long(year,month,day)));
-	if (labs(Func_time2long(st)-Func_time2long(year,month,day))>=60)
+	if (labs(systime-Func_time2long(year,month,day))>=60)
 		return true;
 	return false;
 }
@@ -764,12 +761,7 @@ void Func_countBackupFile(SYSTEMTIME * st){
 	} while (FindNextFile(hdHandle,&wfd));
 	FindClose(hdHandle);
 #ifndef _TESTONLINE
-	if (__count__>20) /*{
-		hdHandle=GetStdHandle(STD_OUTPUT_HANDLE);
-		SetConsoleTextAttribute(hdHandle,FOREGROUND_INTENSITY|FOREGROUND_RED);
-		_tprintf(_T("    You number of backup file is more than 20.\n"));
-		SetConsoleTextAttribute(hdHandle,FOREGROUND_INTENSITY|FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE);
-	}*/
+	if (__count__>20)
 		if (MessageBox(NULL,_T("You number of backup file is more than 20.\n\n\
 Do you want to delete out of date(Over 60 days) backup file?"),
 			_T("Delete request"),
