@@ -1,9 +1,9 @@
 # Download Executable File 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
-Last update: Jul. 2nd , 2016
+Last update: Jul. 10th , 2016
 
-#### 下载地址:(v2.1.9)
+#### 下载地址:(v2.1.10)
 
  - zip Package (Include `tool.exe` and `choose.exe`)
   - [点我来下载](https://git.io/vozMx)
@@ -24,6 +24,14 @@ Server | Microsoft Windows Server 2003 Family
 每次开机后每隔30分钟会自动检测hosts文件的更新噢！
 
 **在此特别感谢[@qwerty258](https://github.com/qwerty258)为本程序提供了Visual Studio的工程文件**
+
+### 声明
+
+从今日起，除发现bug外，不再推送更新。即：不再主动推送新的功能以及code review后的bug修复。
+
+暑假事情繁多 尽请谅解
+
+请通过issue来反馈任何bug以及程序问题，bug会及时得到修复。
 
 ##New Feature
 
