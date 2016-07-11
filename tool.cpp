@@ -352,7 +352,6 @@ inline void __show_str(TCHAR const* st,TCHAR const * _ingore){
 
 void ___debug_point_reset(int _par){
 	SC_HANDLE shMang=_ptrresev_NULL_,shSvc=_ptrresev_NULL_;
-//	_tprintf(_T("Entry Debug Function.\n"));
 	if (_par==DEBUG_SERVICE_REINSTALL){
 		Func_Service_UnInstall(false);
 		Func_Service_Install(false);
@@ -594,16 +593,23 @@ void Func_CallCopyHostsFile(SYSTEMTIME & st){
 	if (!CopyFile(buf1,buf2,FALSE))
 		THROWERR(_T("CopyFile() Error on copy a backup file"));
 	if (!bReserved) _tprintf(_T("\tDone.\n    Step3:Replace Default Hosts File..."));
-	if (!CopyFile(ChangeCTLR,buf1,FALSE))
+	if (!CopyFile(ReservedFile,buf1,FALSE))
 		THROWERR(_T("CopyFile() Error on copy hosts file to system path"));
-	if (!((fp=_tfopen(ReservedFile,_T("rb"))) && (_=_tfopen(buf1,_T("ab+")))))
-		THROWERR(_T("_tfopen() Error in copy hosts file."));
-	if (fseek(_,0,SEEK_SET)) THROWERR(_T("fseek() Error!"));
-	size_t readbyte=0;
-	while ((readbyte=fread(iobuffer,sizeof(char),localbufsize,fp)))
-		fwrite(iobuffer,sizeof(char),readbyte,_);
-	fclose(fp);fclose(_);
-	Sleep(500);
+	try {
+		if (!(_=_tfopen(buf1,_T("ab+"))))
+			throw buf1;
+		if (!(fp=_tfopen(ChangeCTLR,_T("rb"))))
+			throw ChangeCTLR;
+		size_t readbyte=0;
+		while ((readbyte=fread(iobuffer,sizeof(char),localbufsize,fp)))
+			fwrite(iobuffer,sizeof(char),readbyte,_);
+		fclose(fp);fclose(_);
+	}
+	catch(TCHAR const * _FileName){
+		_stprintf(szline,_T("_tfopen() Error in open \"%s\".\n"),_FileName);
+		MessageBox(NULL,szline,_T("Error!"),MB_ICONSTOP|MB_SETFOREGROUND);
+		abort();
+	}
 	if (!bReserved) _tprintf(_T("Replace File Successfully\n"));
 	else ___autocheckmess(_T("Replace File Successfully\n"));
 	if (!bReserved) Func_countBackupFile(&st),MessageBox(_ptrresev_NULL_,_T("Hosts File Set Success!"),
@@ -702,8 +708,8 @@ DWORD __stdcall NormalEntry(LPVOID){
 					memset(szline,0,sizeof(szline));
 					_fgetts(szline,1000,fp);
 					if (*szline==_T('#')) {//fast check is commit
-						//File origal hosts start
-						if (_tcsstr(szline,_T("# Copyright (c) 2014")))
+						//File original hosts start
+						if (_tcsstr(szline,_T("racaljk")))
 						break; else
 						// check is need ignore the commits
 						if (bIgnoreCommit) continue;
@@ -718,8 +724,8 @@ DWORD __stdcall NormalEntry(LPVOID){
 				_=_ptrresev_NULL_;
 				//end
 
-				//Critical function: Check is origal file same with hosts file from network
-				if (!feof(fp)){//check is origal file is read in endof file?
+				//Critical function: Check is original file same with hosts file from network
+				if (!feof(fp)){//check is original file is read in endof file?
 					// no? start copy file function
 					if (!(_=_tfopen(DownLocated,_T("w"))))
 						throw DownLocated;
@@ -739,7 +745,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 			//catch area
 			catch (TCHAR const * _FileName){
 				_stprintf(szline,_T("Open \"%s\" Error(_tfopen() Error)!\n"),_FileName);
-				
+				MessageBox(NULL,szline,_T("Error!"),MB_ICONSTOP|MB_SETFOREGROUND);
 				abort();
 			}
 			//end.
