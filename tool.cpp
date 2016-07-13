@@ -57,7 +57,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.10  Build time:Jul. 10th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.10  Build time:Jul. 13th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -262,24 +262,26 @@ int _tmain(int argc,TCHAR const ** argv){
 }
 
 void Func_CheckProFile(){
-	SetLastError(ERROR_SUCCESS);
+//	SetLastError(ERROR_SUCCESS);
 	try {
-		if (!GetPrivateProfileString(privateAppName,
-									 privateCommitName,
-									 _T("false"),
-									 szline,
-									 localbufsize,
-									 privateFileName))
-		 	throw privateCommitName;
+		GetPrivateProfileString(privateAppName,
+								privateCommitName,
+								_T("false"),
+								szline,
+								localbufsize,
+								privateFileName);
+//		 	throw privateCommitName;
 //successful but not found file.
+//		printf("%ld\n",GetLastError());
 		if (GetLastError()==ERROR_FILE_NOT_FOUND){
+			puts("run");
 			try {
-				if (WritePrivateProfileString(privateAppName,
+				if (!WritePrivateProfileString(privateAppName,
 											  privateCommitName,
 											  _T("false"),
 											  privateFileName))
 		  		throw privateCommitName;
-				if (WritePrivateProfileString(privateAppName,
+				if (!WritePrivateProfileString(privateAppName,
 											  privateNewLineName,
 											  _T("false"),
 											  privateFileName))
@@ -290,6 +292,8 @@ void Func_CheckProFile(){
 				abort();
 			}
 		}
+		else 
+			throw privateCommitName;
 		if (!_tcscmp(szline,_T("true"))) bIgnoreCommit=true;
 		if (!GetPrivateProfileString(privateAppName,
 									 privateNewLineName,

@@ -1,7 +1,7 @@
 # Download Executable File 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
-Last update: Jul. 10th , 2016
+Last update: Jul. 13h , 2016
 
 #### 下载地址:(v2.1.10)
 
@@ -24,6 +24,8 @@ Server | Microsoft Windows Server 2003 Family
 每次开机后每隔30分钟会自动检测hosts文件的更新噢！
 
 **在此特别感谢[@qwerty258](https://github.com/qwerty258)为本程序提供了Visual Studio的工程文件**
+
+**在此特别感谢在spacetime的协助 是他帮助我发现了ci运行测试中程序的致命bug**
 
 ### 声明
 
