@@ -57,7 +57,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.10  Build time:Jul. 13th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.10  Build time:Jul. 14th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -262,54 +262,35 @@ int _tmain(int argc,TCHAR const ** argv){
 }
 
 void Func_CheckProFile(){
-//	SetLastError(ERROR_SUCCESS);
-	try {
-		GetPrivateProfileString(privateAppName,
-								privateCommitName,
-								_T("false"),
-								szline,
-								localbufsize,
-								privateFileName);
-//		 	throw privateCommitName;
-//successful but not found file.
-//		printf("%ld\n",GetLastError());
-		if (GetLastError()==ERROR_FILE_NOT_FOUND){
-			puts("run");
-			try {
-				if (!WritePrivateProfileString(privateAppName,
-											  privateCommitName,
-											  _T("false"),
-											  privateFileName))
-		  		throw privateCommitName;
-				if (!WritePrivateProfileString(privateAppName,
-											  privateNewLineName,
-											  _T("false"),
-											  privateFileName))
-		  		throw privateNewLineName;
-			}
-			catch (TCHAR const * _throwstr){
-				_tprintf(_T("WritePrivateProfileString() Error in \"%s\" key(%ld)\n"),_throwstr,GetLastError());
-				abort();
-			}
-		}
-		else 
-			throw privateCommitName;
-		if (!_tcscmp(szline,_T("true"))) bIgnoreCommit=true;
-		if (!GetPrivateProfileString(privateAppName,
-									 privateNewLineName,
-									 _T("false"),
-									 szline,
-									 localbufsize,
-									 privateFileName))
-			throw privateNewLineName;
+	SetLastError(ERROR_SUCCESS);
+	GetPrivateProfileString(privateAppName,
+							privateCommitName,
+							_T("false"),
+							szline,
+							localbufsize,
+							privateFileName);
+//	printf("%ld",GetLastError());
+	if (GetLastError()==ERROR_FILE_NOT_FOUND){
+		WritePrivateProfileString(privateAppName,
+								  privateCommitName,
+								  _T("false"),
+								  privateFileName);
+		WritePrivateProfileString(privateAppName,
+								  privateNewLineName,
+								  _T("false"),
+								  privateFileName);
 	}
-	catch (TCHAR const * _KeyName){
-		_tprintf(_T("GetPrivateProfileString() Failed in get \"%s\" key(%ld).\n"),_KeyName,GetLastError()),
-			abort();
-	}
+	if (!_tcscmp(szline,_T("true"))) bIgnoreCommit=true;
+	GetPrivateProfileString(privateAppName,
+							privateNewLineName,
+							_T("false"),
+							szline,
+							localbufsize,
+							privateFileName);
 	if (!_tcscmp(szline,_T("true"))) bIgnoreNewline=true;
 	return ;
 }
+
 
 void Func_ResetFile(){
 	SYSTEMTIME st={0,0,0,0,0,0,0,0};
