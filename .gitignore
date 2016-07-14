@@ -26,5 +26,10 @@
 *.out
 *.app
 
-#tmp
+# tmp
 *.tmp
+
+# C-Free tmp file
+*.cpp~
+*.*~
+~*.*

@@ -57,7 +57,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.9  Build time:Jul. 2nd, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.10  Build time:Jul. 14th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -139,7 +139,7 @@ Example:\n\
 SERVICE_STATUS_HANDLE ssh;
 SERVICE_STATUS ss;
 HANDLE lphdThread[]={
-	INVALID_HANDLE_VALUE,INVALID_HANDLE_VALUE
+	INVALID_HANDLE_VALUE
 };
 bool request_client,bReserved,bIgnoreNewline,bIgnoreCommit;
 WIN32_FIND_DATA wfd={0,{0,0},{0,0},{0,0},0,0,0,0,{0},{0}};
@@ -218,7 +218,7 @@ int __fastcall __Check_Parameters(int argc,TCHAR const **argv){
 	size_t i=0;
 	for (;_tcscmp(&(argv[1][1]),szParameters[i]) &&
 		i<sizeof(szParameters)/sizeof(szParameters[0]);i++);
-	if (!(i==0 || i==1 ||i==9) 
+	if (!(i==0 || i==1 ||i==9)
 		&& argc>2) BAD_EXIT;
 	if (argc==3 && !_tcscmp(argv[2],szParameters[11])) request_client=1;
 		else if (argc==3 && _tcscmp(argv[2],szParameters[11])) BAD_EXIT;
@@ -228,7 +228,6 @@ int __fastcall __Check_Parameters(int argc,TCHAR const **argv){
 		case  1: return EXEC_START_INSTALL_SERVICE;
 		case  2: return EXEC_START_UNINSTALL_SERVICE;
 		case  4: return EXEC_DEBUG_RESET;	//restart service
-//		case  5: return SHOW_LICENSE;
 		case  6: return EXEC_START_HELP;
 		case  7: return DEBUG_SERVICE_STOP;	//stop service
 		case  8: return DEBUG_SERVICE_START;	//start service
@@ -264,33 +263,34 @@ int _tmain(int argc,TCHAR const ** argv){
 
 void Func_CheckProFile(){
 	SetLastError(ERROR_SUCCESS);
-	if (!GetPrivateProfileString(privateAppName,
-								 privateCommitName,
-								 _T("false"),
-								 szline,
-								 localbufsize,
-								 privateFileName));
+	GetPrivateProfileString(privateAppName,
+							privateCommitName,
+							_T("false"),
+							szline,
+							localbufsize,
+							privateFileName);
 //	printf("%ld",GetLastError());
 	if (GetLastError()==ERROR_FILE_NOT_FOUND){
-		if (WritePrivateProfileString(privateAppName,
-									  privateCommitName,
-									  _T("false"),
-									  privateFileName));
-		if (WritePrivateProfileString(privateAppName,
-									  privateNewLineName,
-									  _T("false"),
-									  privateFileName));
+		WritePrivateProfileString(privateAppName,
+								  privateCommitName,
+								  _T("false"),
+								  privateFileName);
+		WritePrivateProfileString(privateAppName,
+								  privateNewLineName,
+								  _T("false"),
+								  privateFileName);
 	}
 	if (!_tcscmp(szline,_T("true"))) bIgnoreCommit=true;
-	if (!GetPrivateProfileString(privateAppName,
-								 privateNewLineName,
-								 _T("false"),
-								 szline,
-								 localbufsize,
-								 privateFileName));
+	GetPrivateProfileString(privateAppName,
+							privateNewLineName,
+							_T("false"),
+							szline,
+							localbufsize,
+							privateFileName);
 	if (!_tcscmp(szline,_T("true"))) bIgnoreNewline=true;
 	return ;
 }
+
 
 void Func_ResetFile(){
 	SYSTEMTIME st={0,0,0,0,0,0,0,0};
@@ -337,7 +337,6 @@ inline void __show_str(TCHAR const* st,TCHAR const * _ingore){
 
 void ___debug_point_reset(int _par){
 	SC_HANDLE shMang=_ptrresev_NULL_,shSvc=_ptrresev_NULL_;
-//	_tprintf(_T("Entry Debug Function.\n"));
 	if (_par==DEBUG_SERVICE_REINSTALL){
 		Func_Service_UnInstall(false);
 		Func_Service_Install(false);
@@ -392,6 +391,7 @@ Please contact the application's support team for more information.\n"),
 	return ;
 }
 
+//short path if str has ".."
 TCHAR * dotdotcheck(TCHAR * str){
 	TCHAR * _;	TCHAR *_tmp=new TCHAR[100];
 	memset(_tmp,0,sizeof(_tmp));
@@ -401,6 +401,7 @@ TCHAR * dotdotcheck(TCHAR * str){
 		while ((*(--_))!='\\');
 		_stprintf(_,_T("%s"),_tmp);
 	}
+	delete [] _tmp;
 	return str;
 }
 
@@ -418,7 +419,7 @@ void Func_Service_UnInstall(bool _quite){
 				THROWERR(_T("GetEnvironmentVariable() Error in UnInstall Service."));
 			_stprintf(buf1,_T("%s\\Au__.exe"),buf3);
 			if (!CopyFile(buf2,buf1,FALSE))
-				THROWERR(_T("CopyFile() Error in UnInstall Service."));
+				THROWERR(_T("CopyFile() Error(To temp directory) in UnInstall Service."));
 			if (!ShellExecute(NULL,_T("open"),buf1,_T("-fu"),NULL,SW_SHOWNORMAL))
 				THROWERR(_T("ShellExecute() Error in UnInstall Service."));
 			exit(0);
@@ -577,16 +578,23 @@ void Func_CallCopyHostsFile(SYSTEMTIME & st){
 	if (!CopyFile(buf1,buf2,FALSE))
 		THROWERR(_T("CopyFile() Error on copy a backup file"));
 	if (!bReserved) _tprintf(_T("\tDone.\n    Step3:Replace Default Hosts File..."));
-	if (!CopyFile(ChangeCTLR,buf1,FALSE))
+	if (!CopyFile(ReservedFile,buf1,FALSE))
 		THROWERR(_T("CopyFile() Error on copy hosts file to system path"));
-	if (!((fp=_tfopen(ReservedFile,_T("rb"))) && (_=_tfopen(buf1,_T("ab+")))))
-		THROWERR(_T("_tfopen() Error in copy hosts file."));
-	if (fseek(_,0,SEEK_SET)) THROWERR(_T("fseek() Error!"));
-	size_t readbyte=0;
-	while ((readbyte=fread(iobuffer,sizeof(char),localbufsize,fp)))
-		fwrite(iobuffer,sizeof(char),readbyte,_);
-	fclose(fp);fclose(_);
-	Sleep(500);
+	try {
+		if (!(_=_tfopen(buf1,_T("ab+"))))
+			throw buf1;
+		if (!(fp=_tfopen(ChangeCTLR,_T("rb"))))
+			throw ChangeCTLR;
+		size_t readbyte=0;
+		while ((readbyte=fread(iobuffer,sizeof(char),localbufsize,fp)))
+			fwrite(iobuffer,sizeof(char),readbyte,_);
+		fclose(fp);fclose(_);
+	}
+	catch(TCHAR const * _FileName){
+		_stprintf(szline,_T("_tfopen() Error in open \"%s\".\n"),_FileName);
+		MessageBox(NULL,szline,_T("Error!"),MB_ICONSTOP|MB_SETFOREGROUND);
+		abort();
+	}
 	if (!bReserved) _tprintf(_T("Replace File Successfully\n"));
 	else ___autocheckmess(_T("Replace File Successfully\n"));
 	if (!bReserved) Func_countBackupFile(&st),MessageBox(_ptrresev_NULL_,_T("Hosts File Set Success!"),
@@ -634,7 +642,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 		if (bReserved) ___autocheckmess(_T("Start replace hosts file.\n"));
 		_stprintf(buf1,_T("%s\\drivers\\etc\\hosts"),buf3);
 		_stprintf(buf2,_BAKFORMAT,buf3,st.wYear,st.wMonth,st.wDay,st.wHour,st.wMinute,st.wSecond);
-		SetFileAttributes(buf1,FILE_ATTRIBUTE_NORMAL); //for avoid CopyFile or _tfopen failed.
+		SetFileAttributes(buf1,FILE_ATTRIBUTE_NORMAL);//for avoid CopyFile or _tfopen failed.
 		try {
 			if (!bReserved) _tprintf(_T("    Step1:Download hosts file..."));
 			//download
@@ -649,48 +657,84 @@ DWORD __stdcall NormalEntry(LPVOID){
 					}
 			//end.
 			if (!bReserved) _tprintf(_T("\tDone.\n    Step2:Change Line Endings..."));
-			if (!((fp=_tfopen(DownLocated,_T("r"))) && (_=_tfopen(ChangeCTLR,_T("w")))))
-				THROWERR(_T("Open file Error!(1)"));
-			while (!feof(fp)){
-				memset(szline,0,sizeof(szline));
-				_fgetts(szline,1000,fp);
-				_fputts(szline,_);
-			}
-			fclose(fp);fclose(_);
-			fp=_ptrresev_NULL_,_=_ptrresev_NULL_;
-			if (!DeleteFile(DownLocated)){
-				if (bReserved)
-					Func_FastPMNTS(_T("Delete tmpfile error.(%ld)\n"),GetLastError());
-				else
-					_tprintf(_T("Delete tmpfile error.(%ld)\n"),GetLastError());
-			}
-			if (!((fp=_tfopen(buf1,_T("r"))) && (_=_tfopen(ReservedFile,_T("w")))))
-				THROWERR(_T("_tfopen() Error"));
-			while (!feof(fp)){
-				memset(szline,0,sizeof(szline));
-				_fgetts(szline,1000,fp);
-				if (*szline==_T('#')) {
-					if (_tcsstr(szline,_T("# Copyright (c) 2014")))
-					break; else 
-					if (bIgnoreCommit) continue;
-				}
-				if (bIgnoreNewline && *szline==_T('\n')) continue;
-				_fputts(szline,_);
-			}
-			fclose(_);
-			_=_ptrresev_NULL_;
-			if (!feof(fp)){
-				if (!(_=_tfopen(DownLocated,_T("w"))));
-				_fputts(szline,_);
-				while (!feof(fp)) {
+			try {
+				//Change Line Ending
+				//Open file and check if is open
+				if (!(fp=_tfopen(DownLocated,_T("r"))))
+					throw DownLocated;
+				if (!(_=_tfopen(ChangeCTLR,_T("w"))))
+					throw ChangeCTLR;
+				//end, Read and Write to change the line ending to CRLF
+				while (!feof(fp)){
 					memset(szline,0,sizeof(szline));
 					_fgetts(szline,1000,fp);
 					_fputts(szline,_);
 				}
+				fclose(fp);fclose(_);
+				fp=_ptrresev_NULL_,_=_ptrresev_NULL_;
+				//end
+
+				//delete tmpfile
+				if (!DeleteFile(DownLocated)){
+					if (bReserved)
+						Func_FastPMNTS(_T("Delete tmpfile error.(%ld)\n"),GetLastError());
+					else
+						_tprintf(_T("Delete tmpfile error.(%ld)\n"),GetLastError());
+				}
+
+				//Read user-defined hosts start
+				//Open and check file is open?
+				if (!(fp=_tfopen(buf1,_T("r"))))
+					throw buf1;
+				if (!(_=_tfopen(ReservedFile,_T("w"))))
+					throw ReservedFile;
+				while (!feof(fp)){//checking is end of file?
+					//to prevent print complex line
+					memset(szline,0,sizeof(szline));
+					_fgetts(szline,1000,fp);
+					if (*szline==_T('#')) {//fast check is commit
+						//File original hosts start
+						if (_tcsstr(szline,_T("racaljk")))
+						break; else
+						// check is need ignore the commits
+						if (bIgnoreCommit) continue;
+					}
+					//check is need ignore the new line
+					if (bIgnoreNewline && *szline==_T('\n')) continue;
+					// print user-defined hosts to tmp file.
+					_fputts(szline,_);
+				}
+				// close and save the file
 				fclose(_);
+				_=_ptrresev_NULL_;
+				//end
+
+				//Critical function: Check is original file same with hosts file from network
+				if (!feof(fp)){//check is original file is read in endof file?
+					// no? start copy file function
+					if (!(_=_tfopen(DownLocated,_T("w"))))
+						throw DownLocated;
+					_fputts(szline,_);
+					while (!feof(fp)) {
+						memset(szline,0,sizeof(szline));
+						_fgetts(szline,1000,fp);
+						_fputts(szline,_);
+					}
+					fclose(_);
+				}
+				fclose(fp);
+				fp=_ptrresev_NULL_,_=_ptrresev_NULL_;
+				//end.
 			}
-			fclose(fp);
-			fp=_ptrresev_NULL_,_=_ptrresev_NULL_;
+
+			//catch area
+			catch (TCHAR const * _FileName){
+				_stprintf(szline,_T("Open \"%s\" Error(_tfopen() Error)!\n"),_FileName);
+				MessageBox(NULL,szline,_T("Error!"),MB_ICONSTOP|MB_SETFOREGROUND);
+				abort();
+			}
+			//end.
+
 			if (!Func_CheckDiff(ChangeCTLR,DownLocated)){
 				if (!bReserved) _tprintf(_T("\tDone.\n\n    \
 Finish:Hosts file Not update.\n\n"));
@@ -736,12 +780,10 @@ inline long Func_time2long(const WORD & year, const WORD & month, const WORD & d
 }
 
 bool Func_checkBackupFileTime(const SYSTEMTIME & st,TCHAR const * name){
-	//#define _BAKFORMAT _T("%s\\drivers\\etc\\hosts.%04d%02d%02d.%02d%02d%02d.bak")
 	WORD year,month,day;
 	if (_stscanf(name,_T("hosts.%4hd%2hd%2hd.%*2d%*2d%*2d"),&year,&month,&day)!=3)
 		return false;
 	long systime=Func_time2long(st);
-//	printf(" %ld\n",labs(Func_time2long(st)-Func_time2long(year,month,day)));
 	if (labs(systime-Func_time2long(year,month,day))>=60)
 		return true;
 	return false;
@@ -752,8 +794,11 @@ void Func_countBackupFile(SYSTEMTIME * st){
 	DWORD __count__=0;
 	TCHAR * sizbuf=new TCHAR[localbufsize];
 	_stprintf(sizbuf,_T("%s\\drivers\\etc\\hosts.20*"),buf3);
-	if ((hdHandle=FindFirstFile(sizbuf,&wfd))==INVALID_HANDLE_VALUE)
+	if ((hdHandle=FindFirstFile(sizbuf,&wfd))==INVALID_HANDLE_VALUE){
 		_tprintf(TEXT("FindFirstFile() Error!(%ld)\n"),GetLastError());
+		delete [] sizbuf;
+		return ;
+	}
 	do {
 		if (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) continue;
 		if (_tcsstr(wfd.cFileName,_T("hosts.")))
@@ -781,7 +826,7 @@ Delete file \"%s\" successfully\n"),wfd.cFileName);
 				} while (FindNextFile(hdHandle,&wfd));
 				FindClose(hdHandle);
 			}
-#endif 
+#endif
 	delete [] sizbuf;
 	sizbuf=_ptrresev_NULL_;
 	return ;
