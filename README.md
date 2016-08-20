@@ -27,7 +27,7 @@ Server | Microsoft Windows Server 2003 Family
 
 **在此特别感谢spacetime的协助 是他帮助我发现了ci运行测试中程序的致命bug**
 
-**在此特别感谢[@0xMeansHexadecimal](https://github.com/0xMeansHexadecimal)给我的支持 是她给了我灵感 修复了一个致命bug**
+**在此特别感谢[@0xMeansHexadecimal](https://github.com/0xMeansHexadecimal)给我的支持 是她给了我灵感 协助我修复了[#22](https://github.com/HostsTools/Windows/issues/22)**
 
 ## 声明
 
