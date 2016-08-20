@@ -228,7 +228,7 @@ inline void * __fastcall ___Func_Close_File_Stream(FILE * ___ptr_fp){
 
 FILE * Func_SetErrorFileEx(const TCHAR * _FileName_,const TCHAR * _StreamStatus){
 	if (!(ptr_ErrorFileStream=_tfopen(_FileName_,_StreamStatus)))
-		MessageBox(_ptrresev_NULL_,_T("_tfopen() Error!"),_T("Fatal Error!"),MB_SETFOREGROUND|MB_ICONSTOP);
+		MessageBox(_ptrresev_NULL_,_T("_tfopen() Error!"),_T("Fatal Error!(cause by: ptrerr.hpp)"),MB_SETFOREGROUND|MB_ICONSTOP);
 	return ptr_ErrorFileStream;
 }
 
@@ -236,7 +236,7 @@ FILE * Func_SetErrorFile(const TCHAR * _FileName_,const TCHAR * _StreamStatus){
 	sz__ErrorFileName__=_FileName_;
 	sz__ErrorFileStream__=_StreamStatus;
 	if (!(ptr_ErrorFileStream=_tfopen(_FileName_,_StreamStatus)))
-		MessageBox(_ptrresev_NULL_,_T("_tfopen() Error!"),_T("Fatal Error!"),MB_SETFOREGROUND|MB_ICONSTOP);
+		MessageBox(_ptrresev_NULL_,_T("_tfopen() Error!"),_T("Fatal Error!(cause by: ptrerr.hpp)"),MB_SETFOREGROUND|MB_ICONSTOP);
 	return ptr_ErrorFileStream;
 }
 

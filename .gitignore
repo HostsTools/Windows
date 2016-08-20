@@ -28,6 +28,7 @@
 
 # tmp
 *.tmp
+*.zip
 
 # C-Free tmp file
 *.cpp~

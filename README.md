@@ -3,9 +3,9 @@
 # Download Executable File 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
-Last update: Jul. 14th , 2016
+Last update: Apr. 21st , 2016
 
-#### 下载地址:(v2.1.10)
+#### 下载地址:(v2.1.11)
 
  - zip Package (Include `tool.exe` and `choose.exe`)
   - [点我来下载](https://git.io/vozMx)
@@ -16,8 +16,6 @@ OS type | Minimun Supported Version
 WorkStation | Microsoft Windows XP Family
 Server | Microsoft Windows Server 2003 Family
 
->If you choose `Download`, It means you agreed the General public license.
-
 # Hosts Tool
 
 这个工具可以帮助你全自动的更换 备份原来的hosts文件 
@@ -27,13 +25,15 @@ Server | Microsoft Windows Server 2003 Family
 
 **在此特别感谢[@qwerty258](https://github.com/qwerty258)为本程序提供了Visual Studio的工程文件**
 
-**在此特别感谢在spacetime的协助 是他帮助我发现了ci运行测试中程序的致命bug**
+**在此特别感谢spacetime的协助 是他帮助我发现了ci运行测试中程序的致命bug**
+
+**在此特别感谢[@0xMeansHexadecimal](https://github.com/0xMeansHexadecimal)给我的支持 是她给了我灵感 修复了一个致命bug**
 
 ## 声明
 
 从今日起，除发现bug外，不再推送更新。即：不再主动推送新的功能以及code review后的bug修复。
 
-暑假事情繁多 尽请谅解
+近日事情繁多 尽请谅解
 
 请通过issue来反馈任何bug以及程序问题，bug会及时得到修复。
 

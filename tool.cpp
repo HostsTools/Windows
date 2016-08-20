@@ -57,7 +57,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.10  Build time:Jul. 14th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.11  Build time:Apr. 21st, '16")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -139,7 +139,7 @@ Example:\n\
 SERVICE_STATUS_HANDLE ssh;
 SERVICE_STATUS ss;
 HANDLE lphdThread[]={
-	INVALID_HANDLE_VALUE
+	INVALID_HANDLE_VALUE,INVALID_HANDLE_VALUE
 };
 bool request_client,bReserved,bIgnoreNewline,bIgnoreCommit;
 WIN32_FIND_DATA wfd={0,{0,0},{0,0},{0,0},0,0,0,0,{0},{0}};
@@ -161,6 +161,7 @@ void Func_CheckProFile();
 TCHAR * dotdotcheck(TCHAR *);
 void Func_countBackupFile(SYSTEMTIME *);
 bool Func_checkBackupFileTime(const SYSTEMTIME & , TCHAR const *);
+DWORD WINAPI MonitorServiceThread(LPVOID);
 
 //DWORD __stdcall Func_Update(LPVOID);
 
@@ -191,6 +192,8 @@ char iobuffer[localbufsize];
 #define	DEBUG_SERVICE_START		(DEBUG_ENTRY|(1<<0x03))
 #define	DEBUG_SERVICE_REINSTALL		(DEBUG_ENTRY|(1<<0x04))
 #define	OPEN_LISTEN			(DEBUG_ENTRY|(1<<0x05))
+
+#define STOP_WITH_RESTART (1<<0x02)
 //end.
 
 //define _In_ parameters string
@@ -291,6 +294,18 @@ void Func_CheckProFile(){
 	return ;
 }
 
+namespace __Dpipe{
+	DWORD ___OnError(const TCHAR *__szAdditionalMessage){
+		Func_FastPMNTS(_T("%s() Error! (%ld)\n"),__szAdditionalMessage,GetLastError());
+		//We need it?
+		ss.dwServiceSpecificExitCode=STOP_WITH_RESTART;
+		ss.dwWin32ExitCode=ERROR_SERVICE_SPECIFIC_ERROR;
+		ss.dwCurrentState=SERVICE_STOPPED;
+		SetServiceStatus(ssh,&ss);
+		ExitProcess(1); 
+		return GetLastError();
+	}
+}
 
 void Func_ResetFile(){
 	SYSTEMTIME st={0,0,0,0,0,0,0,0};
@@ -323,6 +338,9 @@ void __abrt(int){
 	_tprintf(_T("Uninstall service.\n"));
 	Func_Service_UnInstall(false);
 	TerminateThread(lphdThread[0],0);
+	if (!lphdThread[1]) TerminateThread(lphdThread[1],0);
+	CloseHandle(lphdThread[0]);
+	CloseHandle(lphdThread[1]);
 	CloseHandle(hdPipe);
 	_tprintf(_T("Program will now exit.\n"));
 	exit(0);
@@ -368,6 +386,8 @@ DO NOT CLOSE THE CONSOLE DIRECT!!!\n"));
 					___debug_point_reset(DEBUG_SERVICE_START);
 					if (!(lphdThread[0]=CreateThread(_ptrresev_NULL_,0,OpenPipeService,_ptrresev_NULL_,0,_ptrresev_NULL_)))
 						THROWERR(_T("CreateThread() Error!"));
+					if (!(lphdThread[1]=CreateThread(_ptrresev_NULL_,0,MonitorServiceThread,_ptrresev_NULL_,0,_ptrresev_NULL_)))
+						_tprintf(_T("CreateThread() Error! in create MonitorServiceThread.(%ld)\n"),GetLastError());
 					WaitForSingleObject(lphdThread[0],INFINITE);
 					CloseHandle(hdPipe);
 					return ;
@@ -389,6 +409,39 @@ Please contact the application's support team for more information.\n"),
 	CloseServiceHandle(shSvc);
 	CloseServiceHandle(shMang);
 	return ;
+}
+
+DWORD WINAPI MonitorServiceThread(LPVOID){
+	SC_HANDLE shMang=_ptrresev_NULL_,shSvc=_ptrresev_NULL_;
+	if (!(shMang=OpenSCManager(_ptrresev_NULL_,_ptrresev_NULL_,SC_MANAGER_ALL_ACCESS))){
+		_tprintf(_T("OpenSCManager() Error in MonitorServiceThread (%ld).\n"),GetLastError());
+		abort();
+	}
+	if (!(shSvc=OpenService(shMang,Sname,SERVICE_QUERY_STATUS))){
+		if (GetLastError()==ERROR_SERVICE_NOT_FOUND){
+			CloseServiceHandle(shMang);
+			___debug_point_reset(DEBUG_SERVICE_REINSTALL);
+		}
+		else{
+			_tprintf(_T("OpenSCManager() Error in MonitorServiceThread (%ld).\n"),GetLastError());
+			abort();
+		}
+	}
+	SERVICE_STATUS mon_ss={0l,0l,0l,0l,0l,0l,0l};
+	while (1){
+		QueryServiceStatus(shSvc,&mon_ss);
+		if (mon_ss.dwCurrentState==SERVICE_STOPPED || mon_ss.dwCurrentState==SERVICE_STOP_PENDING)
+			if (mon_ss.dwWin32ExitCode==ERROR_SERVICE_SPECIFIC_ERROR	&& mon_ss.dwServiceSpecificExitCode==STOP_WITH_RESTART){
+//				___debug_point_reset(DEBUG_SERVICE_REINSTALL);
+				_tprintf(_T("This production may need restart to finish this.\nPlease press Ctrl+C to terminate program then restart again.\n\
+Error code:(%ld)\n"),GetLastError());
+				break;
+			}
+		Sleep(1000);
+	}
+	CloseServiceHandle(shMang);
+	CloseServiceHandle(shSvc);
+	return GetLastError();
 }
 
 //short path if str has ".."
@@ -626,7 +679,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 		_tprintf(_T("    LICENSE:General Public License\n%s\n    Copyright (C) 2016 @Too-Naive\n"),welcomeShow);
 		_tprintf(_T("    Project website:%s\n"),objectwebsite);
 		_tprintf(_T("    Bug report:sometimes.naive[at]hotmail.com \n\t       Or open new issue\n\n\n"));
-		_tprintf(_T("    Start replace hosts file:\n"));//    Step1:Get System Driver..."));
+		_tprintf(_T("    Start replace hosts file:\n"));
 	}
 	else{
 		if (request_client) ___pipeopen(),___pipesentmessage(_T("\nMessage from service:\n\n"));
@@ -642,7 +695,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 		if (bReserved) ___autocheckmess(_T("Start replace hosts file.\n"));
 		_stprintf(buf1,_T("%s\\drivers\\etc\\hosts"),buf3);
 		_stprintf(buf2,_BAKFORMAT,buf3,st.wYear,st.wMonth,st.wDay,st.wHour,st.wMinute,st.wSecond);
-		SetFileAttributes(buf1,FILE_ATTRIBUTE_NORMAL);//for avoid CopyFile or _tfopen failed.
+		SetFileAttributes(buf1,FILE_ATTRIBUTE_NORMAL);//To avoid CopyFile or _tfopen failed.
 		try {
 			if (!bReserved) _tprintf(_T("    Step1:Download hosts file..."));
 			//download
@@ -749,7 +802,7 @@ Finish:Hosts file Not update.\n\n"));
 			if (!hdThread) TerminateThread(hdThread,0);
 		}
 		catch(expection runtimeerr){
-			if (!bReserved){
+			if (bReserved){
 				if (!request_client){
 					Func_FastPMNTS(_T("Fatal Error:\n"));
 					Func_FastPMNSS(_T("%s (GetLastError():%ld)\n"),runtimeerr.Message,GetLastError());
@@ -766,7 +819,7 @@ Finish:Hosts file Not update.\n\n"));
 				abort();
 			}
 		}
-		Sleep(bReserved?(request_client?5000:(29*60000)):0);
+		Sleep(bReserved?(request_client?10000:(29*60000)):0);
 	} while (bReserved);
 	return GetLastError();
 }
@@ -876,6 +929,7 @@ void WINAPI Service_Control(DWORD dwControl){
 			ss.dwCheckPoint=0;
 			ss.dwWaitHint=1000;
 			SetServiceStatus(ssh,&ss);
+			//Why we use terminate?
 			TerminateThread(lphdThread[0],0);
 			if (request_client) CloseHandle(hdPipe);
 			ss.dwCurrentState=SERVICE_STOPPED;
