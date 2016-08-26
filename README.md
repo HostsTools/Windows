@@ -3,9 +3,9 @@
 # Download Executable File 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
-Last update: Apr. 21st , 2016
+Last update: Aug. 26nd , 2016
 
-#### 下载地址:(v2.1.11)
+#### 下载地址:(v2.1.12)
 
  - zip Package (Include `tool.exe` and `choose.exe`)
   - [点我来下载](https://git.io/vozMx)
@@ -31,9 +31,7 @@ Server | Microsoft Windows Server 2003 Family
 
 ## 声明
 
-从今日起，除发现bug外，不再推送更新。即：不再主动推送新的功能以及code review后的bug修复。
-
-近日事情繁多 尽请谅解
+~~作者弃坑了~~
 
 请通过issue来反馈任何bug以及程序问题，bug会及时得到修复。
 

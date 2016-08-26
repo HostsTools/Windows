@@ -11,6 +11,8 @@ Global
 		Debug|x64 = Debug|x64
 		fortestonline|Win32 = fortestonline|Win32
 		fortestonline|x64 = fortestonline|x64
+		fortestonline1|Win32 = fortestonline1|Win32
+		fortestonline1|x64 = fortestonline1|x64
 		Release|Win32 = Release|Win32
 		Release|x64 = Release|x64
 	EndGlobalSection
@@ -23,6 +25,10 @@ Global
 		{98D6ADA9-79C7-4808-AAC6-DDC417BFA6C9}.fortestonline|Win32.Build.0 = fortestonline|Win32
 		{98D6ADA9-79C7-4808-AAC6-DDC417BFA6C9}.fortestonline|x64.ActiveCfg = fortestonline|x64
 		{98D6ADA9-79C7-4808-AAC6-DDC417BFA6C9}.fortestonline|x64.Build.0 = fortestonline|x64
+		{98D6ADA9-79C7-4808-AAC6-DDC417BFA6C9}.fortestonline1|Win32.ActiveCfg = fortestonline1|Win32
+		{98D6ADA9-79C7-4808-AAC6-DDC417BFA6C9}.fortestonline1|Win32.Build.0 = fortestonline1|Win32
+		{98D6ADA9-79C7-4808-AAC6-DDC417BFA6C9}.fortestonline1|x64.ActiveCfg = fortestonline1|x64
+		{98D6ADA9-79C7-4808-AAC6-DDC417BFA6C9}.fortestonline1|x64.Build.0 = fortestonline1|x64
 		{98D6ADA9-79C7-4808-AAC6-DDC417BFA6C9}.Release|Win32.ActiveCfg = Release|Win32
 		{98D6ADA9-79C7-4808-AAC6-DDC417BFA6C9}.Release|Win32.Build.0 = Release|Win32
 		{98D6ADA9-79C7-4808-AAC6-DDC417BFA6C9}.Release|x64.ActiveCfg = Release|x64
