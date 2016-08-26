@@ -353,7 +353,7 @@ Copyright (C) 2016 @Too-Naive License:General Public License\n\
 		if (!CopyFile(ReservedFile,buf1,FALSE)){
 			_stprintf(szline,
 			_T("CopyFile() Failed!(%ld)\nPlease copy the \"%s\" file to\
- \"%%systemroot%%\\drivers\\etc\\hosts\" Manually.")
+ \"%%systemroot%%\\drivers\\etc\\hosts\" Manually."),
 			GetLastError(),ReservedFile);
 			MessageBox(NULL,_T("Fatal Error"),szline,MB_SETFOREGROUND|MB_ICONSTOP);
 			abort();
