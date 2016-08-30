@@ -57,7 +57,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.12  Build time:Aug. 26nd, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.12  Build time:Aug. 30th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define pWait _T("\n    \
@@ -508,12 +508,14 @@ Error code:(%ld)\n"),GetLastError());
 }
 
 //short path if str has ".."
+//Should we need check "\\..\\" ?
 TCHAR * dotdotcheck(TCHAR * str){
 	TCHAR * _;	TCHAR *_tmp=new TCHAR[100];
 	memset(_tmp,0,sizeof(_tmp));
 	if ((_=_tcsstr(str,_T("..")))){
 		_stscanf(_+2,_T("%100s"),_tmp);
-		while ((*(--_))!='\\');
+//		while ((*(--_))!='\\');
+		--_;
 		while ((*(--_))!='\\');
 		_stprintf(_,_T("%s"),_tmp);
 	}
@@ -706,6 +708,7 @@ void Func_CallCopyHostsFile(SYSTEMTIME & st){
 		_fputts(_T(""),_);
 		if (!(fp=_tfopen(ChangeCTLR,_T("rb"))))
 			throw ChangeCTLR;
+		_ftprintf(_,_T("\n"));
 		size_t readbyte=0;
 		while ((readbyte=fread(iobuffer,sizeof(char),localbufsize,fp)))
 			fwrite(iobuffer,sizeof(char),readbyte,_);
