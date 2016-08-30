@@ -57,9 +57,10 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.12  Build time:Aug. 30th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.13  Build time:Aug. 30th, '16")
 
 #define CASE(x,y) case x : y; break;
+#define DEBUGCASE(x) CASE(x,___debug_point_reset(x))
 #define pWait _T("\n    \
 There seems something wrong in download file, we will retry after 5 seconds.\n")
 
@@ -109,11 +110,7 @@ struct expection{
 	}
 };
 
-#define SHOW_HELP _T("\
-------------------------------------------------------------\n\
-Hosts Tool for Windows Console by: Too-Naive\n\
-Copyright (C) 2016 @Too-Naive License:General Public License\n\
-------------------------------------------------------------\n\n\
+#define SHOW_HELP _T("%s\n\
 Usage: tool [-? | -r | -fi | -fu | --debug-pipe]\n\n\
 Options:\n\
     -?    : Show this help message.\n\
@@ -136,6 +133,12 @@ Example:\n\
     *                                            *\n\
     *                    Powered by: @Too-Naive  *\n\
     **********************************************")
+    
+#define copyrightshow _T("\
+------------------------------------------------------------\n\
+Hosts Tool for Windows Console by: Too-Naive\n\
+Copyright (C) 2016 @Too-Naive License:General Public License\n\
+------------------------------------------------------------\n")
 
 //Global variable
 SERVICE_STATUS_HANDLE ssh;
@@ -155,7 +158,7 @@ void Func_Service_Install(bool);
 void Func_Service_UnInstall(bool);
 DWORD __stdcall NormalEntry(LPVOID);
 void ___debug_point_reset(int);
-inline void __show_str(TCHAR const *,TCHAR const *);
+inline void __show_str(TCHAR const *,TCHAR const *,TCHAR const *);
 void Func_ResetFile();
 void ___Func_pipeCallBack(TCHAR const*);
 void Func_CallCopyHostsFile();
@@ -203,7 +206,7 @@ TCHAR const *szParameters[]={
 	_T("svc"),				//for backward compatibility
 	_T("fi"),				//1
 	_T("fu"),				//2
-	_T("\x02\x03"),				//3
+	_T("hardreset"),				//3
 	_T("-debug-reset"),			//4
 	_T("\x02\x03"),				//5
 	_T("?"),				//6
@@ -223,10 +226,12 @@ int __fastcall __Check_Parameters(int argc,TCHAR const **argv){
 	size_t i=0;
 	for (;_tcscmp(&(argv[1][1]),szParameters[i]) &&
 		i<sizeof(szParameters)/sizeof(szParameters[0]);i++);
-	if (!(i==0 || i==1 ||i==9)
+	if (!(i==0 || i==1 || i==9 || i==11)
 		&& argc>2) BAD_EXIT;
-	if (argc==3 && !_tcscmp(argv[2],szParameters[11])) request_client=1;
-		else if (argc==3 && _tcscmp(argv[2],szParameters[11])) BAD_EXIT;
+	if (argc==3 && 
+		(!_tcscmp(argv[2],szParameters[11]) || !_tcscmp(argv[2],szParameters[3]))) 
+			request_client=1;
+		else if (argc==3 && !request_client) BAD_EXIT;
 	switch (i){
 		case  0: bReserved=true;
 			 return EXEC_START_SERVICE;
@@ -253,12 +258,16 @@ int _tmain(int argc,TCHAR const ** argv){
 		CASE(EXEC_START_INSTALL_SERVICE,Func_Service_Install(true));
 		CASE(EXEC_START_UNINSTALL_SERVICE,Func_Service_UnInstall(true));
 		CASE(EXEC_START_SERVICE,StartServiceCtrlDispatcher(STE));
-		CASE(EXEC_START_HELP,__show_str(SHOW_HELP,Sname));
-		CASE(EXEC_DEBUG_RESET,___debug_point_reset(EXEC_DEBUG_RESET));
+		CASE(EXEC_START_HELP,__show_str(SHOW_HELP,copyrightshow,Sname));
 //		CASE(SHOW_LICENSE,__show_str(szgpl_Raw,_pNULL_));
-		CASE(DEBUG_SERVICE_STOP,___debug_point_reset(DEBUG_SERVICE_STOP));
-		CASE(DEBUG_SERVICE_START,___debug_point_reset(DEBUG_SERVICE_START));
-		CASE(DEBUG_SERVICE_REINSTALL,___debug_point_reset(DEBUG_SERVICE_REINSTALL));
+		DEBUGCASE(EXEC_DEBUG_RESET);
+		DEBUGCASE(DEBUG_SERVICE_STOP);
+		DEBUGCASE(DEBUG_SERVICE_START);
+		DEBUGCASE(DEBUG_SERVICE_REINSTALL);
+//		CASE(EXEC_DEBUG_RESET,___debug_point_reset(EXEC_DEBUG_RESET));
+//		CASE(DEBUG_SERVICE_STOP,___debug_point_reset(DEBUG_SERVICE_STOP));
+//		CASE(DEBUG_SERVICE_START,___debug_point_reset(DEBUG_SERVICE_START));
+//		CASE(DEBUG_SERVICE_REINSTALL,___debug_point_reset(DEBUG_SERVICE_REINSTALL));
 		CASE(OPEN_LISTEN,___debug_point_reset(OPEN_LISTEN));
 		CASE(RESET_FILE,Func_ResetFile());
 		default:break;
@@ -304,21 +313,15 @@ namespace __Dpipe{
 		ss.dwWin32ExitCode=ERROR_SERVICE_SPECIFIC_ERROR;
 		ss.dwCurrentState=SERVICE_STOPPED;
 		SetServiceStatus(ssh,&ss);
-		ExitProcess(1); 
+		ExitProcess(1);
 		return GetLastError();
 	}
 }
 
 void Func_ResetFile(){
 	SYSTEMTIME st={0,0,0,0,0,0,0,0};
-#ifdef HOSTS_HARD_RESET
 	bool chk=false;
-#endif
-	_tprintf(_T("\
-------------------------------------------------------------\n\
-Hosts Tool for Windows Console by: Too-Naive\n\
-Copyright (C) 2016 @Too-Naive License:General Public License\n\
-------------------------------------------------------------\n"));
+	_tprintf(copyrightshow);
 	if (!GetSystemDirectory(buf3,localbufsize))
 		_tprintf(_T("    GetSystemDirectory() Error!(GetLastError():%ld)\n\
 \tCannot get system path!"),GetLastError()),abort();
@@ -330,37 +333,36 @@ Copyright (C) 2016 @Too-Naive License:General Public License\n\
 	else
 		_tprintf(_T("Unable to backup file.(%ld)\n"),GetLastError()),abort();
 //reset file start
-	FILE *fp=_tfopen(buf1,
-#ifdef HOSTS_HARD_RESET
-					 _T("w")
-#else
-					 _T("r")
-#endif
-					);
+	FILE *fp=_tfopen(buf1,request_client?_T("w"):_T("r"));
 	if (!fp) {//,abort();
-#ifdef HOSTS_HARD_RESET
-		_tprintf(_T("Cannot open file!\nUsing plan B.\n"));
-		fp=_tfopen(ReservedFile,_T("w"));
-		fclose(fp); 
-		chk=true;
-#else
-		_tprintf(_T("Cannot open file!\n"));
-		abort();
-#endif
-	}
-#ifdef HOSTS_HARD_RESET
-	if (chk) {
-		if (!CopyFile(ReservedFile,buf1,FALSE)){
-			_stprintf(szline,
-			_T("CopyFile() Failed!(%ld)\nPlease copy the \"%s\" file to\
- \"%%systemroot%%\\drivers\\etc\\hosts\" Manually."),
-			GetLastError(),ReservedFile);
-			MessageBox(NULL,_T("Fatal Error"),szline,MB_SETFOREGROUND|MB_ICONSTOP);
+		if (request_client){
+			_tprintf(_T("Cannot open file!\nUsing plan B.\n"));
+			fp=_tfopen(ReservedFile,_T("w"));
+			fclose(fp);
+			fp=_pNULL_;
+			chk=true;
+		}else{
+			_tprintf(_T("Cannot open file!\n"));
 			abort();
 		}
 	}
-	else _ftprintf(fp,_T("%s"),szDefatult_hostsfile);
-#else
+if (request_client){
+		if (chk) {
+			if (!CopyFile(ReservedFile,buf1,FALSE)){
+				_stprintf(szline,
+				_T("CopyFile() Failed!(%ld)\nPlease copy the \"%s\" file to\
+\"%%systemroot%%\\drivers\\etc\\hosts\" Manually."),
+				GetLastError(),ReservedFile);
+				MessageBox(NULL,_T("Fatal Error"),szline,MB_SETFOREGROUND|MB_ICONSTOP);
+				abort();
+			}
+		}
+		else _ftprintf(fp,_T("%s"),szDefatult_hostsfile);
+		fclose(fp);
+		_tprintf(_T("    Reset file successfully.\n"));
+		callsystempause;
+		ExitProcess(0);
+}
 	if (!GetEnvironmentVariable(_T("TEMP"),szline,localbufsize))
 		_tprintf(_T("Can't get TEMP path, using current directory.(%ld)\n"),
 				GetLastError()),
@@ -382,8 +384,6 @@ Copyright (C) 2016 @Too-Naive License:General Public License\n\
 		_tprintf(_T("CopyFile() Failed.(%ld)\nPlease copy the \"%s\" file to \
 \"%%systemroot%%\\drivers\\etc\\hosts\" Manually."),GetLastError(),ReservedFile),
 		abort();
-#endif
-	fclose(fp);
 //reset file end
 	DeleteFile(ReservedFile);
 	_tprintf(_T("    Reset file successfully.\n"));
@@ -406,9 +406,10 @@ void __abrt(int){
 	exit(0);
 }
 
-inline void __show_str(TCHAR const* st,TCHAR const * _ingore){
-	if (!_ingore) _tprintf(_T("%s"),st);
-	else _tprintf(st,_ingore);
+inline void __show_str(TCHAR const* st,TCHAR const * str2,TCHAR const * str3){
+/*	if (!_ingore) _tprintf(_T("%s"),st);
+	else _tprintf(st,_ingore);*/
+	_tprintf(st,str2,str3);
 	callsystempause;
 	return ;
 }
