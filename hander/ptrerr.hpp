@@ -31,6 +31,7 @@ FILE * Func_SetErrorFile(const TCHAR*, const TCHAR*);
 inline void * __fastcall ___Func_Close_File_Stream(FILE *);
 inline int __fastcall ___Func_PrintErrorTimeToFileStream(FILE *);
 inline void * ___Func__Check_File_Set(void);
+FILE * Func_SetErrorFileEx(const TCHAR *,const TCHAR *);
 
 #define __BEGIN__ Func_SetErrorFileEx(sz__ErrorFileName__,sz__ErrorFileStream__)
 #define __END__ ___Func_Close_File_Stream(_pNULL_)
