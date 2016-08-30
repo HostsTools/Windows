@@ -57,7 +57,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.13  Build time:Aug. 30th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.14  Build time:Aug. 30th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define DEBUGCASE(x) CASE(x,___debug_point_reset(x))
@@ -226,7 +226,7 @@ int __fastcall __Check_Parameters(int argc,TCHAR const **argv){
 	size_t i=0;
 	for (;_tcscmp(&(argv[1][1]),szParameters[i]) &&
 		i<sizeof(szParameters)/sizeof(szParameters[0]);i++);
-	if (!(i==0 || i==1 || i==9 || i==11)
+	if (!(i==0 || i==1 || i==9 || i==12)
 		&& argc>2) BAD_EXIT;
 	if (argc==3 && 
 		(!_tcscmp(argv[2],szParameters[11]) || !_tcscmp(argv[2],szParameters[3]))) 
