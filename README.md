@@ -5,7 +5,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
 Last update: Aug. 30th , 2016
 
-#### 下载地址:(v2.1.13)
+#### 下载地址:(v2.1.14)
 
  - zip Package (Include `tool.exe` and `choose.exe`)
   - [点我来下载](https://git.io/vozMx)
@@ -73,4 +73,4 @@ main program file: `tool.exe`
 
 ## Code license:
 
-General public license version 3
+General Public License Version 3
