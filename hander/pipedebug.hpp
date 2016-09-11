@@ -16,7 +16,7 @@ namespace __Dpipe{
 //for pipe debug
 	const DWORD PIPE_TIMEOUT=5000;
 	const size_t BUFSIZE=4096;
-	typedef struct{
+	typedef struct _PIPEINST{
 		OVERLAPPED oOverlap;
 		HANDLE hPipeInst;
 		TCHAR chRequest[BUFSIZE];
@@ -28,7 +28,7 @@ namespace __Dpipe{
 	HANDLE ___pipeopen();
 	inline DWORD ___pipeclose();
 	DWORD __stdcall OpenPipeService(LPVOID);
-	DWORD ___pipesentmessage(const TCHAR *);
+	DWORD ___pipesendmsg(const TCHAR *);
 //pipe debug area
 	void DisconnectAndClose(LPPIPEINST);
 	BOOL CreateAndConnectInstance(LPOVERLAPPED);
@@ -148,7 +148,7 @@ namespace __Dpipe{
 		return hdPipe;
 	}
 	extern DWORD ___OnError(const TCHAR *);
-	DWORD ___pipesentmessage(const TCHAR * szSent){
+	DWORD ___pipesendmsg(const TCHAR * szSent){
 		DWORD dwReserved=PIPE_READMODE_MESSAGE;
 	    if (!SetNamedPipeHandleState(hdPipe,&dwReserved,NULL,NULL))
 	    	___OnError(_T("WriteFile"));

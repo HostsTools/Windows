@@ -57,7 +57,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.14  Build time:Aug. 30th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.15  Build time:Sept. 11th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define DEBUGCASE(x) CASE(x,___debug_point_reset(x))
@@ -392,7 +392,7 @@ if (request_client){
 }
 
 void __abrt(int){
-	SetConsoleTitle(TEXT("Recieved signal SIGINT"));
+	SetConsoleTitle(_T("Recieved signal SIGINT"));
 	_tprintf(_T("Received signal SIGINT\nPlease waiting program exit!\n"));
 	request_client=0;
 	_tprintf(_T("Uninstall service.\n"));
@@ -406,9 +406,12 @@ void __abrt(int){
 	exit(0);
 }
 
+void __abrt1(int){
+	for (int i=70;i--;_tprintf(_T("Please check anti-virus software then open this program again.\n")));
+}
+
+
 inline void __show_str(TCHAR const* st,TCHAR const * str2,TCHAR const * str3){
-/*	if (!_ingore) _tprintf(_T("%s"),st);
-	else _tprintf(st,_ingore);*/
 	_tprintf(st,str2,str3);
 	callsystempause;
 	return ;
@@ -515,7 +518,6 @@ TCHAR * dotdotcheck(TCHAR * str){
 	memset(_tmp,0,sizeof(_tmp));
 	if ((_=_tcsstr(str,_T("..")))){
 		_stscanf(_+2,_T("%100s"),_tmp);
-//		while ((*(--_))!='\\');
 		--_;
 		while ((*(--_))!='\\');
 		_stprintf(_,_T("%s"),_tmp);
@@ -586,7 +588,7 @@ Copyright (C) 2016 @Too-Naive\n\n"));
 		_tprintf(_T("    Bug report:sometimes.naive[at]hotmail.com \n\t       \
 Or open new issue\n------------------------------------------------------\n\n"));
 	}
-	try{
+	try {
 		if (!GetSystemDirectory(buf3,localbufsize))
 			THROWERR(_T("GetSystemDirectory() Error in Install Service."));
 		_stprintf(buf1,_T("%s\\..\\hoststools.exe"),buf3);
@@ -669,11 +671,11 @@ Please contact the application's support team for more information.\n"),
 	return ;
 }
 
-inline void __fastcall ___autocheckmess(const TCHAR * szPstr){
+inline void __fastcall ___autocheckmsg(const TCHAR * szPstr){
 	if (!request_client)
 		Func_FastPMNTS(szPstr);
 	else
-		___pipesentmessage(szPstr);
+		___pipesendmsg(szPstr);
 }
 
 inline void __fastcall ___checkEx(const TCHAR * szPstr,bool space_need){
@@ -681,10 +683,10 @@ inline void __fastcall ___checkEx(const TCHAR * szPstr,bool space_need){
 		if (!space_need) Func_FastPMNSS(szPstr);
 		else Func_FastPMNTS(szPstr);
 	else
-		___pipesentmessage(szPstr);
+		___pipesendmsg(szPstr);
 }
 
-inline void __fastcall _perrtext(const TCHAR * _str,bool _Reserved){
+inline void __fastcall _perr_T(const TCHAR * _str,bool _Reserved){
 	if (!bReserved)	_tprintf(_str);
 	else if (_Reserved) Func_FastPMNTS(_str);
 		 else Func_FastPMNSS(_str);
@@ -698,6 +700,7 @@ void ___Func_pipeCallBack(const TCHAR * str){
 
 void Func_CallCopyHostsFile(SYSTEMTIME & st){
 	FILE * fp,*_;
+	signal(SIGABRT,__abrt1);
 	if (!CopyFile(buf1,buf2,FALSE))
 		THROWERR(_T("CopyFile() Error on copy a backup file"));
 	if (!bReserved) _tprintf(_T("\tDone.\n    Step3:Replace Default Hosts File..."));
@@ -721,7 +724,7 @@ void Func_CallCopyHostsFile(SYSTEMTIME & st){
 		abort();
 	}
 	if (!bReserved) _tprintf(_T("Replace File Successfully\n"));
-	else ___autocheckmess(_T("Replace File Successfully\n"));
+	else ___autocheckmsg(_T("Replace File Successfully\n"));
 	if (!bReserved) Func_countBackupFile(&st),MessageBox(_pNULL_,
 		_T("Hosts File Set Success!"),
 		_T("Congratulations!"),MB_ICONINFORMATION|MB_SETFOREGROUND);
@@ -758,9 +761,8 @@ DWORD __stdcall NormalEntry(LPVOID){
 		_tprintf(_T("    Bug report:sometimes.naive[at]hotmail.com \n\t\
        Or open new issue\n\n\n"));
 		_tprintf(_T("    Start replace hosts file:\n"));
-	}
-	else{
-		if (request_client) ___pipeopen(),___pipesentmessage(_T("\nMessage from service:\n\n"));
+	} else {
+		if (request_client) ___pipeopen(),___pipesendmsg(_T("\nMessage from service:\n\n"));
 		Func_FastPMNTS(_T("Open log file.\n"));
 		___checkEx(_T("LICENSE:General Public License\n"),1);
 		___checkEx(_T("Copyright (C) 2016 Too-Naive\n"),0);
@@ -770,7 +772,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 	do {
 		Sleep(bReserved?(request_client?0:60000):0);//Waiting for network
 		GetLocalTime(&st);
-		if (bReserved) ___autocheckmess(_T("Start replace hosts file.\n"));
+		if (bReserved) ___autocheckmsg(_T("Start replace hosts file.\n"));
 		_stprintf(buf1,_T("%s\\drivers\\etc\\hosts"),buf3);
 		_stprintf(buf2,_BAKFORMAT,buf3,st.wYear,st.wMonth,st.wDay,st.wHour,
 									st.wMinute,st.wSecond);
@@ -778,7 +780,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 		try {
 			if (!bReserved) _tprintf(_T("    Step1:Download hosts file..."));
 			//download
-			if (bReserved) if (request_client) ___pipesentmessage(_T("Download files\n"));
+			if (bReserved) if (request_client) ___pipesendmsg(_T("Download files\n"));
 			for (int errcunt=0;(!Func_Download(hostsfile1,DownLocated)&&
 				!Func_Download(hostsfile,DownLocated));errcunt++)
 					if (errcunt>2) THROWERR(_T("DownLoad hosts file Error!"));
@@ -870,7 +872,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 			if (!Func_CheckDiff(ChangeCTLR,DownLocated)){
 				if (!bReserved) _tprintf(_T("\tDone.\n\n    \
 Finish:Hosts file Not update.\n\n"));
-				else ___autocheckmess(_T("Finish:Hosts file Not update.\n\n"));
+				else ___autocheckmsg(_T("Finish:Hosts file Not update.\n\n"));
 				if (!bReserved) {
 					Func_countBackupFile(&st);
 					callsystempause;
@@ -891,7 +893,7 @@ Finish:Hosts file Not update.\n\n"));
 				}
 				else {
 					_stprintf(szline,szErrMeg,runtimeerr.Message,GetLastError());
-					___pipesentmessage(szline);
+					___pipesendmsg(szline);
 				}
 			}
 			else{
@@ -905,20 +907,12 @@ Finish:Hosts file Not update.\n\n"));
 	return GetLastError();
 }
 
-inline long Func_time2long(const SYSTEMTIME & st){
-	return st.wYear*365+st.wMonth*30+st.wDay;
-}
-
-inline long Func_time2long(const WORD & year, const WORD & month, const WORD & day){
-	return year*365+month*30+day;
-}
-
 bool Func_checkBackupFileTime(const SYSTEMTIME & st,TCHAR const * name){
 	WORD year,month,day;
 	if (_stscanf(name,_T("hosts.%4hd%2hd%2hd.%*2d%*2d%*2d"),&year,&month,&day)!=3)
 		return false;
-	long systime=Func_time2long(st);
-	if (labs(systime-Func_time2long(year,month,day))>=60)
+	long systime=st.wYear*365+st.wMonth*30+st.wDay;
+	if (labs(systime-(year*365+month*30+day))>=60)
 		return true;
 	return false;
 }
@@ -929,7 +923,7 @@ void Func_countBackupFile(SYSTEMTIME * st){
 	TCHAR * sizbuf=new TCHAR[localbufsize];
 	_stprintf(sizbuf,_T("%s\\drivers\\etc\\hosts.20*"),buf3);
 	if ((hdHandle=FindFirstFile(sizbuf,&wfd))==INVALID_HANDLE_VALUE){
-		_tprintf(TEXT("FindFirstFile() Error!(%ld)\n"),GetLastError());
+		_tprintf(_T("FindFirstFile() Error!(%ld)\n"),GetLastError());
 		delete [] sizbuf;
 		return ;
 	}
@@ -947,7 +941,7 @@ Do you want to delete out of date(Over 60 days) backup file?"),
 			MB_ICONQUESTION|MB_YESNO|MB_SETFOREGROUND|MB_DEFBUTTON2)
 			==IDYES){
 				if ((hdHandle=FindFirstFile(sizbuf,&wfd))==INVALID_HANDLE_VALUE)
-					_tprintf(TEXT("FindFirstFile() Error!(%ld)\n"),GetLastError());
+					_tprintf(_T("FindFirstFile() Error!(%ld)\n"),GetLastError());
 				_stprintf(buf1,_T("%s\\drivers\\etc"),buf3);
 				SetCurrentDirectory(buf1);
 				do {
@@ -1002,8 +996,7 @@ Cannot start main thread to update hosts!\n"),GetLastError());
 }
 
 void WINAPI Service_Control(DWORD dwControl){
-	switch (dwControl)
-	{
+	switch (dwControl){
 		case SERVICE_CONTROL_SHUTDOWN:
 		case SERVICE_CONTROL_STOP:
 			ss.dwCurrentState=SERVICE_STOP_PENDING;
