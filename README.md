@@ -3,9 +3,9 @@
 # Download Executable File 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
-Last update: Sept. 11th , 2016
+Last update: Sept. 17th , 2016
 
-#### 下载地址:(v2.1.15)
+#### 下载地址:(v2.1.16)
 
  - zip Package (Include `tool.exe` and `choose.exe`)
   - [点我来下载](https://git.io/vozMx)

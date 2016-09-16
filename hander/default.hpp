@@ -1,6 +1,6 @@
 #pragma once
 #include <tchar.h>
-const TCHAR *szDefatult_hostsfile=_T("\
+const TCHAR * szDefatult_hostsfile=_T("\
 # Copyright (c) 1993-2009 Microsoft Corp.\n\
 #\n\
 # This is a sample HOSTS file used by Microsoft TCP/IP for Windows.\n\

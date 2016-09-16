@@ -9,6 +9,17 @@
 #include <stdio.h>
 #include <tchar.h>
 
+//define _pNULL_
+#ifndef _pNULL_
+	#if (defined(__GXX_EXPERIMENTAL_CXX0X__)||\
+	    (defined(_MSC_VER)&&(_MSC_VER>=1800)))
+		#define _pNULL_ nullptr
+	#else
+		#define _pNULL_ NULL
+	#endif
+#endif
+//end
+
 extern const TCHAR * pipeName;
 HANDLE hdPipe=INVALID_HANDLE_VALUE;
 extern void ___Func_pipeCallBack(TCHAR const *);
@@ -43,7 +54,7 @@ namespace __Dpipe{
 		LPPIPEINST lpPipeInst;
 		DWORD dwWait, cbRet;
 		BOOL fSuccess, fPendingIO;
-		if (!(hConnectEvent = CreateEvent(NULL,TRUE,TRUE,NULL)))
+		if (!(hConnectEvent = CreateEvent(_pNULL_,TRUE,TRUE,_pNULL_)))
 			return 0*_tprintf(_T("CreateEvent failed with %ld.\n"), GetLastError());
 		oConnect.hEvent = hConnectEvent;
 		fPendingIO = CreateAndConnectInstance(&oConnect);
@@ -96,7 +107,7 @@ namespace __Dpipe{
 		if (! DisconnectNamedPipe(lpPipeInst->hPipeInst))
 			printf("DisconnectNamedPipe failed with %ld.\n", GetLastError());
 		CloseHandle(lpPipeInst->hPipeInst);
-		if (lpPipeInst != NULL)
+		if (lpPipeInst != _pNULL_)
 			HeapFree(GetProcessHeap(),0, lpPipeInst);
 	}
 	BOOL CreateAndConnectInstance(LPOVERLAPPED lpoOverlap)
@@ -104,7 +115,7 @@ namespace __Dpipe{
 		if (!(hdPipe = CreateNamedPipe(pipeName,PIPE_ACCESS_DUPLEX |FILE_FLAG_OVERLAPPED,
 			PIPE_TYPE_MESSAGE |	PIPE_READMODE_MESSAGE |	PIPE_WAIT,
 			PIPE_UNLIMITED_INSTANCES,BUFSIZE*sizeof(TCHAR),BUFSIZE*sizeof(TCHAR),
-			PIPE_TIMEOUT,NULL)))
+			PIPE_TIMEOUT,_pNULL_)))
 			return 0*(printf("CreateNamedPipe failed with %ld.\n", GetLastError()));
 		return ConnectToNewClient(hdPipe, lpoOverlap);
 	}
@@ -137,9 +148,11 @@ namespace __Dpipe{
 	HANDLE ___pipeopen(){
 		while (1){
 			if ((hdPipe = CreateFile(pipeName,GENERIC_READ|GENERIC_WRITE,0,
-				NULL,OPEN_EXISTING,0,NULL))!=INVALID_HANDLE_VALUE)
+				_pNULL_,OPEN_EXISTING,0,_pNULL_))!=INVALID_HANDLE_VALUE)
 				break;
 			if (GetLastError()!=ERROR_PIPE_BUSY) {
+#include "ptrerr.hpp"
+#pragma message("other hander file request")
 				Func_FastPMNTS(_T("%s Error! (%ld)\n"),_T("___pipeopen()"),GetLastError());
 				return INVALID_HANDLE_VALUE;
 			}
@@ -150,10 +163,10 @@ namespace __Dpipe{
 	extern DWORD ___OnError(const TCHAR *);
 	DWORD ___pipesendmsg(const TCHAR * szSent){
 		DWORD dwReserved=PIPE_READMODE_MESSAGE;
-	    if (!SetNamedPipeHandleState(hdPipe,&dwReserved,NULL,NULL))
+	    if (!SetNamedPipeHandleState(hdPipe,&dwReserved,_pNULL_,_pNULL_))
 	    	___OnError(_T("WriteFile"));
 //			Func_FastPMNTS(_T("SetNamedPipeHandleState() Error! (%ld)\n"),GetLastError());
-	    if (!WriteFile(hdPipe,szSent,(lstrlen(szSent)+1)*sizeof(TCHAR),&dwReserved,NULL))
+	    if (!WriteFile(hdPipe,szSent,(lstrlen(szSent)+1)*sizeof(TCHAR),&dwReserved,_pNULL_))
 	    	___OnError(_T("WriteFile"));
 //			Func_FastPMNTS(_T("WriteFile() Error! (%ld)\n"),GetLastError());
 	    return GetLastError();

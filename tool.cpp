@@ -57,7 +57,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.15  Build time:Sept. 11th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.16  Build time:Sept. 17th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define DEBUGCASE(x) CASE(x,___debug_point_reset(x))
@@ -407,7 +407,7 @@ void __abrt(int){
 }
 
 void __abrt1(int){
-	for (int i=70;i--;_tprintf(_T("Please check anti-virus software then open this program again.\n")));
+	for (int i=3;i--;_tprintf(_T("Please check anti-virus software then open this program again.\n")));
 }
 
 
