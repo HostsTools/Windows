@@ -57,7 +57,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.16  Build time:Sept. 17th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.17  Build time:Sept. 24th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define DEBUGCASE(x) CASE(x,___debug_point_reset(x))
@@ -146,7 +146,7 @@ SERVICE_STATUS ss;
 HANDLE lphdThread[]={
 	INVALID_HANDLE_VALUE,INVALID_HANDLE_VALUE
 };
-bool request_client,bReserved,bIgnoreNewline,bIgnoreCommit;
+bool request_client,bReserved,bIgnoreNewline,bIgnoreCommit,bIsNulFile=true;
 WIN32_FIND_DATA wfd={0,{0,0},{0,0},{0,0},0,0,0,0,{0},{0}};
 //end.
 
@@ -167,6 +167,7 @@ TCHAR * dotdotcheck(TCHAR *);
 void Func_countBackupFile(SYSTEMTIME *);
 bool Func_checkBackupFileTime(const SYSTEMTIME & , TCHAR const *);
 DWORD WINAPI MonitorServiceThread(LPVOID);
+inline bool Func_checkBusyTime();
 
 //DWORD __stdcall Func_Update(LPVOID);
 
@@ -264,10 +265,6 @@ int _tmain(int argc,TCHAR const ** argv){
 		DEBUGCASE(DEBUG_SERVICE_STOP);
 		DEBUGCASE(DEBUG_SERVICE_START);
 		DEBUGCASE(DEBUG_SERVICE_REINSTALL);
-//		CASE(EXEC_DEBUG_RESET,___debug_point_reset(EXEC_DEBUG_RESET));
-//		CASE(DEBUG_SERVICE_STOP,___debug_point_reset(DEBUG_SERVICE_STOP));
-//		CASE(DEBUG_SERVICE_START,___debug_point_reset(DEBUG_SERVICE_START));
-//		CASE(DEBUG_SERVICE_REINSTALL,___debug_point_reset(DEBUG_SERVICE_REINSTALL));
 		CASE(OPEN_LISTEN,___debug_point_reset(OPEN_LISTEN));
 		CASE(RESET_FILE,Func_ResetFile());
 		default:break;
@@ -701,6 +698,16 @@ void ___Func_pipeCallBack(const TCHAR * str){
 void Func_CallCopyHostsFile(SYSTEMTIME & st){
 	FILE * fp,*_;
 	signal(SIGABRT,__abrt1);
+	
+	//empty file check
+	if (!bIsNulFile){
+		TCHAR ch;
+		_=_tfopen(ReservedFile,_T("r"));
+		for (ch=_fgettc(_);ch==_T(' ') || ch==_T('\n') || ch==_T('\r');ch=_fgettc(_));
+		if (ch==EOF) bIsNulFile=true;
+	}
+	//end
+	
 	if (!CopyFile(buf1,buf2,FALSE))
 		THROWERR(_T("CopyFile() Error on copy a backup file"));
 	if (!bReserved) _tprintf(_T("\tDone.\n    Step3:Replace Default Hosts File..."));
@@ -712,7 +719,7 @@ void Func_CallCopyHostsFile(SYSTEMTIME & st){
 		_fputts(_T(""),_);
 		if (!(fp=_tfopen(ChangeCTLR,_T("rb"))))
 			throw ChangeCTLR;
-		_ftprintf(_,_T("\n"));
+		if (!bIsNulFile) _ftprintf(_,_T("\n"));
 		size_t readbyte=0;
 		while ((readbyte=fread(iobuffer,sizeof(char),localbufsize,fp)))
 			fwrite(iobuffer,sizeof(char),readbyte,_);
@@ -835,6 +842,8 @@ DWORD __stdcall NormalEntry(LPVOID){
 					}
 					//check is need ignore the new line
 					if (bIgnoreNewline && *szline==_T('\n')) continue;
+					//empty file check (if read least one line.)
+					bIsNulFile=false;
 					// print user-defined hosts to tmp file.
 					_fputts(szline,_);
 				}
@@ -902,7 +911,7 @@ Finish:Hosts file Not update.\n\n"));
 				abort();
 			}
 		}
-		Sleep(bReserved?(request_client?10000:(29*60000)):0);
+		Sleep(bReserved?(request_client?10000:(Func_checkBusyTime()?29*60000:60*60000)):0);
 	} while (bReserved);
 	return GetLastError();
 }
@@ -914,6 +923,13 @@ bool Func_checkBackupFileTime(const SYSTEMTIME & st,TCHAR const * name){
 	long systime=st.wYear*365+st.wMonth*30+st.wDay;
 	if (labs(systime-(year*365+month*30+day))>=60)
 		return true;
+	return false;
+}
+
+inline bool Func_checkBusyTime(){
+	SYSTEMTIME st={0,0,0,0,0,0,0,0};
+	GetSystemTime(&st);
+	if (st.wHour<3 || st.wHour>7) return true;
 	return false;
 }
 
