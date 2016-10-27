@@ -20,16 +20,18 @@ TCHAR const *szParameters[]={
 	_T("svc"),				//for backward compatibility
 	_T("fi"),				//1
 	_T("fu"),				//2
-	_T("hardreset"),			//3
+	_T("hardreset"),				//3
 	_T("-debug-reset"),			//4
-	_T("\x02\x03"),				//5
+	_T("fi2"),				//5
 	_T("?"),				//6
 	_T("-debug-stop"),			//7
 	_T("-debug-start"),			//8
 	_T("-debug-reiu"),			//9
 	_T("-debug-pipe"),			//10
 	_T("--pipe"),				//11
-	_T("r")					//12
+	_T("r"),					//12
+	_T("h"),
+	_T("h2")
 };
 
 TCHAR const * showNotice="\
@@ -43,8 +45,9 @@ TCHAR const * showNotice="\
     8. Stop Service\n\
     9. Start Service\n\
    10. Open \".ini\" file\n\
+   11. Install automantic update process(via normal mode to start)\n\
     ";
-const int max_input_int=10;
+const int max_input_int=11;
 
 
 TCHAR _[20]=_T("");
@@ -56,7 +59,6 @@ int _tmain(int,TCHAR const **){
 	_tprintf(_T("Program mode list:\n%s\n"),showNotice);
 	_tprintf(_T("Please enter the number what you want to run:"));
 	_tscanf(_T("%d"),&inputn);
-//	printf("%d\n",max_input_int);
 	if (inputn>max_input_int || inputn<1) abort();
 	switch (inputn){
 		case 1:ShellExecute(NULL,_T("open"),ExecutableFileName,NULL,NULL,SW_SHOWNORMAL);
@@ -71,6 +73,8 @@ int _tmain(int,TCHAR const **){
 		case 9:str=szParameters[8];break;
 		case 10:ShellExecute(NULL,_T("open"),_T("notepad"),_T(" %windir%\\hstool.ini"),NULL,SW_SHOWDEFAULT);
 			exit(0);
+		case 11:str=szParameters[5];break;
+//		case 12:str=szParameters[13];break;
 	}
 	if (inputn==5)
 		_stprintf(_,_T("-%s %s"),str,szParameters[3]);

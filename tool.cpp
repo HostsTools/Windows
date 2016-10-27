@@ -8,14 +8,14 @@
 #include <windows.h>
 #include <stdio.h>
 #include <string.h>
-#include "hander/download.hpp"
+#include "header/download.hpp"
 #include <tchar.h>
 #include <stdlib.h>
-#include "hander/ptrerr.hpp"
-#include "hander/diff.hpp"
+#include "header/ptrerr.hpp"
+#include "header/diff.hpp"
 #include <signal.h>
-#include "hander/pipedebug.hpp"
-#include "hander/default.hpp"
+#include "header/pipedebug.hpp"
+#include "header/default.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 
@@ -57,7 +57,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.17  Build time:Sept. 24th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.18  Build time:Oct. 28th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define DEBUGCASE(x) CASE(x,___debug_point_reset(x))
@@ -92,6 +92,10 @@ TCHAR const *SzName[]={
 	Sname
 };
 const TCHAR * szServiceShowName=_T("racaljk-hosts Tool");
+//end
+
+//register key name
+const TCHAR * _keyname=_T("hoststool-windows");
 //end
 
 const size_t localbufsize=1024;
@@ -146,7 +150,7 @@ SERVICE_STATUS ss;
 HANDLE lphdThread[]={
 	INVALID_HANDLE_VALUE,INVALID_HANDLE_VALUE
 };
-bool request_client,bReserved,bIgnoreNewline,bIgnoreCommit,bIsNulFile=true;
+bool request_client,bIsServiceMode,bIgnoreNewline,bIgnoreCommit,bIsNulFile=true;
 WIN32_FIND_DATA wfd={0,{0,0},{0,0},{0,0},0,0,0,0,{0},{0}};
 //end.
 
@@ -168,7 +172,9 @@ void Func_countBackupFile(SYSTEMTIME *);
 bool Func_checkBackupFileTime(const SYSTEMTIME & , TCHAR const *);
 DWORD WINAPI MonitorServiceThread(LPVOID);
 inline bool Func_checkBusyTime();
-
+void Func_hiddenStart(const TCHAR *);
+void Func_hiddenEntry();
+void Func_installHiddenStart(const TCHAR *);
 //DWORD __stdcall Func_Update(LPVOID);
 
 
@@ -190,7 +196,10 @@ char iobuffer[localbufsize];
 //#define	SHOW_LICENSE			(1<<0x06)
 #define	RESET_FILE			(1<<0x07)
 #define	EXEC_BAD_PARAMETERS		(1073741824)
-
+#define EXEC_START_INSTALL2			(1<<0x06|EXEC_START_INSTALL_SERVICE)
+#define EXEC_HIDDEN_START	(1<<0x01)
+#define EXEC_HIDDEN_STARTED 	(EXEC_HIDDEN_START|1<<0x03)
+#define EXEC_START_UNINSTALL_SERVICE2 (1<<0x06|EXEC_START_UNINSTALL_SERVICE)
 
 #define DEBUG_ENTRY 			(1<<0x00)
 #define	EXEC_DEBUG_RESET		(DEBUG_ENTRY|(1<<0x01))
@@ -209,14 +218,16 @@ TCHAR const *szParameters[]={
 	_T("fu"),				//2
 	_T("hardreset"),				//3
 	_T("-debug-reset"),			//4
-	_T("\x02\x03"),				//5
+	_T("fi2"),				//5
 	_T("?"),				//6
 	_T("-debug-stop"),			//7
 	_T("-debug-start"),			//8
 	_T("-debug-reiu"),			//9
 	_T("-debug-pipe"),			//10
 	_T("--pipe"),				//11
-	_T("r")					//12
+	_T("r"),					//12
+	_T("h"),
+	_T("h2")
 };
 
 //Check parameters function
@@ -234,17 +245,20 @@ int __fastcall __Check_Parameters(int argc,TCHAR const **argv){
 			request_client=1;
 		else if (argc==3 && !request_client) BAD_EXIT;
 	switch (i){
-		case  0: bReserved=true;
+		case  0: bIsServiceMode=true;
 			 return EXEC_START_SERVICE;
 		case  1: return EXEC_START_INSTALL_SERVICE;
 		case  2: return EXEC_START_UNINSTALL_SERVICE;
 		case  4: return EXEC_DEBUG_RESET;	//restart service
+		case  5: return EXEC_START_INSTALL2;
 		case  6: return EXEC_START_HELP;
 		case  7: return DEBUG_SERVICE_STOP;	//stop service
 		case  8: return DEBUG_SERVICE_START;	//start service
 		case  9: return DEBUG_SERVICE_REINSTALL;//reinstall service
 		case 10: return OPEN_LISTEN;
 		case 12: return RESET_FILE;
+		case 13: return EXEC_HIDDEN_START;
+		case 14: return EXEC_HIDDEN_STARTED;
 		default: BAD_EXIT;
 	}
 	BAD_EXIT;
@@ -254,24 +268,96 @@ int __fastcall __Check_Parameters(int argc,TCHAR const **argv){
 //main entry
 int _tmain(int argc,TCHAR const ** argv){
 	SetConsoleTitle(ConsoleTitle);
-	switch (__Check_Parameters(argc,argv)){
-		CASE(EXEC_START_NORMAL,NormalEntry(_pNULL_));
-		CASE(EXEC_START_INSTALL_SERVICE,Func_Service_Install(true));
-		CASE(EXEC_START_UNINSTALL_SERVICE,Func_Service_UnInstall(true));
-		CASE(EXEC_START_SERVICE,StartServiceCtrlDispatcher(STE));
-		CASE(EXEC_START_HELP,__show_str(SHOW_HELP,copyrightshow,Sname));
-//		CASE(SHOW_LICENSE,__show_str(szgpl_Raw,_pNULL_));
-		DEBUGCASE(EXEC_DEBUG_RESET);
-		DEBUGCASE(DEBUG_SERVICE_STOP);
-		DEBUGCASE(DEBUG_SERVICE_START);
-		DEBUGCASE(DEBUG_SERVICE_REINSTALL);
-		CASE(OPEN_LISTEN,___debug_point_reset(OPEN_LISTEN));
-		CASE(RESET_FILE,Func_ResetFile());
-		default:break;
+	try {
+		switch (__Check_Parameters(argc,argv)){
+			CASE(EXEC_START_NORMAL,NormalEntry(_pNULL_));
+			CASE(EXEC_START_INSTALL_SERVICE,Func_Service_Install(true));
+			CASE(EXEC_START_UNINSTALL_SERVICE,Func_Service_UnInstall(true));
+			CASE(EXEC_START_SERVICE,StartServiceCtrlDispatcher(STE));
+			CASE(EXEC_START_HELP,__show_str(SHOW_HELP,copyrightshow,Sname));
+//			CASE(SHOW_LICENSE,__show_str(szgpl_Raw,_pNULL_));
+			DEBUGCASE(EXEC_DEBUG_RESET);
+			DEBUGCASE(DEBUG_SERVICE_STOP);
+			DEBUGCASE(DEBUG_SERVICE_START);
+			DEBUGCASE(DEBUG_SERVICE_REINSTALL);
+			CASE(OPEN_LISTEN,___debug_point_reset(OPEN_LISTEN));
+			CASE(RESET_FILE,Func_ResetFile());
+			CASE(EXEC_HIDDEN_START,Func_hiddenStart(argv[0]));
+			CASE(EXEC_HIDDEN_STARTED,Func_hiddenEntry());
+			CASE(EXEC_START_INSTALL2,Func_installHiddenStart(argv[0]));
+			default:break;
+		}
+	}
+	catch (...){
+		
 	}
 	return 0;
 }
 
+void Func_hiddenStart(const TCHAR * _exec){
+	ShellExecute(NULL,_T("open"),_exec,_T("-h2"),NULL,SW_HIDE);
+	exit(0);
+}
+
+void Func_hiddenEntry(){
+	bIsServiceMode=true;
+	Func_SetErrorFile(LogFileLocate,_T("a+"));
+	Sleep(30000);//waiting for network
+	NormalEntry(_pNULL_);
+	//TODO: if program throw expections, user may cannot find error.
+	return ;
+}
+
+void Func_installHiddenStart(const TCHAR * __path){
+	HKEY _hkey_=_pNULL_;
+	try {
+		if (!GetSystemDirectory(buf1,localbufsize))
+			_tprintf(_T("GetSystemDirectory() Failed.(%ld)\n"),GetLastError());
+		_stprintf(buf2,_T("%s\\..\\hostsstart.exe"),buf1);
+		dotdotcheck(buf2);
+		if (!CopyFile(__path,buf2,FALSE))
+			THROWERR(_T("CopyFile() Failed in Func_installHiddenStart().\n"));
+		_stprintf(buf1,_T("\"%s\" -h"),buf2);
+		if (RegOpenKey(HKEY_LOCAL_MACHINE,_T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"),&_hkey_))
+				THROWERR(_T("RegOpenKey() Error!\n"));
+		if (ERROR_FILE_NOT_FOUND==RegQueryValueEx(_hkey_,_keyname,NULL,NULL,NULL,NULL))
+			if (RegSetValueEx(_hkey_,_keyname,0,REG_SZ,(BYTE *)buf1,_tcslen(buf1)))
+				THROWERR(_T("RegSetValueEx() Error!\n"));
+	}
+	
+	catch (expection r){
+		if (!_hkey_) RegCloseKey(_hkey_);
+//		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,NULL,0,0,szline,localbufsize,NULL);
+		_tprintf(szErrMeg,r.Message,GetLastError());
+		_tprintf(_T("\n[Debug Message]\n%s\n%s\n%s\n"),buf1,buf2,buf3);
+		abort();
+	}
+	RegCloseKey(_hkey_);
+	MessageBox(_pNULL_,_T("Register statrup successfully."),_T("Congratulations!"),MB_OK|MB_ICONINFORMATION);
+	return ;
+}
+/*
+void Func_uninstallHiddenStart(){
+	HKEY _hkey_=_pNULL_;
+	try {
+		if (RegOpenKey(HKEY_LOCAL_MACHINE,_T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"),&_hkey_))
+				THROWERR(_T("RegOpenKey() Error!\n"));
+		if (ERROR_FILE_NOT_FOUND==RegQueryValueEx(_hkey_,_keyname,NULL,NULL,NULL,NULL))
+			if (!RegSetValueEx(_hkey_,_keyname,0,REG_SZ,(BYTE *)buf1,_tcslen(buf1)))
+				THROWERR(_T("RegSetValueEx() Error!\n"));
+		RegDeleteValue(HKEY_LOCAL_MACHINE,_T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"));
+	}
+	catch (expection r){
+		if (!_hkey_) RegCloseKey(_hkey_);
+		_tprintf(szErrMeg,r.Message,GetLastError());
+		_tprintf(_T("\n[Debug Message]\n%s\n%s\n%s\n"),buf1,buf2,buf3);
+		abort();
+	}
+	RegCloseKey(_hkey_);
+	MessageBox(_pNULL_,_T("Register statrup successfully."),_T("Congratulations!"),MB_OK|MB_ICONINFORMATION);
+	return ;
+}
+*/
 void Func_CheckProFile(){
 	SetLastError(ERROR_SUCCESS);
 	GetPrivateProfileString(privateAppName,
@@ -511,7 +597,7 @@ Error code:(%ld)\n"),GetLastError());
 //short path if str has ".."
 //Should we need check "\\..\\" ?
 TCHAR * dotdotcheck(TCHAR * str){
-	TCHAR * _;	TCHAR *_tmp=new TCHAR[100];
+	TCHAR * _,*_tmp=new TCHAR[100];
 	memset(_tmp,0,sizeof(_tmp));
 	if ((_=_tcsstr(str,_T("..")))){
 		_stscanf(_+2,_T("%100s"),_tmp);
@@ -684,7 +770,7 @@ inline void __fastcall ___checkEx(const TCHAR * szPstr,bool space_need){
 }
 
 inline void __fastcall _perr_T(const TCHAR * _str,bool _Reserved){
-	if (!bReserved)	_tprintf(_str);
+	if (!bIsServiceMode)	_tprintf(_str);
 	else if (_Reserved) Func_FastPMNTS(_str);
 		 else Func_FastPMNSS(_str);
 	return ;
@@ -710,7 +796,7 @@ void Func_CallCopyHostsFile(SYSTEMTIME & st){
 	
 	if (!CopyFile(buf1,buf2,FALSE))
 		THROWERR(_T("CopyFile() Error on copy a backup file"));
-	if (!bReserved) _tprintf(_T("\tDone.\n    Step3:Replace Default Hosts File..."));
+	if (!bIsServiceMode) _tprintf(_T("\tDone.\n    Step3:Replace Default Hosts File..."));
 	if (!CopyFile(ReservedFile,buf1,FALSE))
 		THROWERR(_T("CopyFile() Error on copy hosts file to system path"));
 	try {
@@ -730,9 +816,9 @@ void Func_CallCopyHostsFile(SYSTEMTIME & st){
 		MessageBox(NULL,szline,_T("Error!"),MB_ICONSTOP|MB_SETFOREGROUND);
 		abort();
 	}
-	if (!bReserved) _tprintf(_T("Replace File Successfully\n"));
+	if (!bIsServiceMode) _tprintf(_T("Replace File Successfully\n"));
 	else ___autocheckmsg(_T("Replace File Successfully\n"));
-	if (!bReserved) Func_countBackupFile(&st),MessageBox(_pNULL_,
+	if (!bIsServiceMode) Func_countBackupFile(&st),MessageBox(_pNULL_,
 		_T("Hosts File Set Success!"),
 		_T("Congratulations!"),MB_ICONINFORMATION|MB_SETFOREGROUND);
 	return ;
@@ -749,19 +835,17 @@ DWORD __stdcall NormalEntry(LPVOID){
 	SYSTEMTIME st={0,0,0,0,0,0,0,0};
 	FILE * fp=_pNULL_,*_=_pNULL_;
 	HANDLE hdThread=INVALID_HANDLE_VALUE;
-	Func_CheckProFile();
 	if (!GetSystemDirectory(buf3,localbufsize))
 		Func_PMNTTS(_T("GetSystemDirectory() Error!(GetLastError():%ld)\n\
 \tCannot get system path!"),GetLastError()),abort();
 	_stprintf(buf1,_T("%s\\.."),buf3);
-//	printf(buf1);
 	SetCurrentDirectory(buf1);
 	Func_CheckProFile();
 	if (!GetEnvironmentVariable(_T("TEMP"),szline,localbufsize))
 		Func_PMNTTS(_T("GetEnvironmentVariable() Error!(GetLastError():%ld)\n\
 \tCannot get %%TEMP%% path!"),GetLastError()),abort();
 	SetCurrentDirectory(szline);
-	if (!bReserved){
+	if (!bIsServiceMode){
 		_tprintf(_T("    LICENSE:General Public License\n%s\n\
     Copyright (C) 2016 @Too-Naive\n"),welcomeShow);
 		_tprintf(_T("    Project website:%s\n"),objectwebsite);
@@ -777,27 +861,27 @@ DWORD __stdcall NormalEntry(LPVOID){
 		___checkEx(_T("           Or open new issue.(https://github.com/HostsTools/Windows)\n"),0);
 	}
 	do {
-		Sleep(bReserved?(request_client?0:60000):0);//Waiting for network
+		Sleep(bIsServiceMode?(request_client?0:60000):0);//Waiting for network
 		GetLocalTime(&st);
-		if (bReserved) ___autocheckmsg(_T("Start replace hosts file.\n"));
+		if (bIsServiceMode) ___autocheckmsg(_T("Start replace hosts file.\n"));
 		_stprintf(buf1,_T("%s\\drivers\\etc\\hosts"),buf3);
 		_stprintf(buf2,_BAKFORMAT,buf3,st.wYear,st.wMonth,st.wDay,st.wHour,
 									st.wMinute,st.wSecond);
 		SetFileAttributes(buf1,FILE_ATTRIBUTE_NORMAL);//To avoid CopyFile or _tfopen failed.
 		try {
-			if (!bReserved) _tprintf(_T("    Step1:Download hosts file..."));
+			if (!bIsServiceMode) _tprintf(_T("    Step1:Download hosts file..."));
 			//download
-			if (bReserved) if (request_client) ___pipesendmsg(_T("Download files\n"));
+			if (bIsServiceMode) if (request_client) ___pipesendmsg(_T("Download files\n"));
 			for (int errcunt=0;(!Func_Download(hostsfile1,DownLocated)&&
 				!Func_Download(hostsfile,DownLocated));errcunt++)
 					if (errcunt>2) THROWERR(_T("DownLoad hosts file Error!"));
-					else if (!bReserved) {
+					else if (!bIsServiceMode) {
 						_tprintf(pWait);
-						Sleep(bReserved?(request_client?1000:10000):5000);
-						if (!bReserved) _tprintf(_T("\tDownload hosts file..."));
+						Sleep(bIsServiceMode?(request_client?1000:10000):5000);
+						if (!bIsServiceMode) _tprintf(_T("\tDownload hosts file..."));
 					}
 			//end.
-			if (!bReserved) _tprintf(_T("\tDone.\n    Step2:Change Line Endings..."));
+			if (!bIsServiceMode) _tprintf(_T("\tDone.\n    Step2:Change Line Endings..."));
 			try {
 				//Change Line Ending
 				//Open file and check if is open
@@ -817,7 +901,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 
 				//delete tmpfile
 				if (!DeleteFile(DownLocated)){
-					if (bReserved)
+					if (bIsServiceMode)
 						Func_FastPMNTS(_T("Delete tmpfile error.(%ld)\n"),GetLastError());
 					else
 						_tprintf(_T("Delete tmpfile error.(%ld)\n"),GetLastError());
@@ -879,10 +963,10 @@ DWORD __stdcall NormalEntry(LPVOID){
 			//end.
 
 			if (!Func_CheckDiff(ChangeCTLR,DownLocated)){
-				if (!bReserved) _tprintf(_T("\tDone.\n\n    \
+				if (!bIsServiceMode) _tprintf(_T("\tDone.\n\n    \
 Finish:Hosts file Not update.\n\n"));
 				else ___autocheckmsg(_T("Finish:Hosts file Not update.\n\n"));
-				if (!bReserved) {
+				if (!bIsServiceMode) {
 					Func_countBackupFile(&st);
 					callsystempause;
 					return GetLastError();
@@ -892,7 +976,7 @@ Finish:Hosts file Not update.\n\n"));
 			if (!hdThread) TerminateThread(hdThread,0);
 		}
 		catch(expection runtimeerr){
-			if (bReserved){
+			if (bIsServiceMode){
 				if (!request_client){
 					Func_FastPMNTS(_T("Fatal Error:\n"));
 					Func_FastPMNSS(_T("%s (GetLastError():%ld)\n"),
@@ -911,8 +995,8 @@ Finish:Hosts file Not update.\n\n"));
 				abort();
 			}
 		}
-		Sleep(bReserved?(request_client?10000:(Func_checkBusyTime()?29*60000:60*60000)):0);
-	} while (bReserved);
+		Sleep(bIsServiceMode?(request_client?10000:(Func_checkBusyTime()?29*60000:60*60000)):0);
+	} while (bIsServiceMode);
 	return GetLastError();
 }
 

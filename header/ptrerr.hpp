@@ -222,8 +222,8 @@ inline void * ___Func__Check_File_Set(void){
 }
 
 inline void * __fastcall ___Func_Close_File_Stream(FILE * ___ptr_fp){
-	if (!___ptr_fp && ptr_ErrorFileStream) fclose(ptr_ErrorFileStream);
-	else fclose(___ptr_fp);
+	if (!___ptr_fp && ptr_ErrorFileStream) fclose(ptr_ErrorFileStream),ptr_ErrorFileStream=_pNULL_;
+	else fclose(___ptr_fp),___ptr_fp=_pNULL_;
 	return _pNULL_;
 }
 

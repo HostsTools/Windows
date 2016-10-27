@@ -64,9 +64,9 @@ namespace __Dpipe{
 			case 0:
 				if (fPendingIO)
 					if (!(fSuccess = GetOverlappedResult(hdPipe,&oConnect,&cbRet,FALSE)))
-						return printf("ConnectNamedPipe (%ld)\n", GetLastError());
+						return _tprintf(_T("ConnectNamedPipe (%ld)\n"), GetLastError());
 				if (!(lpPipeInst=(LPPIPEINST) HeapAlloc(GetProcessHeap(),0,sizeof(PIPEINST))))
-					return printf("GlobalAlloc failed (%ld)\n", GetLastError());
+					return _tprintf(_T("GlobalAlloc failed (%ld)\n"), GetLastError());
 				lpPipeInst->hPipeInst = hdPipe;
 				lpPipeInst->cbToWrite = 0;
 				CompletedWriteRoutine(0, 0, (LPOVERLAPPED) lpPipeInst);
@@ -75,7 +75,7 @@ namespace __Dpipe{
 			case WAIT_IO_COMPLETION:
 				break;
 			default:
-				return printf("WaitForSingleObjectEx (%ld)\n", GetLastError());
+				return _tprintf(_T("WaitForSingleObjectEx (%ld)\n"), GetLastError());
 			}
 		}
 		return 0;
@@ -105,7 +105,7 @@ namespace __Dpipe{
 	}
 	void DisconnectAndClose(LPPIPEINST lpPipeInst){
 		if (! DisconnectNamedPipe(lpPipeInst->hPipeInst))
-			printf("DisconnectNamedPipe failed with %ld.\n", GetLastError());
+			_tprintf(_T("DisconnectNamedPipe failed with %ld.\n"), GetLastError());
 		CloseHandle(lpPipeInst->hPipeInst);
 		if (lpPipeInst != _pNULL_)
 			HeapFree(GetProcessHeap(),0, lpPipeInst);
@@ -116,14 +116,14 @@ namespace __Dpipe{
 			PIPE_TYPE_MESSAGE |	PIPE_READMODE_MESSAGE |	PIPE_WAIT,
 			PIPE_UNLIMITED_INSTANCES,BUFSIZE*sizeof(TCHAR),BUFSIZE*sizeof(TCHAR),
 			PIPE_TIMEOUT,_pNULL_)))
-			return 0*(printf("CreateNamedPipe failed with %ld.\n", GetLastError()));
+			return 0*(_tprintf(_T("CreateNamedPipe failed with %ld.\n"), GetLastError()));
 		return ConnectToNewClient(hdPipe, lpoOverlap);
 	}
 	BOOL ConnectToNewClient(HANDLE hPipe, LPOVERLAPPED lpo)
 	{
 		BOOL fConnected, fPendingIO = FALSE;
 		if ((fConnected = ConnectNamedPipe(hPipe, lpo)))
-			return 0*printf("ConnectNamedPipe failed with %ld.\n", GetLastError());
+			return 0*_tprintf(_T("ConnectNamedPipe failed with %ld.\n"), GetLastError());
 		switch (GetLastError()){
 		case ERROR_IO_PENDING:
 			fPendingIO = TRUE;
@@ -132,7 +132,7 @@ namespace __Dpipe{
 			if (SetEvent(lpo->hEvent))
 				break;
 		default:
-				return 0*printf("ConnectNamedPipe failed with %ld.\n", GetLastError());
+				return 0*_tprintf(_T("ConnectNamedPipe failed with %ld.\n"), GetLastError());
 		}
 		return fPendingIO;
 	}

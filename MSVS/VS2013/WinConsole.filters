@@ -15,19 +15,19 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\hander\download.hpp">
+    <ClInclude Include="..\..\header\download.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\hander\ptrerr.hpp">
+    <ClInclude Include="..\..\header\ptrerr.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\hander\diff.hpp">
+    <ClInclude Include="..\..\header\diff.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\hander\pipedebug.hpp">
+    <ClInclude Include="..\..\header\pipedebug.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\hander\default.hpp">
+    <ClInclude Include="..\..\header\default.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

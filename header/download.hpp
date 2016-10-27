@@ -31,7 +31,7 @@
 //end
 
 
-#define ___userAgent TEXT("Mozilla/4.0 (compatible; Windows NT 6.1)")
+#define ___userAgent _T("Mozilla/4.0 (compatible; Windows NT 6.1)")
 
 bool Func_DownloadEx(const TCHAR * url,const TCHAR * file,const DWORD FileAttributes){
 	const size_t dwBuffer=2048;		//buffer size

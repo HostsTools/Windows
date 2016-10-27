@@ -35,11 +35,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\hander\download.hpp" />
-    <ClInclude Include="..\..\hander\ptrerr.hpp" />
-    <ClInclude Include="..\..\hander\diff.hpp" />
-    <ClInclude Include="..\..\hander\pipedebug.hpp" />
-    <ClInclude Include="..\..\hander\default.hpp" />
+    <ClInclude Include="..\..\header\download.hpp" />
+    <ClInclude Include="..\..\header\ptrerr.hpp" />
+    <ClInclude Include="..\..\header\diff.hpp" />
+    <ClInclude Include="..\..\header\pipedebug.hpp" />
+    <ClInclude Include="..\..\header\default.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\tool.cpp" />

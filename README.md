@@ -3,13 +3,15 @@
 # Download Executable File 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
-Last update: Sept. 24th , 2016
+Last update: Oct. 28th, 2016
 
-#### 下载地址:(v2.1.17)
+#### 下载地址:(v2.1.18)
 
  - zip Package (Include `tool.exe` and `choose.exe`)
   - [点我来下载](https://git.io/vozMx)
-  - [如果上面那个不行的话点我](https://yunpan.cn/cR6spD6qp89N4)(code:fdf5)
+  - [如果上面那个不行的话点我](hhttps://coding.net/u/scaffrey/p/hosts/git/raw/master/tools/windows.zip)
+
+如只需下载tool.exe请到[release](https://github.com/HostsTools/Windows/releases)页面手动下载
 
 OS type | Minimun Supported Version
 --------|-------------------
@@ -37,16 +39,9 @@ Server | Microsoft Windows Server 2003 Family
 
 ##New Feature
 
-现在，可以在hosts的头部加上自定义的hosts，程序自动更新时不会覆盖掉自定义的hosts.例如
+如果服务无法更新hosts 请尝试安装静默启动
 
-	127.0.0.1 baidu.com
-	127.0.0.1 www.baidu.com
-	# Copyright (c) 2014-2016, racaljk.
-	# https://github.com/racaljk/hosts
-
-程序不会将第一行过滤掉，而会从`# Copyright (c) 2014-2016, racaljk.`开始改写hosts文件。
-
-如需忽略空行以及注释 请使用`choose.exe`打开`.ini`文件在指定的项中修改`false`为`true`
+打开choose.exe后输入11按下回车 重启即可
 
 ## 警告
 
