@@ -9,7 +9,7 @@ Last update: Oct. 28th, 2016
 
  - zip Package (Include `tool.exe` and `choose.exe`)
   - [点我来下载](https://git.io/vozMx)
-  - [如果上面那个不行的话点我](hhttps://coding.net/u/scaffrey/p/hosts/git/raw/master/tools/windows.zip)
+  - [如果上面那个不行的话点我](https://coding.net/u/scaffrey/p/hosts/git/raw/master/tools/windows.zip)
 
 如只需下载tool.exe请到[release](https://github.com/HostsTools/Windows/releases)页面手动下载
 
