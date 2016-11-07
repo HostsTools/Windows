@@ -1,7 +1,7 @@
 /*
  * This source code was published under GPL v3
  *
- * Copyright (C) 2016 Too-Naive E-mail:sometimes.naive@hotmail.com
+ * Copyright (C) 2016 Too-Naive
  *
  */
 
@@ -50,7 +50,6 @@
 		#define hostsfile _T("http://localhost/hosts")
 		#define hostsfile1 hostsfile
 /*	#else
-		#define hostsfile _T("https://raw.githubusercontent.com/YoungIsSimple/Object-Release/testbranch/minHOSTS")
 		#define hostsfile1 hostsfile
 	#endif*/
 #endif
@@ -597,7 +596,7 @@ Error code:(%ld)\n"),GetLastError());
 //short path if str has ".."
 //Should we need check "\\..\\" ?
 TCHAR * dotdotcheck(TCHAR * str){
-	TCHAR * _,*_tmp=new TCHAR[100];
+	TCHAR * _,*_tmp=new TCHAR[MAX_PATH];
 	memset(_tmp,0,sizeof(_tmp));
 	if ((_=_tcsstr(str,_T("..")))){
 		_stscanf(_+2,_T("%100s"),_tmp);
@@ -668,7 +667,7 @@ void Func_Service_Install(bool _q){
 	if (_q){
 		_tprintf(_T("    LICENSE:General Public License\n    \
 Copyright (C) 2016 @Too-Naive\n\n"));
-		_tprintf(_T("    Bug report:sometimes.naive[at]hotmail.com \n\t       \
+		_tprintf(_T("    Bug report:[hidden] \n\t       \
 Or open new issue\n------------------------------------------------------\n\n"));
 	}
 	try {
@@ -782,14 +781,14 @@ void ___Func_pipeCallBack(const TCHAR * str){
 }
 
 void Func_CallCopyHostsFile(SYSTEMTIME & st){
-	FILE * fp,*_;
+	FILE * filepoint1,*filepoint2;
 	signal(SIGABRT,__abrt1);
 	
 	//empty file check
 	if (!bIsNulFile){
 		TCHAR ch;
-		_=_tfopen(ReservedFile,_T("r"));
-		for (ch=_fgettc(_);ch==_T(' ') || ch==_T('\n') || ch==_T('\r');ch=_fgettc(_));
+		filepoint2=_tfopen(ReservedFile,_T("r"));
+		for (ch=_fgettc(filepoint2);ch==_T(' ') || ch==_T('\n') || ch==_T('\r');ch=_fgettc(filepoint2));
 		if (ch==EOF) bIsNulFile=true;
 	}
 	//end
@@ -800,16 +799,16 @@ void Func_CallCopyHostsFile(SYSTEMTIME & st){
 	if (!CopyFile(ReservedFile,buf1,FALSE))
 		THROWERR(_T("CopyFile() Error on copy hosts file to system path"));
 	try {
-		if (!(_=_tfopen(buf1,_T("ab+"))))
+		if (!(filepoint2=_tfopen(buf1,_T("ab+"))))
 			throw buf1;
-		_fputts(_T(""),_);
-		if (!(fp=_tfopen(ChangeCTLR,_T("rb"))))
+		_fputts(_T(""),filepoint2);
+		if (!(filepoint1=_tfopen(ChangeCTLR,_T("rb"))))
 			throw ChangeCTLR;
-		if (!bIsNulFile) _ftprintf(_,_T("\n"));
+		if (!bIsNulFile) _ftprintf(filepoint2,_T("\n"));
 		size_t readbyte=0;
-		while ((readbyte=fread(iobuffer,sizeof(char),localbufsize,fp)))
-			fwrite(iobuffer,sizeof(char),readbyte,_);
-		fclose(fp);fclose(_);
+		while ((readbyte=fread(iobuffer,sizeof(char),localbufsize,filepoint1)))
+			fwrite(iobuffer,sizeof(char),readbyte,filepoint2);
+		fclose(filepoint1);fclose(filepoint2);
 	}
 	catch(TCHAR const * _FileName){
 		_stprintf(szline,_T("_tfopen() Error in open \"%s\".\n"),_FileName);
@@ -849,7 +848,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 		_tprintf(_T("    LICENSE:General Public License\n%s\n\
     Copyright (C) 2016 @Too-Naive\n"),welcomeShow);
 		_tprintf(_T("    Project website:%s\n"),objectwebsite);
-		_tprintf(_T("    Bug report:sometimes.naive[at]hotmail.com \n\t\
+		_tprintf(_T("    Bug report:[hidden] \n\t\
        Or open new issue\n\n\n"));
 		_tprintf(_T("    Start replace hosts file:\n"));
 	} else {
@@ -857,7 +856,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 		Func_FastPMNTS(_T("Open log file.\n"));
 		___checkEx(_T("LICENSE:General Public License\n"),1);
 		___checkEx(_T("Copyright (C) 2016 Too-Naive\n"),0);
-		___checkEx(_T("Bug report:sometimes.naive[at]hotmail.com\n"),0);
+		___checkEx(_T("Bug report:[hidden]\n"),0);
 		___checkEx(_T("           Or open new issue.(https://github.com/HostsTools/Windows)\n"),0);
 	}
 	do {
@@ -892,7 +891,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 				//end, Read and Write to change the line ending to CRLF
 				while (!feof(fp)){
 					memset(szline,0,sizeof(szline));
-					_fgetts(szline,1000,fp);
+					_fgetts(szline,localbufsize,fp);
 					_fputts(szline,_);
 				}
 				fclose(fp);fclose(_);
@@ -916,7 +915,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 				while (!feof(fp)){//checking is end of file?
 					//to prevent print complex line
 					memset(szline,0,sizeof(szline));
-					_fgetts(szline,1000,fp);
+					_fgetts(szline,localbufsize,fp);
 					if (*szline==_T('#')) {//fast check is commit
 						//File original hosts start
 						if (_tcsstr(szline,_T("racaljk")))
@@ -944,7 +943,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 					_fputts(szline,_);
 					while (!feof(fp)) {
 						memset(szline,0,sizeof(szline));
-						_fgetts(szline,1000,fp);
+						_fgetts(szline,localbufsize,fp);
 						_fputts(szline,_);
 					}
 					fclose(_);

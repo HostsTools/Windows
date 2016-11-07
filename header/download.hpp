@@ -1,11 +1,10 @@
 /*
  * This source code was published under GPL v3
  *
- * Copyright (C) 2016 Too-Naive E-mail:sometimes.naive@hotmail.com
+ * Copyright (C) 2016 Too-Naive
  *
  */
-//download.hpp(Re-edit)
-//Code:https://raw.githubusercontent.com/Too-Naive/Tools/master/download.hpp
+//download.hpp(Re-edit)\
 
 #pragma once
  

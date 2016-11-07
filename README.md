@@ -8,8 +8,7 @@ Last update: Oct. 28th, 2016
 #### 下载地址:(v2.1.18)
 
  - zip Package (Include `tool.exe` and `choose.exe`)
-  - [点我来下载](https://git.io/vozMx)
-  - [如果上面那个不行的话点我](https://coding.net/u/scaffrey/p/hosts/git/raw/master/tools/windows.zip)
+  - [点我来下载](https://coding.net/u/scaffrey/p/hosts/git/raw/master/tools/windows.zip)
 
 如只需下载tool.exe请到[release](https://github.com/HostsTools/Windows/releases)页面手动下载
 
@@ -63,7 +62,7 @@ main program file: `tool.exe`
 2. 安装服务后 日志文件会保存在`C:\Hosts_Tool_log.log`下 您可以通过查看日志观察服务的工作状态
 7. 本程序一切有更改hosts文件的行为前都会先备份hosts文件。
 4. 请间隔一段时间后清理`%SystemRoot%\system32\drivers\etc\`文件夹 (程序加入了询问删除早期备份文件的功能)
-5. 如有任何疑问或bug反馈，请开新的issue或者发邮件到 sometimes.naive[at]hotmail.com (如是服务问题请附上日志文件)
+5. 如有任何疑问或bug反馈，请开新的issue (如是服务问题请附上日志文件)
 
 
 ## Code license:
