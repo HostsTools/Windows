@@ -3,12 +3,12 @@
 # Download Executable File 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
-Last update: Oct. 28th, 2016
+Last update: Nov. 15th, 2016
 
-#### 下载地址:(v2.1.18)
+#### 下载地址:(v2.1.19)
 
  - zip Package (Include `tool.exe` and `choose.exe`)
-  - [点我来下载](https://coding.net/u/scaffrey/p/hosts/git/raw/master/tools/windows.zip)
+  - [点我来下载](https://git.io/vX1Pz)
 
 如只需下载tool.exe请到[release](https://github.com/HostsTools/Windows/releases)页面手动下载
 

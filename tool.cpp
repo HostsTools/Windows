@@ -41,7 +41,7 @@
 
 //Hosts file web address set
 #define hostsfile _T("https://raw.githubusercontent.com/racaljk/hosts/master/hosts")
-#define hostsfile1 _T("https://coding.net/u/scaffrey/p/hosts/git/raw/master/hosts")
+//#define hostsfile1 _T("https://coding.net/u/scaffrey/p/hosts/git/raw/master/hosts")
 
 #ifdef _LOCAL
 	#undef hostsfile
@@ -56,7 +56,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.18  Build time:Oct. 28th, '16")
+#define ConsoleTitle _T("racaljk-host tool    v2.1.19  Build time:Nov. 15th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define DEBUGCASE(x) CASE(x,___debug_point_reset(x))
@@ -871,7 +871,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 			if (!bIsServiceMode) _tprintf(_T("    Step1:Download hosts file..."));
 			//download
 			if (bIsServiceMode) if (request_client) ___pipesendmsg(_T("Download files\n"));
-			for (int errcunt=0;(!Func_Download(hostsfile1,DownLocated)&&
+			for (int errcunt=0;(//!Func_Download(hostsfile1,DownLocated)&&
 				!Func_Download(hostsfile,DownLocated));errcunt++)
 					if (errcunt>2) THROWERR(_T("DownLoad hosts file Error!"));
 					else if (!bIsServiceMode) {
