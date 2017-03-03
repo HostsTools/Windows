@@ -1,7 +1,7 @@
 /*
  * This source code was published under GPL v3
  *
- * Copyright (C) 2016 Too-Naive
+ * Copyright (C) 2017 Too-Naive
  *
  */
 
@@ -140,7 +140,7 @@ Example:\n\
 #define copyrightshow _T("\
 ------------------------------------------------------------\n\
 Hosts Tool for Windows Console by: Too-Naive\n\
-Copyright (C) 2016 @Too-Naive License:General Public License\n\
+Copyright (C) 2017 @Too-Naive License:General Public License\n\
 ------------------------------------------------------------\n")
 
 //Global variable
@@ -666,7 +666,7 @@ void Func_Service_Install(bool _q){
 	SC_HANDLE shMang=_pNULL_,shSvc=_pNULL_;
 	if (_q){
 		_tprintf(_T("    LICENSE:General Public License\n    \
-Copyright (C) 2016 @Too-Naive\n\n"));
+Copyright (C) 2017 @Too-Naive\n\n"));
 		_tprintf(_T("    Bug report:[hidden] \n\t       \
 Or open new issue\n------------------------------------------------------\n\n"));
 	}
@@ -846,7 +846,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 	SetCurrentDirectory(szline);
 	if (!bIsServiceMode){
 		_tprintf(_T("    LICENSE:General Public License\n%s\n\
-    Copyright (C) 2016 @Too-Naive\n"),welcomeShow);
+    Copyright (C) 2017 @Too-Naive\n"),welcomeShow);
 		_tprintf(_T("    Project website:%s\n"),objectwebsite);
 		_tprintf(_T("    Bug report:[hidden] \n\t\
        Or open new issue\n\n\n"));
@@ -855,7 +855,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 		if (request_client) ___pipeopen(),___pipesendmsg(_T("\nMessage from service:\n\n"));
 		Func_FastPMNTS(_T("Open log file.\n"));
 		___checkEx(_T("LICENSE:General Public License\n"),1);
-		___checkEx(_T("Copyright (C) 2016 Too-Naive\n"),0);
+		___checkEx(_T("Copyright (C) 2017 Too-Naive\n"),0);
 		___checkEx(_T("Bug report:[hidden]\n"),0);
 		___checkEx(_T("           Or open new issue.(https://github.com/HostsTools/Windows)\n"),0);
 	}

@@ -3,7 +3,7 @@
 # Download Executable File 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
-Last update: Nov. 15th, 2016
+Last update: Mar. 3rd, 2017
 
 #### 下载地址:(v2.1.19)
 
@@ -44,7 +44,7 @@ Server | Microsoft Windows Server 2003 Family
 
 ## 警告
 
-1. **请不要删除`# Copyright (c) 2014-2016, racaljk.`(作为程序的识别位点) 否则 有可能发生不可预料的后果**
+1. **请不要删除`# Copyright (c) 2014-2017, racaljk.`(作为程序的识别位点) 否则 有可能发生不可预料的后果**
 2. **如果先前没有使用本项目hosts文件 而使用了其他项目的hosts文件的 请重置hosts文件(具体方法看下方使用说明)后 再使用本程序**
 
 ## How to use?
