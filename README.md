@@ -36,7 +36,7 @@ Server | Microsoft Windows Server 2003 Family
 
 请通过issue来反馈任何bug以及程序问题，bug会及时得到修复。
 
-##New Feature
+## New Feature
 
 如果服务无法更新hosts 请尝试安装静默启动
 
