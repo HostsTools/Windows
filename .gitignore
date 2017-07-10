@@ -34,3 +34,9 @@
 *.cpp~
 *.*~
 ~*.*
+
+## CMake tmp file
+cmake-build-debug/
+
+## CLion
+.idea/
