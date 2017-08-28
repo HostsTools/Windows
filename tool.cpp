@@ -131,7 +131,7 @@ Example:\n\
     *                                            *\n\
     *                                            *\n\
     *                                            *\n\
-    *     Welcome to use googlehosts/hosts tool!     *\n\
+    *     Welcome to use googlehosts/hosts tool! *\n\
     *                                            *\n\
     *                                            *\n\
     *                    Powered by: @Too-Naive  *\n\
