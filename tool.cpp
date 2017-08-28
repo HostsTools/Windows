@@ -40,8 +40,8 @@
 #define THROWERR(x) throw expection(x)
 
 //Hosts file web address set
-#define hostsfile _T("https://raw.githubusercontent.com/racaljk/hosts/master/hosts")
-//#define hostsfile1 _T("https://coding.net/u/scaffrey/p/hosts/git/raw/master/hosts")
+#define hostsfile _T("https://raw.githubusercontent.com/googlehosts/hosts/master/hosts-files/hosts")
+//#define hostsfile1 _T("https://coding.net/u/scaffrey/p/hosts/git/raw/master/hosts-files/hosts")
 
 #ifdef _LOCAL
 	#undef hostsfile
