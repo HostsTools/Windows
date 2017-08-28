@@ -56,7 +56,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.19  Build time:Nov. 15th, '16")
+#define ConsoleTitle _T("googlehosts tool    v2.1.19  Build time:Nov. 15th, '16")
 
 #define CASE(x,y) case x : y; break;
 #define DEBUGCASE(x) CASE(x,___debug_point_reset(x))
@@ -90,7 +90,7 @@ TCHAR Sname[]=_T("racaljk-hoststool");
 TCHAR const *SzName[]={
 	Sname
 };
-const TCHAR * szServiceShowName=_T("racaljk-hosts Tool");
+const TCHAR * szServiceShowName=_T("googlehosts Tool");
 //end
 
 //register key name
@@ -131,7 +131,7 @@ Example:\n\
     *                                            *\n\
     *                                            *\n\
     *                                            *\n\
-    *     Welcome to use racaljk/hosts tool!     *\n\
+    *     Welcome to use googlehosts/hosts tool!     *\n\
     *                                            *\n\
     *                                            *\n\
     *                    Powered by: @Too-Naive  *\n\
