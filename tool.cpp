@@ -456,7 +456,7 @@ if (request_client){
 	while (!feof(fp)){
 		memset(szline,0,sizeof(szline));
 		_fgetts(szline,localbufsize,fp);
-		if (_tcsstr(szline,_T("racaljk")))
+		if (_tcsstr(szline,_T("googlehosts members")))
 			_fputts(szline,_);
 		else break;
 	}
@@ -918,7 +918,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 					_fgetts(szline,localbufsize,fp);
 					if (*szline==_T('#')) {//fast check is commit
 						//File original hosts start
-						if (_tcsstr(szline,_T("racaljk")))
+						if (_tcsstr(szline,_T("googlehosts members")))
 						break; else
 						// check is need ignore the commits
 						if (bIgnoreCommit) continue;
