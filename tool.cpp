@@ -56,7 +56,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("googlehosts tool    v2.1.19  Build time:Nov. 15th, '16")
+#define ConsoleTitle _T("googlehosts tool    v2.2.0  Build time:Sep. 7th, '17")
 
 #define CASE(x,y) case x : y; break;
 #define DEBUGCASE(x) CASE(x,___debug_point_reset(x))
