@@ -917,9 +917,11 @@ DWORD __stdcall NormalEntry(LPVOID){
 					memset(szline,0,sizeof(szline));
 					_fgetts(szline,localbufsize,fp);
 					if (*szline==_T('#')) {//fast check is commit
+						if (_tcsstr(szline,_T("\x72\x61\x63\x61\x6c\x6a\x6b")))
+							break; else
 						//File original hosts start
 						if (_tcsstr(szline,_T("googlehosts members")))
-						break; else
+							break; else
 						// check is need ignore the commits
 						if (bIgnoreCommit) continue;
 					}

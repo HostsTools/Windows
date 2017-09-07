@@ -4,7 +4,7 @@
  * Copyright (C) 2017 Too-Naive
  *
  */
-//download.hpp(Re-edit)\
+//download.hpp(Re-edit)
 
 #pragma once
  
