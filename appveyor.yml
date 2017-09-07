@@ -1,0 +1,35 @@
+version: 2.1.19-b.{build}
+branches:
+  only:
+  - master
+skip_tags: true
+image: Visual Studio 2015
+configuration: fortestonline1
+environment:
+  pg: C:\projects\windows\MSVS\VS2015\bin\x86\fortestonline1\WinConsole.exe
+  hsf: '%SystemRoot%\system32\drivers\etc\hosts'
+  pgr: C:\projects\windows\MSVS\VS2015\bin\x86\fortestonline1\
+before_build:
+- cmd: >-
+    cd /d C:\projects\windows
+
+    cmake .
+
+    clearcmakebuild.bat
+
+    rd /s /q C:\projects\windows\MSVS\VS2013
+build:
+  verbosity: minimal
+test_script:
+- cmd: >-
+    REM add a row to hosts file (first test)
+
+    echo.127.0.0.1 baidu.com >> %hsf%
+
+    REM Run program to test
+
+    %pg%
+
+    REM reset hosts file
+
+    %pg% -r

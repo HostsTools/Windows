@@ -40,8 +40,8 @@
 #define THROWERR(x) throw expection(x)
 
 //Hosts file web address set
-#define hostsfile _T("https://raw.githubusercontent.com/racaljk/hosts/master/hosts")
-//#define hostsfile1 _T("https://coding.net/u/scaffrey/p/hosts/git/raw/master/hosts")
+#define hostsfile _T("https://raw.githubusercontent.com/googlehosts/hosts/master/hosts-files/hosts")
+//#define hostsfile1 _T("https://coding.net/u/scaffrey/p/hosts/git/raw/master/hosts-files/hosts")
 
 #ifdef _LOCAL
 	#undef hostsfile
@@ -56,7 +56,7 @@
 #define objectwebsite _T("https:\x2f\x2fgithub.com/HostsTools/Windows")
 //end.
 
-#define ConsoleTitle _T("racaljk-host tool    v2.1.19  Build time:Nov. 15th, '16")
+#define ConsoleTitle _T("googlehosts tool    v2.2.0  Build time:Sep. 7th, '17")
 
 #define CASE(x,y) case x : y; break;
 #define DEBUGCASE(x) CASE(x,___debug_point_reset(x))
@@ -90,7 +90,7 @@ TCHAR Sname[]=_T("racaljk-hoststool");
 TCHAR const *SzName[]={
 	Sname
 };
-const TCHAR * szServiceShowName=_T("racaljk-hosts Tool");
+const TCHAR * szServiceShowName=_T("googlehosts Tool");
 //end
 
 //register key name
@@ -131,7 +131,7 @@ Example:\n\
     *                                            *\n\
     *                                            *\n\
     *                                            *\n\
-    *     Welcome to use racaljk/hosts tool!     *\n\
+    *     Welcome to use googlehosts/hosts tool! *\n\
     *                                            *\n\
     *                                            *\n\
     *                    Powered by: @Too-Naive  *\n\
@@ -456,7 +456,7 @@ if (request_client){
 	while (!feof(fp)){
 		memset(szline,0,sizeof(szline));
 		_fgetts(szline,localbufsize,fp);
-		if (_tcsstr(szline,_T("racaljk")))
+		if (_tcsstr(szline,_T("googlehosts members")))
 			_fputts(szline,_);
 		else break;
 	}
@@ -918,7 +918,7 @@ DWORD __stdcall NormalEntry(LPVOID){
 					_fgetts(szline,localbufsize,fp);
 					if (*szline==_T('#')) {//fast check is commit
 						//File original hosts start
-						if (_tcsstr(szline,_T("racaljk")))
+						if (_tcsstr(szline,_T("googlehosts members")))
 						break; else
 						// check is need ignore the commits
 						if (bIgnoreCommit) continue;
