@@ -3,12 +3,12 @@
 # Download Executable File 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8aya86796ipmuwr2/branch/master?svg=true)](https://ci.appveyor.com/project/Too-Naive/windows/branch/master)
-Last update: Mar. 3rd, 2017
+Last update: Sept. 7th, 2017
 
-#### 下载地址:(v2.1.19)
+#### 下载地址:(v2.2.0)
 
  - zip Package (Include `tool.exe` and `choose.exe`)
-  - [点我来下载](https://git.io/vX1Pz)
+  - [点我来下载](https://git.io/v5wzs)
 
 如只需下载tool.exe请到[release](https://github.com/HostsTools/Windows/releases)页面手动下载
 
@@ -25,10 +25,6 @@ Server | Microsoft Windows Server 2003 Family
 每次开机后每隔30分钟会自动检测hosts文件的更新噢！
 
 **在此特别感谢[@qwerty258](https://github.com/qwerty258)为本程序提供了Visual Studio的工程文件**
-
-**在此特别感谢spacetime的协助 是他帮助我发现了ci运行测试中程序的致命bug**
-
-**在此特别感谢[@0xMeansHexadecimal](https://github.com/0xMeansHexadecimal)给我的支持 是她给了我灵感 协助我修复了[#22](https://github.com/HostsTools/Windows/issues/22)**
 
 ## 声明
 
