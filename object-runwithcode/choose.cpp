@@ -1,7 +1,7 @@
 /*
  * This source code was published under GPL v3
  *
- * Copyright (C) 2016 Too-Naive
+ * Copyright (C) 2016-2018 Too-Naive
  *
  */
 
